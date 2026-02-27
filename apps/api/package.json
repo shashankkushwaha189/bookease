@@ -1,0 +1,53 @@
+{
+    "name": "@bookease/api",
+    "version": "1.0.0",
+    "private": true,
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "prisma:generate": "prisma generate",
+        "prisma:migrate": "prisma migrate dev",
+        "db:seed": "ts-node prisma/seed.ts",
+        "db:test": "ts-node scripts/test-db.ts",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@bookease/logger": "workspace:*",
+        "@bookease/types": "workspace:*",
+        "@prisma/client": "latest",
+        "bcrypt": "^6.0.0",
+        "compression": "latest",
+        "cors": "latest",
+        "express": "latest",
+        "express-rate-limit": "latest",
+        "helmet": "latest",
+        "jsonwebtoken": "^9.0.3",
+        "morgan": "latest",
+        "uuid": "^13.0.0",
+        "zod": "latest"
+    },
+    "devDependencies": {
+        "@prisma/config": "^7.4.1",
+        "@types/bcrypt": "^6.0.0",
+        "@types/compression": "latest",
+        "@types/cors": "latest",
+        "@types/express": "latest",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/morgan": "latest",
+        "@types/node": "latest",
+        "@types/pg": "^8.16.0",
+        "@types/supertest": "latest",
+        "@types/uuid": "^11.0.0",
+        "@vitest/coverage-v8": "latest",
+        "dotenv": "latest",
+        "prisma": "latest",
+        "supertest": "latest",
+        "ts-node": "^10.9.2",
+        "ts-node-dev": "latest",
+        "typescript": "latest",
+        "vitest": "latest"
+    }
+}
