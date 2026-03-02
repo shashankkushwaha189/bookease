@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 import { AppError } from '../../lib/errors';
 import { parseISO, subMonths } from 'date-fns';

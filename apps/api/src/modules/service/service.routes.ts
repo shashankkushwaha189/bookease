@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { serviceController } from './service.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { requireRole } from '../../middleware/role.middleware';
-import { UserRole } from '@prisma/client';
 
 const router = Router();
 
@@ -16,8 +15,8 @@ router.get('/', (req, res, next) => {
 }, serviceController.list);
 
 // ADMIN only routes for write operations
-router.post('/', authMiddleware, requireRole(UserRole.ADMIN), serviceController.create);
-router.patch('/:id', authMiddleware, requireRole(UserRole.ADMIN), serviceController.update);
-router.delete('/:id', authMiddleware, requireRole(UserRole.ADMIN), serviceController.delete);
+router.post('/', authMiddleware, requireRole('ADMIN'), serviceController.create);
+router.patch('/:id', authMiddleware, requireRole('ADMIN'), serviceController.update);
+router.delete('/:id', authMiddleware, requireRole('ADMIN'), serviceController.delete);
 
 export default router;

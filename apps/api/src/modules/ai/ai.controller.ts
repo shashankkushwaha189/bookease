@@ -12,7 +12,7 @@ export class AiController {
                 throw new AppError('Appointment ID is required', 400, 'VALIDATION_ERROR');
             }
 
-            const summary = await aiService.generateSummary(id, tenantId);
+            const summary = await aiService.generateSummary(id as string, tenantId as string);
 
             res.status(200).json({
                 success: true,
@@ -35,7 +35,7 @@ export class AiController {
                 throw new AppError('Appointment ID is required', 400, 'VALIDATION_ERROR');
             }
 
-            const result = await aiService.acceptSummary(id, tenantId, userId);
+            const result = await aiService.acceptSummary(id as string, tenantId as string, userId as string);
 
             res.status(200).json({
                 success: true,
@@ -56,7 +56,7 @@ export class AiController {
                 throw new AppError('Appointment ID is required', 400, 'VALIDATION_ERROR');
             }
 
-            const result = await aiService.discardSummary(id, tenantId, userId);
+            const result = await aiService.discardSummary(id as string, tenantId as string, userId as string);
 
             res.status(200).json({
                 success: true,
