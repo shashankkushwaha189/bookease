@@ -7,7 +7,7 @@
         "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
         "build": "tsc --build",
         "start": "node dist/index.js",
-        "postbuild": "prisma generate && npx copyfiles -u 1 'node_modules/@prisma/client/**/*' dist/generated/client && npx copyfiles -u 1 'node_modules/@prisma/client-runtime-utils/**/*' dist/generated/client/node_modules/@prisma/client-runtime-utils && npx copyfiles -u 1 'node_modules/@prisma/internals/**/*' dist/generated/client/node_modules/@prisma/internals",
+        "postbuild": "prisma generate && npx copyfiles -u 1 'node_modules/@prisma/**/*' dist/",
         "prisma:generate": "prisma generate",
         "prisma:migrate": "prisma migrate dev",
         "db:seed": "ts-node prisma/seed.ts",
