@@ -3,7 +3,7 @@
         "target": "ESNext",
         "module": "CommonJS",
         "outDir": "./dist",
-        "rootDir": "./",
+        "rootDir": "./src",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
@@ -12,8 +12,6 @@
         "emitDecoratorMetadata": true
     },
     "include": [
-        "src/**/*",
-        "tests/**/*",
-        "prisma/**/*"
+        "src/**/*"
     ]
 }

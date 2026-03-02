@@ -11,6 +11,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const helpers_1 = require("./helpers");
 const client_1 = require("../src/generated/client");
 const ai_service_1 = require("../src/modules/ai/ai.service");
+const errors_1 = require("../src/lib/errors");
 (0, vitest_1.describe)('AI Module API', () => {
     let tenant;
     let tenantDisabled;
@@ -154,7 +155,7 @@ const ai_service_1 = require("../src/modules/ai/ai.service");
             });
             // Temporarily patch the retry wait duration strictly to avoid slow tests
             vitest_1.vi.spyOn(ai_service_1.aiService, 'callAIProviderWithRetry').mockImplementationOnce(async (prompt) => {
-                throw new Error('AI service unavailable');
+                throw new errors_1.AppError('AI service unavailable', 503, 'AI_SERVICE_UNAVAILABLE');
             });
             const res = await (0, supertest_1.default)(app_1.app)
                 .post(`/api/appointments/${aptFail.id}/ai-summary`)
