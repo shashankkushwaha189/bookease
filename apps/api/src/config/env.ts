@@ -10,7 +10,11 @@ console.log('🔍 Debug - process.env.PORT:', process.env.PORT);
 console.log('🔍 Debug - process.env:', Object.keys(process.env).filter(k => k.includes('PORT')));
 
 const envSchema = z.object({
-    PORT: z.coerce.number().default(3000),
+    PORT: z.coerce.number().default(() => {
+        // Use Render's port first, then fallback to 3000
+        const renderPort = process.env.KUBERNETES_SERVICE_PORT || process.env.PORT;
+        return renderPort ? parseInt(renderPort) : 3000;
+    }),
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     DATABASE_URL: z.string().url(),
     JWT_SECRET: z.string().min(32),
