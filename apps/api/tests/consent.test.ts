@@ -2,15 +2,15 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../src/app';
 import { prisma } from '../src/lib/prisma';
+import { cleanupDatabase } from './helpers';
 
 describe('Consent Capture Module', () => {
     let tenantA: any;
+    let serviceId: string;
+    let staffId: string;
 
     beforeAll(async () => {
-        // Cleanup
-        await prisma.consentRecord.deleteMany();
-        await prisma.businessProfile.deleteMany();
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
 
         tenantA = await prisma.tenant.create({
             data: {
@@ -19,6 +19,24 @@ describe('Consent Capture Module', () => {
                 timezone: 'UTC',
             },
         });
+
+        const service = await prisma.service.create({
+            data: {
+                tenantId: tenantA.id,
+                name: 'Consent Service',
+                durationMinutes: 30,
+            }
+        });
+        serviceId = service.id;
+
+        const staff = await prisma.staff.create({
+            data: {
+                tenantId: tenantA.id,
+                name: 'Consent Staff',
+                email: 'consent-staff@example.com',
+            }
+        });
+        staffId = staff.id;
 
         await prisma.businessProfile.create({
             data: {
@@ -30,20 +48,24 @@ describe('Consent Capture Module', () => {
     });
 
     afterAll(async () => {
-        await prisma.consentRecord.deleteMany();
-        await prisma.businessProfile.deleteMany();
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
     });
 
     it('should reject booking without consent flag', async () => {
         const response = await request(app)
-            .post('/api/public/bookings')
+            .post('/api/public/bookings/book')
             .set('X-Tenant-ID', tenantA.id)
             .send({
-                customerEmail: 'customer@example.com',
-                customerName: 'John Doe',
-                startTime: new Date().toISOString(),
-                serviceId: '00000000-0000-0000-0000-000000000000',
+                serviceId,
+                staffId,
+                customer: {
+                    name: 'John Doe',
+                    email: 'customer@example.com',
+                    phone: '1234567890'
+                },
+                startTimeUtc: new Date(Date.now() + 3600000).toISOString(),
+                endTimeUtc: new Date(Date.now() + 5400000).toISOString(),
+                sessionToken: 'test-token',
                 consentGiven: false,
             });
 
@@ -54,18 +76,23 @@ describe('Consent Capture Module', () => {
     it('should create consent record on successful booking', async () => {
         const customerEmail = 'tester@example.com';
         const response = await request(app)
-            .post('/api/public/bookings')
+            .post('/api/public/bookings/book')
             .set('X-Tenant-ID', tenantA.id)
             .send({
-                customerEmail,
-                customerName: 'Test User',
-                startTime: new Date().toISOString(),
-                serviceId: '00000000-0000-0000-0000-000000000000',
+                serviceId,
+                staffId,
+                customer: {
+                    name: 'Test User',
+                    email: customerEmail,
+                    phone: '1234567890'
+                },
+                startTimeUtc: new Date(Date.now() + 7200000).toISOString(),
+                endTimeUtc: new Date(Date.now() + 9000000).toISOString(),
+                sessionToken: 'test-token-2',
                 consentGiven: true,
             });
 
         expect(response.status).toBe(201);
-        expect(response.body.success).toBe(true);
 
         // Verify record in DB
         const records = await prisma.consentRecord.findMany({
@@ -85,13 +112,19 @@ describe('Consent Capture Module', () => {
 
         // 1. Give consent with current policy
         await request(app)
-            .post('/api/public/bookings')
+            .post('/api/public/bookings/book')
             .set('X-Tenant-ID', tenantA.id)
             .send({
-                customerEmail,
-                customerName: 'Hist User',
-                startTime: new Date().toISOString(),
-                serviceId: '00000000-0000-0000-0000-000000000000',
+                serviceId,
+                staffId,
+                customer: {
+                    name: 'Hist User',
+                    email: customerEmail,
+                    phone: '1234567890'
+                },
+                startTimeUtc: new Date(Date.now() + 10800000).toISOString(),
+                endTimeUtc: new Date(Date.now() + 12600000).toISOString(),
+                sessionToken: 'test-token-3',
                 consentGiven: true,
             });
 

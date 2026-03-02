@@ -1,0 +1,143 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/realworkstudio/bookease/apps/api[39m
+
+[90mstdout[2m | tests/recurring_appointment.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+node.exe : Sourcemap 
+for "D:/realworkstudio/
+bookease/node_modules/.
+pnpm/node-cron@4.2.1/no
+de_modules/node-cron/di
+st/esm/node-cron.js" 
+points to missing 
+source files
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Users\shash\AppData
+\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Sourcemap for   
+  "...ng source fil    
+es:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+ [32mΓ£ô[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould create a weekly series of 4 appointments on correct 4 Mondays[32m 300[2mms[22m[39m
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould return 
+conflict error if one 
+slot in series is taken
+[22m[39mRecurring 
+Booking Error: Error: S
+LOT_TAKEN:2026-04-12T14
+:00:00.000Z
+    at D:/realworkstudi
+o/bookease/apps/api/src
+/modules/appointment/ap
+pointment.repository.ts
+:266:27
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at Proxy._transacti
+onWithCallback [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:79:4390[90m)
+[39m
+    at 
+createRecurringBooking 
+(D:/realworkstudio/book
+ease/apps/api/src/modul
+es/appointment/appointm
+ent.controller.ts:34:28
+)
+
+ [31m├ù[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould return conflict error if one slot in series is taken[32m 105[2mms[22m[39m
+[31m   ΓåÆ expected +0 to be 4 // Object.is equality[39m
+ [32mΓ£ô[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould cancel only one occurrence with scope=single[32m 228[2mms[22m[39m
+ [32mΓ£ô[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould cancel all future occurrences with scope=series[32m 163[2mms[22m[39m
+ [32mΓ£ô[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould reschedule all future occurrences with scope=series[32m 122[2mms[22m[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[39m[1m[41m 
+Failed Tests 1 [49m[2
+2m[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»[39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould return 
+conflict error if one 
+slot in series is taken
+[31m[1mAssertionError
+[22m: expected +0 to 
+be 4 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 4[39m
+[31m+ 0[39m
+
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m131:23[22
+m[39m
+    [90m129| [39m    
+    const count = 
+await prisma.appointmen
+t.count({ where: { 
+notes:ΓÇª
+    [90m130| [39m    
+    // Wait, the test 
+clinic might have some 
+from previous tests 
+iΓÇª
+    [90m131| [39m    
+    [34mexpect[39m(co
+unt)[33m.[39m[34mtoB
+e[39m([34m4[39m)[33
+m;[39m [90m// Only 
+the 4 from the first 
+test[39m
+    [90m   | [39m    
+                  
+[31m^[39m
+    [90m132| [39m    
+})[33m;[39m
+    [90m133| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»[2
+2m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 22:04:13
+[2m   Duration [22m 7.39s[2m (transform 1.04s, setup 0ms, import 5.57s, tests 1.34s, environment 0ms)[22m
+

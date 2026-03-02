@@ -122,13 +122,13 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.TenantScalarFieldEnum = {
   id: 'id',
-  slug: 'slug',
   name: 'name',
+  slug: 'slug',
   timezone: 'timezone',
   isActive: 'isActive',
-  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.BusinessProfileScalarFieldEnum = {
@@ -160,6 +160,141 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ServiceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  durationMinutes: 'durationMinutes',
+  bufferBefore: 'bufferBefore',
+  bufferAfter: 'bufferAfter',
+  price: 'price',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StaffScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  email: 'email',
+  photoUrl: 'photoUrl',
+  bio: 'bio',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.StaffServiceScalarFieldEnum = {
+  staffId: 'staffId',
+  serviceId: 'serviceId'
+};
+
+exports.Prisma.WeeklyScheduleScalarFieldEnum = {
+  id: 'id',
+  staffId: 'staffId',
+  dayOfWeek: 'dayOfWeek',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  isWorking: 'isWorking'
+};
+
+exports.Prisma.StaffBreakScalarFieldEnum = {
+  id: 'id',
+  weeklyScheduleId: 'weeklyScheduleId',
+  startTime: 'startTime',
+  endTime: 'endTime'
+};
+
+exports.Prisma.StaffTimeOffScalarFieldEnum = {
+  id: 'id',
+  staffId: 'staffId',
+  date: 'date',
+  endDate: 'endDate',
+  reason: 'reason',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AppointmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  serviceId: 'serviceId',
+  staffId: 'staffId',
+  customerId: 'customerId',
+  referenceId: 'referenceId',
+  startTimeUtc: 'startTimeUtc',
+  endTimeUtc: 'endTimeUtc',
+  status: 'status',
+  notes: 'notes',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  seriesId: 'seriesId',
+  seriesIndex: 'seriesIndex'
+};
+
+exports.Prisma.AppointmentTimelineScalarFieldEnum = {
+  id: 'id',
+  appointmentId: 'appointmentId',
+  tenantId: 'tenantId',
+  eventType: 'eventType',
+  performedBy: 'performedBy',
+  note: 'note',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  action: 'action',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  correlationId: 'correlationId',
+  before: 'before',
+  after: 'after',
+  ipAddress: 'ipAddress',
+  reason: 'reason',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RecurringAppointmentSeriesScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  frequency: 'frequency',
+  occurrences: 'occurrences',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CustomerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  notes: 'notes',
+  tags: 'tags',
+  consentGiven: 'consentGiven',
+  deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SlotLockScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  staffId: 'staffId',
+  startTimeUtc: 'startTimeUtc',
+  endTimeUtc: 'endTimeUtc',
+  sessionToken: 'sessionToken',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ConsentRecordScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
@@ -169,9 +304,72 @@ exports.Prisma.ConsentRecordScalarFieldEnum = {
   givenAt: 'givenAt'
 };
 
+exports.Prisma.TenantConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  version: 'version',
+  config: 'config',
+  createdBy: 'createdBy',
+  note: 'note',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AppointmentArchiveScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  serviceId: 'serviceId',
+  staffId: 'staffId',
+  customerId: 'customerId',
+  referenceId: 'referenceId',
+  startTimeUtc: 'startTimeUtc',
+  endTimeUtc: 'endTimeUtc',
+  status: 'status',
+  notes: 'notes',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  archivedAt: 'archivedAt',
+  seriesId: 'seriesId',
+  seriesIndex: 'seriesIndex'
+};
+
+exports.Prisma.ApiTokenScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  tokenHash: 'tokenHash',
+  lastUsed: 'lastUsed',
+  expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiSummaryScalarFieldEnum = {
+  id: 'id',
+  appointmentId: 'appointmentId',
+  tenantId: 'tenantId',
+  summary: 'summary',
+  customerIntent: 'customerIntent',
+  followUpSuggestion: 'followUpSuggestion',
+  confidence: 'confidence',
+  model: 'model',
+  accepted: 'accepted',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -183,16 +381,72 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
 exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN',
   STAFF: 'STAFF'
+};
+
+exports.AppointmentStatus = exports.$Enums.AppointmentStatus = {
+  BOOKED: 'BOOKED',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED',
+  NO_SHOW: 'NO_SHOW',
+  COMPLETED: 'COMPLETED'
+};
+
+exports.TimelineEvent = exports.$Enums.TimelineEvent = {
+  CREATED: 'CREATED',
+  CONFIRMED: 'CONFIRMED',
+  RESCHEDULED: 'RESCHEDULED',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED',
+  NO_SHOW_MARKED: 'NO_SHOW_MARKED',
+  NOTE_ADDED: 'NOTE_ADDED',
+  AI_SUMMARY_GENERATED: 'AI_SUMMARY_GENERATED',
+  AI_SUMMARY_ACCEPTED: 'AI_SUMMARY_ACCEPTED',
+  AI_SUMMARY_DISCARDED: 'AI_SUMMARY_DISCARDED',
+  ADMIN_OVERRIDE: 'ADMIN_OVERRIDE'
+};
+
+exports.RecurringFrequency = exports.$Enums.RecurringFrequency = {
+  WEEKLY: 'WEEKLY',
+  BIWEEKLY: 'BIWEEKLY',
+  MONTHLY: 'MONTHLY'
+};
+
+exports.AiConfidence = exports.$Enums.AiConfidence = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
 };
 
 exports.Prisma.ModelName = {
   Tenant: 'Tenant',
   BusinessProfile: 'BusinessProfile',
   User: 'User',
-  ConsentRecord: 'ConsentRecord'
+  Service: 'Service',
+  Staff: 'Staff',
+  StaffService: 'StaffService',
+  WeeklySchedule: 'WeeklySchedule',
+  StaffBreak: 'StaffBreak',
+  StaffTimeOff: 'StaffTimeOff',
+  Appointment: 'Appointment',
+  AppointmentTimeline: 'AppointmentTimeline',
+  AuditLog: 'AuditLog',
+  RecurringAppointmentSeries: 'RecurringAppointmentSeries',
+  Customer: 'Customer',
+  SlotLock: 'SlotLock',
+  ConsentRecord: 'ConsentRecord',
+  TenantConfig: 'TenantConfig',
+  AppointmentArchive: 'AppointmentArchive',
+  ApiToken: 'ApiToken',
+  AiSummary: 'AiSummary'
 };
 
 /**

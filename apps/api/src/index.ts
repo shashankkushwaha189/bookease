@@ -1,6 +1,10 @@
 import { app } from './app';
 import { env } from './config/env';
 import { logger } from '@bookease/logger';
+import { archivalJob } from './jobs/archival.job';
+
+// Init background jobs
+archivalJob.init();
 
 // Global Error Handlers
 process.on('unhandledRejection', (reason) => {

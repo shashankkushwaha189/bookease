@@ -24,3 +24,15 @@ npm install
 docker-compose up -d  # Start PostgreSQL
 npm run dev           # Start all applications
 ```
+
+## Production Checklist
+- [ ] All env vars set (no defaults in production)
+- [ ] JWT_SECRET min 32 chars
+- [ ] HTTPS enforced
+- [ ] Rate limiting active
+- [ ] DB connection pooling configured
+- [ ] Backup schedule configured
+- [ ] Error tracking configured (Sentry or similar)
+- [ ] Log aggregation configured
+- [ ] All tests passing
+- [ ] Load test run and passing

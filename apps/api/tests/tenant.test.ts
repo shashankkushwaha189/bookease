@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../src/app';
 import { prisma } from '../src/lib/prisma';
+import { cleanupDatabase } from './helpers';
 
 describe('Tenant Module', () => {
     const testTenant = {
@@ -12,16 +13,11 @@ describe('Tenant Module', () => {
     let tenantId: string;
 
     beforeAll(async () => {
-        // Cleanup any existing test data
-        await prisma.tenant.deleteMany({
-            where: { slug: testTenant.slug },
-        });
+        await cleanupDatabase();
     });
 
     afterAll(async () => {
-        await prisma.tenant.deleteMany({
-            where: { slug: testTenant.slug },
-        });
+        await cleanupDatabase();
     });
 
     it('POST /api/tenants should create a tenant', async () => {

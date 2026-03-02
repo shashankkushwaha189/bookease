@@ -33,5 +33,15 @@ export const errorHandler = (
         },
     };
 
+    if (err.name === 'MulterError' && err.message === 'File too large') {
+        return res.status(413).json({
+            success: false,
+            error: {
+                code: 'PAYLOAD_TOO_LARGE',
+                message: 'File size exceeds the 5MB limit.'
+            }
+        });
+    }
+
     res.status(status).json(response);
 };

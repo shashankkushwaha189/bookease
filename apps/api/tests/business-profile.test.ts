@@ -2,15 +2,14 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../src/app';
 import { prisma } from '../src/lib/prisma';
+import { cleanupDatabase } from './helpers';
 
 describe('Business Profile Module', () => {
     let tenantA: any;
     let tenantB: any;
 
     beforeAll(async () => {
-        // Cleanup
-        await prisma.businessProfile.deleteMany();
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
 
         tenantA = await prisma.tenant.create({
             data: {
@@ -40,8 +39,7 @@ describe('Business Profile Module', () => {
     });
 
     afterAll(async () => {
-        await prisma.businessProfile.deleteMany();
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
     });
 
     describe('POST /api/business-profile', () => {

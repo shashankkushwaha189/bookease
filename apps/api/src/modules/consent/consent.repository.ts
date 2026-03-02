@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import { ConsentRecord } from '@prisma/client';
+import { ConsentRecord } from '../../generated/client';
 
 export class ConsentRepository {
     async create(data: {
@@ -7,21 +7,18 @@ export class ConsentRepository {
         customerEmail: string;
         ipAddress: string;
         consentText: string;
-    }): Promise<ConsentRecord> {
-        return (await prisma.consentRecord.create({
-            data,
-        })) as ConsentRecord;
+    }) {
+        return prisma.consentRecord.create({
+            data
+        });
     }
 
-    async findByCustomer(tenantId: string, customerEmail: string): Promise<ConsentRecord[]> {
-        return (await prisma.consentRecord.findMany({
-            where: {
-                tenantId,
-                customerEmail,
-            },
-            orderBy: {
-                givenAt: 'desc',
-            },
-        })) as ConsentRecord[];
+    async findLatest(tenantId: string, customerEmail: string) {
+        return prisma.consentRecord.findFirst({
+            where: { tenantId, customerEmail },
+            orderBy: { givenAt: 'desc' }
+        });
     }
 }
+
+export const consentRepository = new ConsentRepository();

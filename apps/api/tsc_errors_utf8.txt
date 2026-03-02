@@ -1,0 +1,19 @@
+﻿src/modules/appointment-timeline/timeline.controller.ts(9,64): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/auth/auth.controller.ts(9,68): error TS2554: Expected 1 arguments, but got 2.
+src/modules/availability/availability.repository.ts(2,10): error TS2305: Module '"../../generated/client"' has no exported member 'BookingStatus'.
+src/modules/availability/availability.repository.ts(37,20): error TS2339: Property 'booking' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/modules/availability/availability.repository.ts(51,21): error TS2561: Object literal may only specify known properties, but 'startTime' does not exist in type 'SlotLockWhereInput'. Did you mean to write 'startTimeUtc'?
+src/modules/availability/availability.service.ts(57,42): error TS2339: Property 'bufferBefore' does not exist on type '{ name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; tenantId: string; description: string | null; durationMinutes: number; price: any; }'.
+src/modules/availability/availability.service.ts(58,41): error TS2339: Property 'bufferAfter' does not exist on type '{ name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; tenantId: string; description: string | null; durationMinutes: number; price: any; }'.
+src/modules/service/service.repository.ts(12,17): error TS2353: Object literal may only specify known properties, and 'bookings' does not exist in type 'ServiceInclude<DefaultArgs>'.
+tests/availability.test.ts(17,22): error TS2339: Property 'booking' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+tests/availability.test.ts(36,17): error TS2353: Object literal may only specify known properties, and 'bufferBefore' does not exist in type 'Without<ServiceCreateInput, ServiceUncheckedCreateInput> & ServiceUncheckedCreateInput'.
+tests/availability.test.ts(80,22): error TS2339: Property 'booking' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+tests/availability.test.ts(119,22): error TS2339: Property 'booking' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+tests/availability.test.ts(154,17): error TS2561: Object literal may only specify known properties, but 'startTime' does not exist in type 'Without<SlotLockCreateInput, SlotLockUncheckedCreateInput> & SlotLockUncheckedCreateInput'. Did you mean to write 'startTimeUtc'?
+tests/policy_engine.test.ts(139,53): error TS2561: Object literal may only specify known properties, but 'notes' does not exist in type 'AppointmentTimelineWhereInput'. Did you mean to write 'note'?
+tests/policy_engine.test.ts(142,26): error TS2551: Property 'notes' does not exist on type '{ id: string; createdAt: Date; tenantId: string; note: string | null; metadata: JsonValue; appointmentId: string; eventType: TimelineEvent; performedBy: string | null; }'. Did you mean 'note'?
+tests/policy_engine.test.ts(163,17): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type 'Without<AppointmentTimelineCreateInput, AppointmentTimelineUncheckedCreateInput> & AppointmentTimelineUncheckedCreateInput'.
+tests/staff.test.ts(19,22): error TS2339: Property 'break' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+tests/staff.test.ts(67,22): error TS2339: Property 'break' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.

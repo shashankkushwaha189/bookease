@@ -1,4 +1,4 @@
-import { Tenant, User } from '@prisma/client';
+import { Tenant, User } from '../generated/client';
 
 declare global {
     namespace Express {

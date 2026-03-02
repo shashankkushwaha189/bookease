@@ -3,6 +3,8 @@ import request from 'supertest';
 import { app } from '../src/app';
 import { prisma } from '../src/lib/prisma';
 
+import { cleanupDatabase } from './helpers';
+
 describe('Tenant Resolution Middleware', () => {
     let tenantA: any;
     let tenantB: any;
@@ -10,7 +12,7 @@ describe('Tenant Resolution Middleware', () => {
 
     beforeAll(async () => {
         // Cleanup
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
 
         tenantA = await prisma.tenant.create({
             data: {
@@ -39,18 +41,18 @@ describe('Tenant Resolution Middleware', () => {
     });
 
     afterAll(async () => {
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
     });
 
     it('should return 403 if X-Tenant-ID header is missing', async () => {
-        const response = await request(app).get('/api/tenants');
+        const response = await request(app).get('/api/public/services');
         expect(response.status).toBe(403);
         expect(response.body.error.code).toBe('TENANT_ID_REQUIRED');
     });
 
     it('should return 403 if tenant does not exist', async () => {
         const response = await request(app)
-            .get('/api/tenants')
+            .get('/api/public/services')
             .set('X-Tenant-ID', '00000000-0000-0000-0000-000000000000');
         expect(response.status).toBe(403);
         expect(response.body.error.code).toBe('TENANT_NOT_FOUND');
@@ -58,7 +60,7 @@ describe('Tenant Resolution Middleware', () => {
 
     it('should return 403 if tenant is inactive', async () => {
         const response = await request(app)
-            .get('/api/tenants')
+            .get('/api/public/services')
             .set('X-Tenant-ID', inactiveTenant.id);
         expect(response.status).toBe(403);
         expect(response.body.error.code).toBe('TENANT_INACTIVE');
@@ -66,7 +68,7 @@ describe('Tenant Resolution Middleware', () => {
 
     it('should return 200 if tenant ID is valid and active', async () => {
         const response = await request(app)
-            .get('/api/tenants')
+            .get('/api/public/services')
             .set('X-Tenant-ID', tenantA.id);
 
         // The endpoint exists and we have a valid tenant ID

@@ -1,0 +1,487 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/realworkstudio/bookease/apps/api[39m
+
+[90mstdout[2m | tests/tenant-resolution.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+node.exe : Sourcemap for "D
+:/realworkstudio/bookease/n
+ode_modules/.pnpm/node-cron
+@4.2.1/node_modules/node-cr
+on/dist/esm/node-cron.js" 
+points to missing source 
+files
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\
+Users\shash\AppData\Roaming
+\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecifi    ed: 
+(Sourcemap for     "...ng 
+source fil    es:String) 
+[], Rem    oteException
+    + FullyQualifiedEr    
+rorId : NativeComm    
+andError
+ 
+ [31mΓ¥»[39m tests/tenant-resolution.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 1537[2mms[22m[39m
+[31m     [31m├ù[31m should return 403 if X-Tenant-ID header is missing[39m[32m 69[2mms[22m[39m
+[31m     [31m├ù[31m should return 403 if tenant does not exist[39m[32m 12[2mms[22m[39m
+[31m     [31m├ù[31m should return 403 if tenant is inactive[39m[32m 12[2mms[22m[39m
+     [32mΓ£ô[39m should return 200 if tenant ID is valid and active[32m 9[2mms[22m[39m
+     [32mΓ£ô[39m should allow /health without X-Tenant-ID[32m 9[2mms[22m[39m
+[90mstdout[2m | tests/auth.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜí∩╕Å secrets for agents: https://dotenvx.com/as2
+
+{"level":"ERROR","time":"2026-03-01T14:19:32.633Z","pid":8756,"hostname":"xyz","correlationId":"b478ad71-aa28-4f3a-97f5-039fd4b19eea","err":{"type":"Object","message":"Invalid credentials","stack":"","code":"UNAUTHORIZED"},"status":401,"path":"/api/auth/login","method":"POST","msg":"Invalid credentials"}
+{"level":"ERROR","time":"2026-03-01T14:19:32.648Z","pid":8756,"hostname":"xyz","correlationId":"06e28876-5e8d-4fd9-833d-8c9ba4f04ec8","err":{"type":"Object","message":"Invalid credentials","stack":"","code":"UNAUTHORIZED"},"status":401,"path":"/api/auth/login","method":"POST","msg":"Invalid credentials"}
+ [32mΓ£ô[39m tests/auth.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 3451[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should return 200 and a token for valid credentials [33m 359[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should return current user for valid token [33m 305[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should block staff from admin-protected logic (if any) [33m 316[2mms[22m[39m
+[90mstdout[2m | tests/staff.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒñû agentic secret storage: https://dotenvx.com/as2
+
+ [32mΓ£ô[39m tests/staff.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 2664[2mms[22m[39m
+[90mstdout[2m | tests/config.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒñû agentic secret storage: https://dotenvx.com/as2
+
+ [32mΓ£ô[39m tests/config.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2816[2mms[22m[39m
+[90mstdout[2m | tests/service.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+ [32mΓ£ô[39m tests/service.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2870[2mms[22m[39m
+[90mstdout[2m | tests/consent.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[90mstderr[2m | 
+tests/consent.test.ts[2m 
+> [22m[2mConsent Capture 
+Module[2m > 
+[22m[2mshould reject 
+booking without consent 
+flag
+[22m[39mBooking Error: 
+Error: CONSENT_REQUIRED
+    at AppointmentService.c
+reateBooking (D:/realworkst
+udio/bookease/apps/api/src/
+modules/appointment/appoint
+ment.service.ts:63:19)
+[90m    at 
+processTicksAndRejections (
+node:internal/process/task_
+queues:105:5)[39m
+    at createBooking (D:/re
+alworkstudio/bookease/apps/
+api/src/modules/appointment
+/appointment.controller.ts:
+15:33)
+
+[90mstdout[2m | tests/consent.test.ts[2m > [22m[2mConsent Capture Module[2m > [22m[2mshould create consent record on successful booking
+[22m[39m[TimelineService] Creating event for appt: e7ab6b72-017e-4df8-8df6-d7cd357ee0f7, type: CREATED
+
+[90mstdout[2m | tests/consent.test.ts[2m > [22m[2mConsent Capture Module[2m > [22m[2mshould create consent record on successful booking
+[22m[39m[TimelineService] Created event ID: 85b57c91-646a-454d-8623-c45e75706af5
+
+[90mstdout[2m | tests/consent.test.ts[2m > [22m[2mConsent Capture Module[2m > [22m[2mshould snapshot the historical policy text even if profile changes later
+[22m[39m[TimelineService] Creating event for appt: 5e465f3d-0cd9-4c39-ad2b-ad193e059950, type: CREATED
+
+[90mstdout[2m | tests/consent.test.ts[2m > [22m[2mConsent Capture Module[2m > [22m[2mshould snapshot the historical policy text even if profile changes later
+[22m[39m[TimelineService] Created event ID: fc589db7-d73c-40cb-849c-01ed26169955
+
+ [32mΓ£ô[39m tests/consent.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1885[2mms[22m[39m
+[90mstdout[2m | tests/availability.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+
+ [32mΓ£ô[39m tests/availability.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2006[2mms[22m[39m
+[90mstdout[2m | tests/audit_timeline.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Creating event for appt: c1de0501-bedf-442e-9283-a9e5682c7b00, type: CREATED
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Created event ID: 0e4c434c-ae23-416b-ae25-6204c94333b8
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39mTEST 1 APPOINTMENT ID is: c1de0501-bedf-442e-9283-a9e5682c7b00 Body was: {
+  id: [32m'c1de0501-bedf-442e-9283-a9e5682c7b00'[39m,
+  tenantId: [32m'7cc88033-dcbb-48b0-9e8a-6da350da1835'[39m,
+  serviceId: [32m'63a9bc7f-75d0-44af-93e4-5061f233a41a'[39m,
+  staffId: [32m'05173b6b-07b1-4e43-b561-4740a4a13933'[39m,
+  customerId: [32m'a7b06f1e-aca0-49d4-ab47-ef693f4e6310'[39m,
+  referenceId: [32m'BK-2026-00001'[39m,
+  startTimeUtc: [32m'2026-03-02T14:20:07.437Z'[39m,
+  endTimeUtc: [32m'2026-03-02T14:50:07.437Z'[39m,
+  status: [32m'BOOKED'[39m,
+  notes: [1mnull[22m,
+  createdBy: [1mnull[22m,
+  createdAt: [32m'2026-03-01T14:20:07.553Z'[39m,
+  updatedAt: [32m'2026-03-01T14:20:07.553Z'[39m,
+  seriesId: [1mnull[22m,
+  seriesIndex: [1mnull[22m
+}
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Fetching timeline for appt: c1de0501-bedf-442e-9283-a9e5682c7b00, tenant: 7cc88033-dcbb-48b0-9e8a-6da350da1835
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Found 1 events
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Creating event for appt: 564acb93-86fe-498b-b041-bc91deb451e9, type: CONFIRMED
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Created event ID: 69c9afe5-8af1-458b-a006-79a2ca6f2cb7
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Fetching timeline for appt: 564acb93-86fe-498b-b041-bc91deb451e9, tenant: 7cc88033-dcbb-48b0-9e8a-6da350da1835
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Found 1 events
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Creating event for appt: 6605902b-89af-4bc2-8826-05d950ce2be6, type: ADMIN_OVERRIDE
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Created event ID: dee82625-75e2-40de-a200-8b0f356b1a8e
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Fetching timeline for appt: 6605902b-89af-4bc2-8826-05d950ce2be6, tenant: 7cc88033-dcbb-48b0-9e8a-6da350da1835
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Found 1 events
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould not fail the main request if audit logging fails (resilience)
+[22m[39m[TimelineService] Creating event for appt: 1e86a8da-4121-4a8d-adc0-1c775a28b5f3, type: CONFIRMED
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould not fail the main request if audit logging fails (resilience)
+[22m[39m[TimelineService] Created event ID: d47360f3-d876-4fa9-9a7d-742e451c9fc1
+
+ [32mΓ£ô[39m tests/audit_timeline.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1797[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should create a timeline event when an appointment is booked [33m 369[2mms[22m[39m
+[90mstdout[2m | tests/business-profile.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+{"level":"ERROR","time":"2026-03-01T14:20:12.624Z","pid":18584,"hostname":"xyz","correlationId":"fade360c-71eb-4f5a-839b-24a08f051fbe","err":{"type":"Object","message":"Business profile not found","stack":"","code":"NOT_FOUND"},"status":404,"path":"/api/business-profile","method":"GET","msg":"Business profile not found"}
+ [32mΓ£ô[39m tests/business-profile.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1613[2mms[22m[39m
+[90mstdout[2m | tests/tenant.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+{"level":"ERROR","time":"2026-03-01T14:20:17.534Z","pid":25272,"hostname":"xyz","correlationId":"29ed1697-f88e-443b-9504-5207ec85ff1d","err":{"type":"Object","message":"Tenant with this slug already exists","stack":"","code":"CONFLICT"},"status":409,"path":"/api/tenants","method":"POST","msg":"Tenant with this slug already exists"}
+{"level":"ERROR","time":"2026-03-01T14:20:17.579Z","pid":25272,"hostname":"xyz","correlationId":"dc93561e-99d9-406b-a54e-edeb59021c07","err":{"type":"Object","message":"Tenant not found","stack":"","code":"NOT_FOUND"},"status":404,"path":"/api/tenants/d4efdb76-3c66-4125-a486-679fea73cd11","method":"GET","msg":"Tenant not found"}
+ [32mΓ£ô[39m tests/tenant.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1638[2mms[22m[39m
+[90mstdout[2m | tests/recurring_appointment.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒñû agentic secret storage: https://dotenvx.com/as2
+
+[90mstderr[2m | tests/rec
+urring_appointment.test.ts
+[2m > [22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould return 
+conflict error if one slot 
+in series is taken
+[22m[39mRecurring 
+Booking Error: Error: SLOT_
+TAKEN:2026-04-14T14:00:00.0
+00Z
+    at D:/realworkstudio/bo
+okease/apps/api/src/modules
+/appointment/appointment.re
+pository.ts:284:27
+[90m    at 
+processTicksAndRejections (
+node:internal/process/task_
+queues:105:5)[39m
+    at Proxy._transactionWi
+thCallback [90m(D:\realwor
+kstudio\bookease\apps\api\
+[39msrc\generated\client\ru
+ntime\client.js:79:4390[90
+m)[39m
+    at 
+createRecurringBooking (D:/
+realworkstudio/bookease/app
+s/api/src/modules/appointme
+nt/appointment.controller.t
+s:43:28)
+
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould cancel only one occurrence with scope=single
+[22m[39m[TimelineService] Creating event for appt: 87cc85ad-8a4f-4b84-b301-92c70e755327, type: CANCELLED
+
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould cancel only one occurrence with scope=single
+[22m[39m[TimelineService] Created event ID: 63c33c60-f17f-41e2-a586-043b9ec36fb0
+
+ [32mΓ£ô[39m tests/recurring_appointment.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1541[2mms[22m[39m
+[90mstdout[2m | tests/appointment.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒ¢í∩╕Å auth for agents: https://vestauth.com
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould create a slot lock and then book an appointment
+[22m[39m[TimelineService] Creating event for appt: 8e71fb5a-6ab3-414c-b110-4444c848691f, type: CREATED
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould create a slot lock and then book an appointment
+[22m[39m[TimelineService] Created event ID: 4e6c9f8e-ff90-4941-a3b8-27f16e45f308
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould reject a second lock on the same slot
+[22m[39mprisma:error 
+Invalid `prisma.slotLock.create()` invocation in
+D:/realworkstudio/bookease/apps/api/src/modules/appointment/appointment.repository.ts:103:32
+
+  100     sessionToken: string;
+  101     expiresAt: Date;
+  102 }) {
+ΓåÆ 103     return prisma.slotLock.create(
+Unique constraint failed on the fields: (`"tenantId"`, `"staffId"`, `"startTimeUtc"`)
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould reject a second lock on the same slot
+[22m[39mDEBUG: Second lock status: [33m409[39m
+DEBUG: Second lock body: {"error":"Slot already locked"}
+
+ [32mΓ£ô[39m tests/appointment.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1224[2mms[22m[39m
+[90mstdout[2m | tests/policy_engine.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜí∩╕Å secrets for agents: https://dotenvx.com/as2
+
+[90mstderr[2m | tests/pol
+icy_engine.test.ts[2m > 
+[22m[2mPolicy Engine 
+Integration[2m > 
+[22m[2mshould reject 
+staff cancellation within 
+24h window
+[22m[39mCancel Error: 
+Error: Cancellation window 
+has closed
+    at AppointmentService.c
+ancelAppointment (D:/realwo
+rkstudio/bookease/apps/api/
+src/modules/appointment/app
+ointment.service.ts:361:19)
+[90m    at 
+processTicksAndRejections (
+node:internal/process/task_
+queues:105:5)[39m
+    at cancel (D:/realworks
+tudio/bookease/apps/api/src
+/modules/appointment/appoin
+tment.controller.ts:191:28)
+
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould allow admin override for cancellation within window
+[22m[39m[TimelineService] Creating event for appt: af5b38fc-fa91-4b96-8b93-85a2bf342863, type: ADMIN_OVERRIDE
+
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould allow admin override for cancellation within window
+[22m[39m[TimelineService] Created event ID: b4345f8c-5746-4529-9752-40a08608372c
+
+[90mstderr[2m | tests/pol
+icy_engine.test.ts[2m > 
+[22m[2mPolicy Engine 
+Integration[2m > 
+[22m[2mshould reject 
+reschedule if limit 
+reached (maxReschedules: 1)
+[22m[39mReschedule 
+Error: Error: Reschedule 
+limit reached
+    at AppointmentService.r
+escheduleAppointment (D:/re
+alworkstudio/bookease/apps/
+api/src/modules/appointment
+/appointment.service.ts:413
+:19)
+[90m    at 
+processTicksAndRejections (
+node:internal/process/task_
+queues:105:5)[39m
+    at reschedule (D:/realw
+orkstudio/bookease/apps/api
+/src/modules/appointment/ap
+pointment.controller.ts:156
+:28)
+
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould mark past confirmed appointments as NO_SHOW via background job
+[22m[39m[TimelineService] Creating event for appt: b8e4c641-39e0-48c8-9bb4-a5168dfccfe5, type: NO_SHOW_MARKED
+Appointment b8e4c641-39e0-48c8-9bb4-a5168dfccfe5 marked as NO_SHOW
+
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould mark past confirmed appointments as NO_SHOW via background job
+[22m[39m[TimelineService] Created event ID: 28b242c7-0289-4449-b35b-84db8b4e3219
+
+ [32mΓ£ô[39m tests/policy_engine.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1476[2mms[22m[39m
+[90mstdout[2m | tests/simple_check.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒñû agentic secret storage: https://dotenvx.com/as2
+
+ [32mΓ£ô[39m tests/simple_check.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 473[2mms[22m[39m
+[90mstdout[2m | tests/health.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+
+ [32mΓ£ô[39m tests/health.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+ [32mΓ£ô[39m tests/simple.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[39m[1m[41m Failed Tests 
+3 [49m[22m[31mΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»[39m
+
+[41m[1m FAIL [22m[49m t
+ests/tenant-resolution.test
+.ts[2m > [22mTenant 
+Resolution Middleware[2m 
+> [22mshould return 403 
+if X-Tenant-ID header is 
+missing
+[31m[1mAssertionError[22
+m: expected 200 to be 403 
+// Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 403[39m
+[31m+ 200[39m
+
+[36m [2mΓ¥»[22m tests/te
+nant-resolution.test.ts:[2
+m49:33[22m[39m
+    [90m 47| [39m    
+it('should return 403 if 
+X-Tenant-ID header is 
+missing', async () ΓÇª
+    [90m 48| [39m        
+[35mconst[39m response 
+[33m=[39m 
+[35mawait[39m [34mreques
+t[39m(app)[33m.[39m[35m
+get[39m([32m'/api/tenants
+'[39m)[33m;[39m
+    [90m 49| [39m        
+[34mexpect[39m(response[
+33m.[39mstatus)[33m.[39m
+[34mtoBe[39m([34m403[39
+m)[33m;[39m
+    [90m   | [39m        
+                        
+[31m^[39m
+    [90m 50| [39m        
+[34mexpect[39m(response[
+33m.[39mbody[33m.[39merr
+or[33m.[39mcode)[33m.[3
+9m[34mtoBe[39m([32m'TENA
+NT_ID_REQUIRED'[39m)[33m;
+[39m
+    [90m 51| [39m    
+})[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[1/3]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m t
+ests/tenant-resolution.test
+.ts[2m > [22mTenant 
+Resolution Middleware[2m 
+> [22mshould return 403 
+if tenant does not exist
+[31m[1mAssertionError[22
+m: expected 200 to be 403 
+// Object.is equality[39m
+
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 403[39m
+[31m+ 200[39m
+
+[36m [2mΓ¥»[22m tests/te
+nant-resolution.test.ts:[2
+m57:33[22m[39m
+    [90m 55| [39m        
+    [33m.[39m[35mget[39
+m([32m'/api/tenants'[39m)
+    [90m 56| [39m        
+    .set('X-Tenant-ID', '00
+000000-0000-0000-0000-00000
+0000000'ΓÇª
+    [90m 57| [39m        
+[34mexpect[39m(response[
+33m.[39mstatus)[33m.[39m
+[34mtoBe[39m([34m403[39
+m)[33m;[39m
+    [90m   | [39m        
+                        
+[31m^[39m
+    [90m 58| [39m        
+[34mexpect[39m(response[
+33m.[39mbody[33m.[39merr
+or[33m.[39mcode)[33m.[3
+9m[34mtoBe[39m([32m'TENA
+NT_NOT_FOUND'[39m)[33m;[
+39m
+    [90m 59| [39m    
+})[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[2/3]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m t
+ests/tenant-resolution.test
+.ts[2m > [22mTenant 
+Resolution Middleware[2m 
+> [22mshould return 403 
+if tenant is inactive
+[31m[1mAssertionError[22
+m: expected 200 to be 403 
+// Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 403[39m
+[31m+ 200[39m
+
+[36m [2mΓ¥»[22m tests/te
+nant-resolution.test.ts:[2
+m65:33[22m[39m
+    [90m 63| [39m        
+    [33m.[39m[35mget[39
+m([32m'/api/tenants'[39m)
+    [90m 64| [39m        
+    [33m.[39m[35mset[39
+m([32m'X-Tenant-ID'[39m[
+33m,[39m inactiveTenant[3
+3m.[39mid)[33m;[39m
+    [90m 65| [39m        
+[34mexpect[39m(response[
+33m.[39mstatus)[33m.[39m
+[34mtoBe[39m([34m403[39
+m)[33m;[39m
+    [90m   | [39m        
+                        
+[31m^[39m
+    [90m 66| [39m        
+[34mexpect[39m(response[
+33m.[39mbody[33m.[39merr
+or[33m.[39mcode)[33m.[3
+9m[34mtoBe[39m([32m'TENA
+NT_INACTIVE'[39m)[33m;[3
+9m
+    [90m 67| [39m    
+})[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[3/3]ΓÄ»[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m15 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m67 passed[39m[22m[90m (70)[39m
+[2m   Start at [22m 19:49:22
+[2m   Duration [22m 78.83s[2m (transform 1.05s, setup 0ms, import 46.33s, tests 27.06s, environment 4ms)[22m
+

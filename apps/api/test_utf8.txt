@@ -1,0 +1,45 @@
+﻿
+> @bookease/api@1.0.0 test D:\realworkstudio\bookease\apps\api
+> vitest run "tests/tenant-resolution.test.ts"
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/realworkstudio/bookease/apps/api[39m
+
+[90mstdout[2m | tests/tenant-resolution.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[90mstdout[2m | tests/tenant-resolution.test.ts[2m > [22m[2mTenant Resolution Middleware
+[22m[39mprisma:error 
+Invalid `prisma.tenant.deleteMany()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/tenant-resolution.test.ts:13:29
+
+  10 
+  11 beforeAll(async () => {
+  12     // Cleanup
+ΓåÆ 13     await prisma.tenant.deleteMany(
+Foreign key constraint violated on the constraint: `Service_tenantId_fkey`
+
+[90mstdout[2m | tests/tenant-resolution.test.ts[2m > [22m[2mTenant Resolution Middleware
+[22m[39mprisma:error 
+Invalid `prisma.tenant.deleteMany()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/tenant-resolution.test.ts:42:29
+
+  39 });
+  40 
+  41 afterAll(async () => {
+ΓåÆ 42     await prisma.tenant.deleteMany(
+Foreign key constraint violated on the constraint: `Service_tenantId_fkey`
+
+ [31mΓ¥»[39m tests/tenant-resolution.test.ts [2m([22m[2m5 tests[22m[2m | [22m[33m5 skipped[39m[2m)[22m[33m 360[2mms[22m[39m
+     [2m[90mΓåô[39m[22m should return 403 if X-Tenant-ID header is missing
+     [2m[90mΓåô[39m[22m should return 403 if tenant does not exist
+     [2m[90mΓåô[39m[22m should return 403 if tenant is inactive
+     [2m[90mΓåô[39m[22m should return 200 if tenant ID is valid and active
+     [2m[90mΓåô[39m[22m should allow /health without X-Tenant-ID
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [33m5 skipped[39m[90m (5)[39m
+[2m   Start at [22m 19:08:48
+[2m   Duration [22m 5.36s[2m (transform 834ms, setup 0ms, import 4.57s, tests 360ms, environment 0ms)[22m
+
+ΓÇëELIFECYCLEΓÇë Test failed. See above for more details.

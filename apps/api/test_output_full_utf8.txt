@@ -1,0 +1,1255 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/realworkstudio/bookease/apps/api[39m
+
+[90mstdout[2m | tests/recurring_appointment.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+
+node.exe : Sourcemap 
+for "D:/realworkstudio/
+bookease/node_modules/.
+pnpm/node-cron@4.2.1/no
+de_modules/node-cron/di
+st/esm/node-cron.js" 
+points to missing 
+source files
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Users\shash\AppData
+\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Sourcemap for   
+  "...ng source fil    
+es:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould create a weekly series of 4 appointments on correct 4 Mondays
+[22m[39mprisma:error 
+Invalid `tx.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/src/modules/appointment/appointment.repository.ts:270:58
+
+  267     throw new Error(`SLOT_TAKEN:${appData.startTimeUtc.toISOString()}`);
+  268 }
+  269 
+ΓåÆ 270 const appointment = await tx.appointment.create(
+Unique constraint failed on the fields: (`"referenceId"`)
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould create 
+a weekly series of 4 
+appointments on 
+correct 4 Mondays
+[22m[39mRecurring 
+Booking Error: PrismaCl
+ientKnownRequestError: 
+Invalid `tx.appointment
+.create()` invocation 
+in
+D:/realworkstudio/booke
+ase/apps/api/src/module
+s/appointment/appointme
+nt.repository.ts:270:58
+
+  267     throw new Err
+or(`SLOT_TAKEN:${appDat
+a.startTimeUtc.toISOStr
+ing()}`);
+  268 }
+  269 
+ΓåÆ 270 const 
+appointment = await 
+tx.appointment.create(
+Unique constraint 
+failed on the fields: 
+(`"referenceId"`)
+    at 
+zr.handleRequestError 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:69:8286
+[90m)[39m
+    at zr.handleAndLogR
+equestError [90m(D:\re
+alworkstudio\bookease\a
+pps\api\[39msrc\genera
+ted\client\runtime\clie
+nt.js:69:7581[90m)[39
+m
+    at zr.request [90m
+(D:\realworkstudio\book
+ease\apps\api\[39msrc\
+generated\client\runtim
+e\client.js:69:7288[90
+m)[39m
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at a [90m(D:\realw
+orkstudio\bookease\apps
+\api\[39msrc\generated
+\client\runtime\client.
+js:79:5816[90m)[39m
+    at D:/realworkstudi
+o/bookease/apps/api/src
+/modules/appointment/ap
+pointment.repository.ts
+:270:37
+    at Proxy._transacti
+onWithCallback [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:79:4390[90m)
+[39m
+    at 
+createRecurringBooking 
+(D:/realworkstudio/book
+ease/apps/api/src/modul
+es/appointment/appointm
+ent.controller.ts:34:28
+) {
+  code: 
+[32m'P2002'[39m,
+  meta: {
+    modelName: [32m'Ap
+pointment'[39m,
+    
+driverAdapterError: 
+DriverAdapterError: Uni
+queConstraintViolation
+        at 
+PgTransaction.onError (
+file:///D:/realworkstud
+io/bookease/node_module
+s/[4m.pnpm[24m/@prism
+a+adapter-pg@7.4.1/node
+_modules/[4m@prisma/ad
+apter-pg[24m/dist/inde
+x.mjs:651:11)
+        at PgTransactio
+n.performIO (file:///D:
+/realworkstudio/bookeas
+e/node_modules/[4m.pnp
+m[24m/@prisma+adapter-
+pg@7.4.1/node_modules/
+[4m@prisma/adapter-pg[
+24m/dist/index.mjs:646:
+12)
+    [90m    at process
+TicksAndRejections (nod
+e:internal/process/task
+_queues:105:5)[39m
+        at 
+PgTransaction.queryRaw 
+(file:///D:/realworkstu
+dio/bookease/node_modul
+es/[4m.pnpm[24m/@pris
+ma+adapter-pg@7.4.1/nod
+e_modules/[4m@prisma/a
+dapter-pg[24m/dist/ind
+ex.mjs:566:30)
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44403[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44843[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:46032[90m
+)[39m
+        at e.run [90m(
+D:\realworkstudio\booke
+ase\apps\api\[39msrc\g
+enerated\client\runtime
+\client.js:15:43121[90
+m)[39m
+        at execute [90
+m(D:\realworkstudio\boo
+kease\apps\api\[39msrc
+\generated\client\runti
+me\client.js:61:815[90
+m)[39m
+        at qt.request 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:62:2327
+[90m)[39m {
+      cause: 
+[36m[Object][39m
+    }
+  },
+  clientVersion: 
+[32m'7.4.1'[39m
+}
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould create 
+a weekly series of 4 
+appointments on 
+correct 4 Mondays
+[22m[39mTest Failed 
+with body: {
+  "error": "\nInvalid `
+tx.appointment.create()
+` invocation in\nD:/rea
+lworkstudio/bookease/ap
+ps/api/src/modules/appo
+intment/appointment.rep
+ository.ts:270:58\n\n  
+267     throw new Error
+(`SLOT_TAKEN:${appData.
+startTimeUtc.toISOStrin
+g()}`);\n  268 }\n  
+269 \nΓåÆ 270 const 
+appointment = await tx.
+appointment.create(\nUn
+ique constraint failed 
+on the fields: 
+(`\"referenceId\"`)",
+  "stack": "PrismaClien
+tKnownRequestError: 
+\nInvalid `tx.appointme
+nt.create()` 
+invocation in\nD:/realw
+orkstudio/bookease/apps
+/api/src/modules/appoin
+tment/appointment.repos
+itory.ts:270:58\n\n  
+267     throw new Error
+(`SLOT_TAKEN:${appData.
+startTimeUtc.toISOStrin
+g()}`);\n  268 }\n  
+269 \nΓåÆ 270 const 
+appointment = await tx.
+appointment.create(\nUn
+ique constraint failed 
+on the fields: 
+(`\"referenceId\"`)\n  
+  at 
+zr.handleRequestError (
+D:\\realworkstudio\\boo
+kease\\apps\\api\\src\\
+generated\\client\\runt
+ime\\client.js:69:8286)
+\n    at zr.handleAndLo
+gRequestError (D:\\real
+workstudio\\bookease\\a
+pps\\api\\src\\generate
+d\\client\\runtime\\cli
+ent.js:69:7581)\n    
+at zr.request (D:\\real
+workstudio\\bookease\\a
+pps\\api\\src\\generate
+d\\client\\runtime\\cli
+ent.js:69:7288)\n    
+at processTicksAndRejec
+tions (node:internal/pr
+ocess/task_queues:105:5
+)\n    at a (D:\\realwo
+rkstudio\\bookease\\app
+s\\api\\src\\generated\
+\client\\runtime\\clien
+t.js:79:5816)\n    at D
+:/realworkstudio/bookea
+se/apps/api/src/modules
+/appointment/appointmen
+t.repository.ts:270:37\
+n    at Proxy._transact
+ionWithCallback (D:\\re
+alworkstudio\\bookease\
+\apps\\api\\src\\genera
+ted\\client\\runtime\\c
+lient.js:79:4390)\n    
+at 
+createRecurringBooking 
+(D:/realworkstudio/book
+ease/apps/api/src/modul
+es/appointment/appointm
+ent.controller.ts:34:28
+)"
+}
+
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould return conflict error if one slot in series is taken
+[22m[39mprisma:error 
+Invalid `prisma.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/recurring_appointment.test.ts:90:34
+
+  87 const thirdWeekDate = new Date(startDate);
+  88 thirdWeekDate.setUTCDate(startDate.getUTCDate() + 14);
+  89 
+ΓåÆ 90 await prisma.appointment.create(
+Foreign key constraint violated on the constraint: `Appointment_customerId_fkey`
+
+ [31m├ù[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould create a weekly series of 4 appointments on correct 4 Mondays[32m 244[2mms[22m[39m
+[31m   ΓåÆ expected 500 to be 201 // Object.is equality[39m
+ [31m├ù[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould return conflict error if one slot in series is taken[32m 25[2mms[22m[39m
+[31m   ΓåÆ 
+Invalid `prisma.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/recurring_appointment.test.ts:90:34
+
+  87 const thirdWeekDate = new Date(startDate);
+  88 thirdWeekDate.setUTCDate(startDate.getUTCDate() + 14);
+  89 
+ΓåÆ 90 await prisma.appointment.create(
+Foreign key constraint violated on the constraint: `Appointment_customerId_fkey`[39m
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould cancel only one occurrence with scope=single
+[22m[39mprisma:error 
+Invalid `tx.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/src/modules/appointment/appointment.repository.ts:270:58
+
+  267     throw new Error(`SLOT_TAKEN:${appData.startTimeUtc.toISOString()}`);
+  268 }
+  269 
+ΓåÆ 270 const appointment = await tx.appointment.create(
+Unique constraint failed on the fields: (`"referenceId"`)
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould cancel 
+only one occurrence 
+with scope=single
+[22m[39mRecurring 
+Booking Error: PrismaCl
+ientKnownRequestError: 
+Invalid `tx.appointment
+.create()` invocation 
+in
+D:/realworkstudio/booke
+ase/apps/api/src/module
+s/appointment/appointme
+nt.repository.ts:270:58
+
+  267     throw new Err
+or(`SLOT_TAKEN:${appDat
+a.startTimeUtc.toISOStr
+ing()}`);
+  268 }
+  269 
+ΓåÆ 270 const 
+appointment = await 
+tx.appointment.create(
+Unique constraint 
+failed on the fields: 
+(`"referenceId"`)
+    at 
+zr.handleRequestError 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:69:8286
+[90m)[39m
+    at zr.handleAndLogR
+equestError [90m(D:\re
+alworkstudio\bookease\a
+pps\api\[39msrc\genera
+ted\client\runtime\clie
+nt.js:69:7581[90m)[39
+m
+    at zr.request [90m
+(D:\realworkstudio\book
+ease\apps\api\[39msrc\
+generated\client\runtim
+e\client.js:69:7288[90
+m)[39m
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at a [90m(D:\realw
+orkstudio\bookease\apps
+\api\[39msrc\generated
+\client\runtime\client.
+js:79:5816[90m)[39m
+    at D:/realworkstudi
+o/bookease/apps/api/src
+/modules/appointment/ap
+pointment.repository.ts
+:270:37
+    at Proxy._transacti
+onWithCallback [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:79:4390[90m)
+[39m
+    at 
+createRecurringBooking 
+(D:/realworkstudio/book
+ease/apps/api/src/modul
+es/appointment/appointm
+ent.controller.ts:34:28
+) {
+  code: 
+[32m'P2002'[39m,
+  meta: {
+    modelName: [32m'Ap
+pointment'[39m,
+    
+driverAdapterError: 
+DriverAdapterError: Uni
+queConstraintViolation
+        at 
+PgTransaction.onError (
+file:///D:/realworkstud
+io/bookease/node_module
+s/[4m.pnpm[24m/@prism
+a+adapter-pg@7.4.1/node
+_modules/[4m@prisma/ad
+apter-pg[24m/dist/inde
+x.mjs:651:11)
+        at PgTransactio
+n.performIO (file:///D:
+/realworkstudio/bookeas
+e/node_modules/[4m.pnp
+m[24m/@prisma+adapter-
+pg@7.4.1/node_modules/
+[4m@prisma/adapter-pg[
+24m/dist/index.mjs:646:
+12)
+    [90m    at process
+TicksAndRejections (nod
+e:internal/process/task
+_queues:105:5)[39m
+        at 
+PgTransaction.queryRaw 
+(file:///D:/realworkstu
+dio/bookease/node_modul
+es/[4m.pnpm[24m/@pris
+ma+adapter-pg@7.4.1/nod
+e_modules/[4m@prisma/a
+dapter-pg[24m/dist/ind
+ex.mjs:566:30)
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44403[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44843[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:46032[90m
+)[39m
+        at e.run [90m(
+D:\realworkstudio\booke
+ase\apps\api\[39msrc\g
+enerated\client\runtime
+\client.js:15:43121[90
+m)[39m
+        at execute [90
+m(D:\realworkstudio\boo
+kease\apps\api\[39msrc
+\generated\client\runti
+me\client.js:61:815[90
+m)[39m
+        at qt.request 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:62:2327
+[90m)[39m {
+      cause: 
+[36m[Object][39m
+    }
+  },
+  clientVersion: 
+[32m'7.4.1'[39m
+}
+
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould cancel all future occurrences with scope=series
+[22m[39mprisma:error 
+Invalid `tx.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/src/modules/appointment/appointment.repository.ts:270:58
+
+  267     throw new Error(`SLOT_TAKEN:${appData.startTimeUtc.toISOString()}`);
+  268 }
+  269 
+ΓåÆ 270 const appointment = await tx.appointment.create(
+Unique constraint failed on the fields: (`"referenceId"`)
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould cancel 
+all future occurrences 
+with scope=series
+[22m[39mRecurring 
+Booking Error: PrismaCl
+ientKnownRequestError: 
+Invalid `tx.appointment
+.create()` invocation 
+in
+D:/realworkstudio/booke
+ase/apps/api/src/module
+s/appointment/appointme
+nt.repository.ts:270:58
+
+  267     throw new Err
+or(`SLOT_TAKEN:${appDat
+a.startTimeUtc.toISOStr
+ing()}`);
+  268 }
+  269 
+ΓåÆ 270 const 
+appointment = await 
+tx.appointment.create(
+Unique constraint 
+failed on the fields: 
+(`"referenceId"`)
+    at 
+zr.handleRequestError 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:69:8286
+[90m)[39m
+    at zr.handleAndLogR
+equestError [90m(D:\re
+alworkstudio\bookease\a
+pps\api\[39msrc\genera
+ted\client\runtime\clie
+nt.js:69:7581[90m)[39
+m
+    at zr.request [90m
+(D:\realworkstudio\book
+ease\apps\api\[39msrc\
+generated\client\runtim
+e\client.js:69:7288[90
+m)[39m
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at a [90m(D:\realw
+orkstudio\bookease\apps
+\api\[39msrc\generated
+\client\runtime\client.
+js:79:5816[90m)[39m
+    at D:/realworkstudi
+o/bookease/apps/api/src
+/modules/appointment/ap
+pointment.repository.ts
+:270:37
+    at Proxy._transacti
+onWithCallback [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:79:4390[90m)
+[39m
+    at 
+createRecurringBooking 
+(D:/realworkstudio/book
+ease/apps/api/src/modul
+es/appointment/appointm
+ent.controller.ts:34:28
+) {
+  code: 
+[32m'P2002'[39m,
+  meta: {
+    modelName: [32m'Ap
+pointment'[39m,
+    
+driverAdapterError: 
+DriverAdapterError: Uni
+queConstraintViolation
+        at 
+PgTransaction.onError (
+file:///D:/realworkstud
+io/bookease/node_module
+s/[4m.pnpm[24m/@prism
+a+adapter-pg@7.4.1/node
+_modules/[4m@prisma/ad
+apter-pg[24m/dist/inde
+x.mjs:651:11)
+        at PgTransactio
+n.performIO (file:///D:
+/realworkstudio/bookeas
+e/node_modules/[4m.pnp
+m[24m/@prisma+adapter-
+pg@7.4.1/node_modules/
+[4m@prisma/adapter-pg[
+24m/dist/index.mjs:646:
+12)
+    [90m    at process
+TicksAndRejections (nod
+e:internal/process/task
+_queues:105:5)[39m
+        at 
+PgTransaction.queryRaw 
+(file:///D:/realworkstu
+dio/bookease/node_modul
+es/[4m.pnpm[24m/@pris
+ma+adapter-pg@7.4.1/nod
+e_modules/[4m@prisma/a
+dapter-pg[24m/dist/ind
+ex.mjs:566:30)
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44403[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44843[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:46032[90m
+)[39m
+        at e.run [90m(
+D:\realworkstudio\booke
+ase\apps\api\[39msrc\g
+enerated\client\runtime
+\client.js:15:43121[90
+m)[39m
+        at execute [90
+m(D:\realworkstudio\boo
+kease\apps\api\[39msrc
+\generated\client\runti
+me\client.js:61:815[90
+m)[39m
+        at qt.request 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:62:2327
+[90m)[39m {
+      cause: 
+[36m[Object][39m
+    }
+  },
+  clientVersion: 
+[32m'7.4.1'[39m
+}
+
+ [31m├ù[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould cancel only one occurrence with scope=single[32m 152[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading '1')[39m
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould reschedule all future occurrences with scope=series
+[22m[39mprisma:error 
+Invalid `tx.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/src/modules/appointment/appointment.repository.ts:270:58
+
+  267     throw new Error(`SLOT_TAKEN:${appData.startTimeUtc.toISOString()}`);
+  268 }
+  269 
+ΓåÆ 270 const appointment = await tx.appointment.create(
+Unique constraint failed on the fields: (`"referenceId"`)
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould 
+reschedule all future 
+occurrences with 
+scope=series
+[22m[39mRecurring 
+Booking Error: PrismaCl
+ientKnownRequestError: 
+Invalid `tx.appointment
+.create()` invocation 
+in
+D:/realworkstudio/booke
+ase/apps/api/src/module
+s/appointment/appointme
+nt.repository.ts:270:58
+
+  267     throw new Err
+or(`SLOT_TAKEN:${appDat
+a.startTimeUtc.toISOStr
+ing()}`);
+  268 }
+  269 
+ΓåÆ 270 const 
+appointment = await 
+tx.appointment.create(
+Unique constraint 
+failed on the fields: 
+(`"referenceId"`)
+    at 
+zr.handleRequestError 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:69:8286
+[90m)[39m
+    at zr.handleAndLogR
+equestError [90m(D:\re
+alworkstudio\bookease\a
+pps\api\[39msrc\genera
+ted\client\runtime\clie
+nt.js:69:7581[90m)[39
+m
+    at zr.request [90m
+(D:\realworkstudio\book
+ease\apps\api\[39msrc\
+generated\client\runtim
+e\client.js:69:7288[90
+m)[39m
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at a [90m(D:\realw
+orkstudio\bookease\apps
+\api\[39msrc\generated
+\client\runtime\client.
+js:79:5816[90m)[39m
+    at D:/realworkstudi
+o/bookease/apps/api/src
+/modules/appointment/ap
+pointment.repository.ts
+:270:37
+    at Proxy._transacti
+onWithCallback [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:79:4390[90m)
+[39m
+    at 
+createRecurringBooking 
+(D:/realworkstudio/book
+ease/apps/api/src/modul
+es/appointment/appointm
+ent.controller.ts:34:28
+) {
+  code: 
+[32m'P2002'[39m,
+  meta: {
+    modelName: [32m'Ap
+pointment'[39m,
+    
+driverAdapterError: 
+DriverAdapterError: Uni
+queConstraintViolation
+        at 
+PgTransaction.onError (
+file:///D:/realworkstud
+io/bookease/node_module
+s/[4m.pnpm[24m/@prism
+a+adapter-pg@7.4.1/node
+_modules/[4m@prisma/ad
+apter-pg[24m/dist/inde
+x.mjs:651:11)
+        at PgTransactio
+n.performIO (file:///D:
+/realworkstudio/bookeas
+e/node_modules/[4m.pnp
+m[24m/@prisma+adapter-
+pg@7.4.1/node_modules/
+[4m@prisma/adapter-pg[
+24m/dist/index.mjs:646:
+12)
+    [90m    at process
+TicksAndRejections (nod
+e:internal/process/task
+_queues:105:5)[39m
+        at 
+PgTransaction.queryRaw 
+(file:///D:/realworkstu
+dio/bookease/node_modul
+es/[4m.pnpm[24m/@pris
+ma+adapter-pg@7.4.1/nod
+e_modules/[4m@prisma/a
+dapter-pg[24m/dist/ind
+ex.mjs:566:30)
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44403[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44843[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:46032[90m
+)[39m
+        at e.run [90m(
+D:\realworkstudio\booke
+ase\apps\api\[39msrc\g
+enerated\client\runtime
+\client.js:15:43121[90
+m)[39m
+        at execute [90
+m(D:\realworkstudio\boo
+kease\apps\api\[39msrc
+\generated\client\runti
+me\client.js:61:815[90
+m)[39m
+        at qt.request 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:62:2327
+[90m)[39m {
+      cause: 
+[36m[Object][39m
+    }
+  },
+  clientVersion: 
+[32m'7.4.1'[39m
+}
+
+ [31m├ù[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould cancel all future occurrences with scope=series[32m 44[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading '2')[39m
+ [31m├ù[39m tests/recurring_appointment.test.ts[2m > [22mRecurring Appointment Integration[2m > [22mshould reschedule all future occurrences with scope=series[32m 41[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading '0')[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[39m[1m[41m 
+Failed Tests 5 [49m[2
+2m[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»[39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould create a 
+weekly series of 4 
+appointments on 
+correct 4 Mondays
+[31m[1mAssertionError
+[22m: expected 500 to 
+be 201 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 201[39m
+[31m+ 500[39m
+
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m69:28[22m
+[39m
+    [90m 67| [39m    
+        
+console.error('Test 
+Failed with body:', 
+JSON.stringify(resΓÇª
+    [90m 68| [39m    
+    }
+    [90m 69| [39m    
+    [34mexpect[39m(re
+s[33m.[39mstatus)[33
+m.[39m[34mtoBe[39m(
+[34m201[39m)[33m;[39
+m
+    [90m   | [39m    
+                       
+[31m^[39m
+    [90m 70| [39m    
+    [34mexpect[39m(re
+s[33m.[39mbody[33m.
+[39mappointments)[33m.
+[39m[34mtoHaveLength
+[39m([34m4[39m)[33m;
+[39m
+    [90m 71| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/5]ΓÄ»[2
+2m[39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould return 
+conflict error if one 
+slot in series is taken
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.appoint
+ment.create()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/recu
+rring_appointment.test.
+ts:90:34
+
+  87 const 
+thirdWeekDate = new 
+Date(startDate);
+  88 thirdWeekDate.setU
+TCDate(startDate.getUTC
+Date() + 14);
+  89 
+ΓåÆ 90 await prisma.app
+ointment.create(
+Foreign key constraint 
+violated on the 
+constraint: `Appointmen
+t_customerId_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m90:9[22m
+[39m
+    [90m 88| [39m    
+    thirdWeekDate[33m.
+[39m[34msetUTCDate[3
+9m(startDate[33m.[39m
+[34mgetUTCDate[39m() 
+[33m+[39m [34m14[39
+m)[33m;[39m
+    [90m 89| [39m
+    [90m 90| [39m    
+    [35mawait[39m pri
+sma[33m.[39mappointme
+nt[33m.[39m[34mcreat
+e[39m({
+    [90m   | [39m    
+    [31m^[39m
+    [90m 91| [39m    
+        
+data[33m:[39m {
+    [90m 92| [39m    
+            
+tenantId[33m,[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»[22m[39m
+[31m[1mSerialized 
+Error:[22m[39m 
+[90m{ code: 'P2003', 
+meta: { modelName: 
+'Appointment', 
+driverAdapterError: { 
+stack: 
+'DriverAdapterError: Fo
+reignKeyConstraintViola
+tion\n    at PrismaPgAd
+apter.onError (file:///
+D:/realworkstudio/booke
+ase/node_modules/.pnpm/
+@prisma+adapter-pg@7.4.
+1/node_modules/@prisma/
+adapter-pg/dist/index.m
+js:651:11)\n    at Pris
+maPgAdapter.performIO (
+file:///D:/realworkstud
+io/bookease/node_module
+s/.pnpm/@prisma+adapter
+-pg@7.4.1/node_modules/
+@prisma/adapter-pg/dist
+/index.mjs:646:12)\n   
+ at processTicksAndReje
+ctions (node:internal/p
+rocess/task_queues:105:
+5)\n    at PrismaPgAdap
+ter.queryRaw (file:///D
+:/realworkstudio/bookea
+se/node_modules/.pnpm/@
+prisma+adapter-pg@7.4.1
+/node_modules/@prisma/a
+dapter-pg/dist/index.mj
+s:566:30)\n    at 
+e.interpretNode (D:\rea
+lworkstudio\bookease\ap
+ps\api\src\generated\cl
+ient\runtime\client.js:
+15:44403)\n    at 
+e.interpretNode (D:\rea
+lworkstudio\bookease\ap
+ps\api\src\generated\cl
+ient\runtime\client.js:
+15:44843)\n    at 
+e.interpretNode (D:\rea
+lworkstudio\bookease\ap
+ps\api\src\generated\cl
+ient\runtime\client.js:
+15:46032)\n    at 
+e.run (D:\realworkstudi
+o\bookease\apps\api\src
+\generated\client\runti
+me\client.js:15:43121)\
+n    at execute (D:\rea
+lworkstudio\bookease\ap
+ps\api\src\generated\cl
+ient\runtime\client.js:
+61:815)\n    at 
+qt.request (D:\realwork
+studio\bookease\apps\ap
+i\src\generated\client\
+runtime\client.js:62:23
+27)', message: 'Foreign
+KeyConstraintViolation'
+, name: 
+'DriverAdapterError', 
+cause: { originalCode: 
+'23503', 
+originalMessage: 
+'insert or update on 
+table "Appointment" 
+violates foreign key 
+constraint "Appointment
+_customerId_fkey"', 
+kind: 'ForeignKeyConstr
+aintViolation', 
+constraint: { index: 'A
+ppointment_customerId_f
+key' } }, constructor: 
+'Function<DriverAdapter
+Error>', toString: 
+'Function<toString>' } 
+}, clientVersion: 
+'7.4.1', 
+batchRequestIdx: 
+undefined }[39m
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/5]ΓÄ»[2
+2m[39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould cancel 
+only one occurrence 
+with scope=single
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'1')[39m
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m143:33[22
+m[39m
+    [90m141| [39m    
+        })[33m;[39m
+    [90m142| [39m
+    [90m143| [39m    
+    [35mconst[39m 
+app2Id [33m=[39m res
+[33m.[39mbody[33m.[3
+9mappointments[[34m1[
+39m][33m.[39mid[33m;
+[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m144| [39m
+    [90m145| [39m    
+    [35mconst[39m 
+cancelRes [33m=[39m 
+[35mawait[39m 
+[34mrequest[39m(app)
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/5]ΓÄ»[2
+2m[39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould cancel all 
+future occurrences 
+with scope=series
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'2')[39m
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m176:33[22
+m[39m
+    [90m174| [39m    
+        })[33m;[39m
+    [90m175| [39m
+    [90m176| [39m    
+    [35mconst[39m 
+app3Id [33m=[39m res
+[33m.[39mbody[33m.[3
+9mappointments[[34m2[
+39m][33m.[39mid[33m;
+[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m177| [39m
+    [90m178| [39m    
+    [35mconst[39m 
+cancelRes [33m=[39m 
+[35mawait[39m 
+[34mrequest[39m(app)
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/5]ΓÄ»[2
+2m[39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould reschedule 
+all future occurrences 
+with scope=series
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'0')[39m
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m208:33[22
+m[39m
+    [90m206| [39m    
+        })[33m;[39m
+    [90m207| [39m
+    [90m208| [39m    
+    [35mconst[39m 
+app1Id [33m=[39m res
+[33m.[39mbody[33m.[3
+9mappointments[[34m0[
+39m][33m.[39mid[33m;
+[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m209| [39m    
+    const newStart = 
+new 
+Date(start.getTime() + 
+2 * 60 * 60 * 1000ΓÇª
+    [90m210| [39m    
+    [35mconst[39m 
+newEnd [33m=[39m 
+[35mnew[39m [33mDate
+[39m(newStart[33m.[3
+9m[34mgetTime[39m() 
+[33m+[39m 
+[34m60[39m 
+[33m*[39m 
+[34m60[39m 
+[33m*[39m [34m1000[
+39m)[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»[5/5]ΓÄ»[2
+2m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[90m (5)[39m
+[2m   Start at [22m 22:00:59
+[2m   Duration [22m 7.21s[2m (transform 1.07s, setup 0ms, import 5.76s, tests 919ms, environment 0ms)[22m
+

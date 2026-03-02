@@ -1,0 +1,2187 @@
+﻿
+> @bookease/api@1.0.0 test D:\realworkstudio\bookease\apps\api
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/realworkstudio/bookease/apps/api[39m
+
+[90mstdout[2m | tests/service.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+[90mstdout[2m | tests/tenant-resolution.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[90mstdout[2m | tests/auth.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[90mstdout[2m | tests/staff.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒ¢á∩╕Å  run anywhere with `dotenvx run -- yourcommand`
+
+[90mstdout[2m | tests/config.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+
+[90mstdout[2m | tests/consent.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+
+[90mstdout[2m | tests/availability.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+
+[90mstdout[2m | tests/audit_timeline.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+[90mstdout[2m | tests/tenant.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+
+[90mstdout[2m | tests/business-profile.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+
+[90mstdout[2m | tests/recurring_appointment.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+node.exe : Sourcemap 
+for "D:/realworkstudio/
+bookease/node_modules/.
+pnpm/node-cron@4.2.1/no
+de_modules/node-cron/di
+st/esm/node-cron.js" 
+points to missing 
+source files
+At C:\Users\shash\AppDa
+ta\Roaming\npm\pnpm.ps1
+:24 char:5
++     & "node$exe"  "$b
+asedir/node_modules/pnp
+m/bin/pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Sourcemap for   
+  "...ng source fil    
+es:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+[90mstdout[2m | tests/availability.test.ts[2m > [22m[2mAvailability Engine
+[22m[39mprisma:error 
+Invalid `prisma.appointment.deleteMany()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/availability.test.ts:18:34
+
+  15 beforeAll(async () => {
+  16     // Cleanup
+  17     await prisma.slotLock.deleteMany();
+ΓåÆ 18     await prisma.appointment.deleteMany(
+Foreign key constraint violated on the constraint: `AppointmentTimeline_appointmentId_fkey`
+
+[90mstdout[2m | tests/service.test.ts[2m > [22m[2mServices Module
+[22m[39mprisma:error 
+Invalid `prisma.service.deleteMany()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/service.test.ts:16:30
+
+  13 
+  14 beforeAll(async () => {
+  15     // Cleanup
+ΓåÆ 16     await prisma.service.deleteMany(
+Foreign key constraint violated on the constraint: `Appointment_serviceId_fkey`
+
+[90mstdout[2m | tests/staff.test.ts[2m > [22m[2mStaff Module
+[22m[39mprisma:error 
+Invalid `prisma.staff.deleteMany()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/staff.test.ts:22:28
+
+  19 await prisma.staffBreak.deleteMany();
+  20 await prisma.weeklySchedule.deleteMany();
+  21 await prisma.staffService.deleteMany();
+ΓåÆ 22 await prisma.staff.deleteMany(
+Foreign key constraint violated on the constraint: `Appointment_staffId_fkey`
+
+[90mstdout[2m | tests/tenant-resolution.test.ts[2m > [22m[2mTenant Resolution Middleware
+[22m[39mprisma:error 
+Invalid `prisma.tenant.deleteMany()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/tenant-resolution.test.ts:13:29
+
+  10 
+  11 beforeAll(async () => {
+  12     // Cleanup
+ΓåÆ 13     await prisma.tenant.deleteMany(
+Foreign key constraint violated on the constraint: `User_tenantId_fkey`
+
+[90mstdout[2m | tests/tenant-resolution.test.ts[2m > [22m[2mTenant Resolution Middleware
+[22m[39mprisma:error 
+Invalid `prisma.tenant.deleteMany()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/tenant-resolution.test.ts:42:29
+
+  39 });
+  40 
+  41 afterAll(async () => {
+ΓåÆ 42     await prisma.tenant.deleteMany(
+Foreign key constraint violated on the constraint: `Customer_tenantId_fkey`
+
+ [31mΓ¥»[39m tests/tenant-resolution.test.ts [2m([22m[2m5 tests[22m[2m | [22m[33m5 skipped[39m[2m)[22m[33m 2062[2mms[22m[39m
+     [2m[90mΓåô[39m[22m should return 403 if X-Tenant-ID header is missing
+     [2m[90mΓåô[39m[22m should return 403 if tenant does not exist
+     [2m[90mΓåô[39m[22m should return 403 if tenant is inactive
+     [2m[90mΓåô[39m[22m should return 200 if tenant ID is valid and active
+     [2m[90mΓåô[39m[22m should allow /health without X-Tenant-ID
+ [31mΓ¥»[39m tests/service.test.ts [2m([22m[2m6 tests[22m[2m | [22m[33m6 skipped[39m[2m)[22m[33m 2464[2mms[22m[39m
+       [2m[90mΓåô[39m[22m should create a service with valid data
+       [2m[90mΓåô[39m[22m should reject negative duration
+       [2m[90mΓåô[39m[22m should reject duplicate names in same tenant
+       [2m[90mΓåô[39m[22m should list only active services for the tenant
+       [2m[90mΓåô[39m[22m should respect tenant isolation
+       [2m[90mΓåô[39m[22m should soft delete the service
+ [31mΓ¥»[39m tests/availability.test.ts [2m([22m[2m5 tests[22m[2m | [22m[33m5 skipped[39m[2m)[22m[33m 2472[2mms[22m[39m
+     [2m[90mΓåô[39m[22m should generate slots within working hours (Monday)
+     [2m[90mΓåô[39m[22m should block slots for existing appointments
+     [2m[90mΓåô[39m[22m should block slots for active slot locks
+     [2m[90mΓåô[39m[22m should return empty slots if staff has time-off
+     [2m[90mΓåô[39m[22m should handle timezone correctly (DST transition simulation)
+ [31mΓ¥»[39m tests/staff.test.ts [2m([22m[2m8 tests[22m[2m | [22m[33m8 skipped[39m[2m)[22m[33m 2472[2mms[22m[39m
+       [2m[90mΓåô[39m[22m should create a staff member
+       [2m[90mΓåô[39m[22m should assign services to staff
+       [2m[90mΓåô[39m[22m should reject services from another tenant
+       [2m[90mΓåô[39m[22m should set weekly working hours with valid breaks
+       [2m[90mΓåô[39m[22m should reject break outside working hours
+       [2m[90mΓåô[39m[22m should reject overlapping breaks
+       [2m[90mΓåô[39m[22m should block off dates
+       [2m[90mΓåô[39m[22m should list limited staff info publicly
+[90mstdout[2m | tests/policy_engine.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒ¢á∩╕Å  run anywhere with `dotenvx run -- yourcommand`
+
+[90mstdout[2m | tests/simple_check.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+[90mstdout[2m | tests/health.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒñû agentic secret storage: https://dotenvx.com/as2
+
+[90mstdout[2m | tests/appointment.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒ¢í∩╕Å auth for agents: https://vestauth.com
+
+[90mstdout[2m | tests/auth.test.ts[2m > [22m[2mAuth & RBAC Module
+[22m[39mprisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+Raw query failed. Code: `40P01`. Message: `deadlock detected`
+
+[90mstdout[2m | tests/config.test.ts[2m > [22m[2mConfiguration Engine
+[22m[39mprisma:error deadlock detected
+
+[90mstderr[2m | tests
+/audit_timeline.test.ts
+[2m > [22m[2mAudit 
+& Timeline 
+Integration[2m > 
+[22m[2mshould create 
+a timeline event when 
+an appointment is 
+booked
+[22m[39mTEST FAILURE 
+BODY: {
+  "success": false,
+  "error": {
+    "code": 
+"TENANT_NOT_FOUND",
+    "message": "Tenant 
+not found"
+  }
+}
+
+{"level":"ERROR","time":"2026-03-01T10:22:06.031Z","pid":22772,"hostname":"xyz","correlationId":"cb034464-a5b9-4210-b27e-90ae01c962b5","err":{"type":"Object","message":"Tenant with this slug already exists","stack":"","code":"CONFLICT"},"status":409,"path":"/api/tenants","method":"POST","msg":"Tenant with this slug already exists"}
+[90mstdout[2m | tests/consent.test.ts[2m > [22m[2mConsent Capture Module[2m > [22m[2mshould snapshot the historical policy text even if profile changes later
+[22m[39mprisma:error 
+Invalid `prisma.businessProfile.update()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/consent.test.ts:132:38
+
+  129     });
+  130 
+  131 // 2. Change policy in profile
+ΓåÆ 132 await prisma.businessProfile.update(
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+
+{"level":"ERROR","time":"2026-03-01T10:22:06.116Z","pid":22772,"hostname":"xyz","correlationId":"9377bb98-44f4-455c-9916-ac4bb1e444ab","err":{"type":"Object","message":"Tenant not found","stack":"","code":"NOT_FOUND"},"status":404,"path":"/api/tenants/9c8075fa-5703-4fd6-991d-8f30190905da","method":"GET","msg":"Tenant not found"}
+[90mstdout[2m | tests/auth.test.ts[2m > [22m[2mAuth & RBAC Module
+[22m[39mprisma:error 
+Invalid `prisma.user.create()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/auth.test.ts:38:40
+
+  35 
+  36 const passwordHash = await bcrypt.hash(password, 12);
+  37 
+ΓåÆ 38 adminUserA = await prisma.user.create(
+Foreign key constraint violated on the constraint: `User_tenantId_fkey`
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould not fail the main request if audit logging fails (resilience)
+[22m[39mprisma:error 
+Invalid `prisma.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/tests/audit_timeline.test.ts:241:47
+
+  238 const spy = vi.spyOn(auditService, 'logEvent')
+  239     .mockRejectedValue(new Error('Audit DB Down'));
+  240 
+ΓåÆ 241 const appt = await prisma.appointment.create(
+Foreign key constraint violated on the constraint: `Appointment_tenantId_fkey`
+
+ [31mΓ¥»[39m tests/audit_timeline.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[33m 6941[2mms[22m[39m
+[31m     [31m├ù[31m should create a timeline event when an appointment is booked[39m[33m 578[2mms[22m[39m
+[31m     [31m├ù[31m should create a timeline event and audit log on status change[39m[32m 12[2mms[22m[39m
+[31m     [31m├ù[31m should create ADMIN_OVERRIDE event when cancelling with override[39m[32m 7[2mms[22m[39m
+[31m     [31m├ù[31m should not allow deleting timeline events via API (regression check)[39m[32m 25[2mms[22m[39m
+[31m     [31m├ù[31m should not fail the main request if audit logging fails (resilience)[39m[32m 112[2mms[22m[39m
+{"level":"ERROR","time":"2026-03-01T10:22:06.286Z","pid":13084,"hostname":"xyz","correlationId":"0bb9b62d-df20-4558-8842-11f89c3a34f4","err":{"type":"Object","message":"Business profile not found","stack":"","code":"NOT_FOUND"},"status":404,"path":"/api/business-profile","method":"GET","msg":"Business profile not found"}
+ [32mΓ£ô[39m tests/simple.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 8[2mms[22m[39m
+[90mstdout[2m | tests/auth.test.ts[2m > [22m[2mAuth & RBAC Module
+[22m[39mprisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+Raw query failed. Code: `40P01`. Message: `deadlock detected`
+
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould create a weekly series of 4 appointments on correct 4 Mondays
+[22m[39mprisma:error deadlock detected
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould create 
+a weekly series of 4 
+appointments on 
+correct 4 Mondays
+[22m[39mRecurring 
+Booking Error: 
+DriverAdapterError: 
+deadlock detected
+    at 
+PgTransaction.onError (
+file:///D:/realworkstud
+io/bookease/node_module
+s/[4m.pnpm[24m/@prism
+a+adapter-pg@7.4.1/node
+_modules/[4m@prisma/ad
+apter-pg[24m/dist/inde
+x.mjs:651:11)
+    at PgTransaction.pe
+rformIO (file:///D:/rea
+lworkstudio/bookease/no
+de_modules/[4m.pnpm[2
+4m/@prisma+adapter-pg@7
+.4.1/node_modules/[4m@
+prisma/adapter-pg[24m/
+dist/index.mjs:646:12)
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at 
+PgTransaction.queryRaw 
+(file:///D:/realworkstu
+dio/bookease/node_modul
+es/[4m.pnpm[24m/@pris
+ma+adapter-pg@7.4.1/nod
+e_modules/[4m@prisma/a
+dapter-pg[24m/dist/ind
+ex.mjs:566:30)
+    at e.interpretNode 
+[90m(D:\realworkstudio
+\bookease\apps\api\[39
+msrc\generated\client\r
+untime\client.js:15:444
+03[90m)[39m
+    at e.interpretNode 
+[90m(D:\realworkstudio
+\bookease\apps\api\[39
+msrc\generated\client\r
+untime\client.js:15:448
+43[90m)[39m
+    at e.interpretNode 
+[90m(D:\realworkstudio
+\bookease\apps\api\[39
+msrc\generated\client\r
+untime\client.js:15:460
+32[90m)[39m
+    at e.run [90m(D:\r
+ealworkstudio\bookease\
+apps\api\[39msrc\gener
+ated\client\runtime\cli
+ent.js:15:43121[90m)[
+39m
+    at execute [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:61:815[90m)[
+39m
+    at qt.request [90m
+(D:\realworkstudio\book
+ease\apps\api\[39msrc\
+generated\client\runtim
+e\client.js:62:2327[90
+m)[39m {
+  cause: {
+    originalCode: 
+[32m'40P01'[39m,
+    originalMessage: 
+[32m'deadlock 
+detected'[39m,
+    kind: 
+[32m'postgres'[39m,
+    code: 
+[32m'40P01'[39m,
+    severity: 
+[32m'ERROR'[39m,
+    message: 
+[32m'deadlock 
+detected'[39m,
+    detail: 
+[32m'Process 27240 
+waits for RowShareLock 
+on relation 32002 of 
+database 16394; 
+blocked by process 
+13996.\n'[39m +
+      [32m'Process 
+13996 waits for 
+AccessExclusiveLock on 
+relation 32041 of 
+database 16394; 
+blocked by process 
+27240.'[39m,
+    column: 
+[90mundefined[39m,
+    hint: [32m'See 
+server log for query 
+details.'[39m
+  },
+  clientVersion: 
+[32m'7.4.1'[39m
+}
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould create 
+a weekly series of 4 
+appointments on 
+correct 4 Mondays
+[22m[39mTest Failed 
+with body: {
+  "error": "deadlock 
+detected",
+  "stack": 
+"DriverAdapterError: 
+deadlock detected\n    
+at 
+PgTransaction.onError (
+file:///D:/realworkstud
+io/bookease/node_module
+s/.pnpm/@prisma+adapter
+-pg@7.4.1/node_modules/
+@prisma/adapter-pg/dist
+/index.mjs:651:11)\n   
+ at PgTransaction.perfo
+rmIO (file:///D:/realwo
+rkstudio/bookease/node_
+modules/.pnpm/@prisma+a
+dapter-pg@7.4.1/node_mo
+dules/@prisma/adapter-p
+g/dist/index.mjs:646:12
+)\n    at processTicksA
+ndRejections (node:inte
+rnal/process/task_queue
+s:105:5)\n    at 
+PgTransaction.queryRaw 
+(file:///D:/realworkstu
+dio/bookease/node_modul
+es/.pnpm/@prisma+adapte
+r-pg@7.4.1/node_modules
+/@prisma/adapter-pg/dis
+t/index.mjs:566:30)\n  
+  at e.interpretNode (D
+:\\realworkstudio\\book
+ease\\apps\\api\\src\\g
+enerated\\client\\runti
+me\\client.js:15:44403)
+\n    at 
+e.interpretNode (D:\\re
+alworkstudio\\bookease\
+\apps\\api\\src\\genera
+ted\\client\\runtime\\c
+lient.js:15:44843)\n   
+ at e.interpretNode (D:
+\\realworkstudio\\booke
+ase\\apps\\api\\src\\ge
+nerated\\client\\runtim
+e\\client.js:15:46032)\
+n    at e.run (D:\\real
+workstudio\\bookease\\a
+pps\\api\\src\\generate
+d\\client\\runtime\\cli
+ent.js:15:43121)\n    
+at execute (D:\\realwor
+kstudio\\bookease\\apps
+\\api\\src\\generated\\
+client\\runtime\\client
+.js:61:815)\n    at 
+qt.request (D:\\realwor
+kstudio\\bookease\\apps
+\\api\\src\\generated\\
+client\\runtime\\client
+.js:62:2327)"
+}
+
+ [32mΓ£ô[39m tests/health.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 114[2mms[22m[39m
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould return conflict error if one slot in series is taken
+[22m[39mprisma:error deadlock detected
+
+[90mstdout[2m | tests/tenant.test.ts[2m > [22m[2mTenant Module
+[22m[39mprisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+Raw query failed. Code: `40P01`. Message: `deadlock detected`
+
+[90mstdout[2m | tests/config.test.ts[2m > [22m[2mConfiguration Engine
+[22m[39mprisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+Raw query failed. Code: `40P01`. Message: `deadlock detected`
+
+ [31mΓ¥»[39m tests/config.test.ts [2m([22m[2m6 tests[22m[2m | [22m[33m6 skipped[39m[2m)[22m[33m 10246[2mms[22m[39m
+       [2m[90mΓåô[39m[22m should return default config if none set
+       [2m[90mΓåô[39m[22m should be blocked for staff users
+       [2m[90mΓåô[39m[22m should save new config and increment version
+       [2m[90mΓåô[39m[22m should reject invalid config shape
+       [2m[90mΓåô[39m[22m should rollback to a previous version
+       [2m[90mΓåô[39m[22m should return under 50ms on cache hit
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould cancel only one occurrence with scope=single
+[22m[39mprisma:error 
+Invalid `tx.appointment.create()` invocation in
+D:/realworkstudio/bookease/apps/api/src/modules/appointment/appointment.repository.ts:287:58
+
+  284     throw new Error(`SLOT_TAKEN:${appData.startTimeUtc.toISOString()}`);
+  285 }
+  286 
+ΓåÆ 287 const appointment = await tx.appointment.create(
+Foreign key constraint violated on the constraint: `Appointment_serviceId_fkey`
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould cancel 
+only one occurrence 
+with scope=single
+[22m[39mRecurring 
+Booking Error: PrismaCl
+ientKnownRequestError: 
+Invalid `tx.appointment
+.create()` invocation 
+in
+D:/realworkstudio/booke
+ase/apps/api/src/module
+s/appointment/appointme
+nt.repository.ts:287:58
+
+  284     throw new Err
+or(`SLOT_TAKEN:${appDat
+a.startTimeUtc.toISOStr
+ing()}`);
+  285 }
+  286 
+ΓåÆ 287 const 
+appointment = await 
+tx.appointment.create(
+Foreign key constraint 
+violated on the 
+constraint: `Appointmen
+t_serviceId_fkey`
+    at 
+zr.handleRequestError 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:69:8286
+[90m)[39m
+    at zr.handleAndLogR
+equestError [90m(D:\re
+alworkstudio\bookease\a
+pps\api\[39msrc\genera
+ted\client\runtime\clie
+nt.js:69:7581[90m)[39
+m
+    at zr.request [90m
+(D:\realworkstudio\book
+ease\apps\api\[39msrc\
+generated\client\runtim
+e\client.js:69:7288[90
+m)[39m
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at a [90m(D:\realw
+orkstudio\bookease\apps
+\api\[39msrc\generated
+\client\runtime\client.
+js:79:5816[90m)[39m
+    at D:/realworkstudi
+o/bookease/apps/api/src
+/modules/appointment/ap
+pointment.repository.ts
+:287:37
+    at Proxy._transacti
+onWithCallback [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:79:4390[90m)
+[39m
+    at 
+createRecurringBooking 
+(D:/realworkstudio/book
+ease/apps/api/src/modul
+es/appointment/appointm
+ent.controller.ts:43:28
+) {
+  code: 
+[32m'P2003'[39m,
+  meta: {
+    modelName: [32m'Ap
+pointment'[39m,
+    
+driverAdapterError: 
+DriverAdapterError: For
+eignKeyConstraintViolat
+ion
+        at 
+PgTransaction.onError (
+file:///D:/realworkstud
+io/bookease/node_module
+s/[4m.pnpm[24m/@prism
+a+adapter-pg@7.4.1/node
+_modules/[4m@prisma/ad
+apter-pg[24m/dist/inde
+x.mjs:651:11)
+        at PgTransactio
+n.performIO (file:///D:
+/realworkstudio/bookeas
+e/node_modules/[4m.pnp
+m[24m/@prisma+adapter-
+pg@7.4.1/node_modules/
+[4m@prisma/adapter-pg[
+24m/dist/index.mjs:646:
+12)
+    [90m    at process
+TicksAndRejections (nod
+e:internal/process/task
+_queues:105:5)[39m
+        at 
+PgTransaction.queryRaw 
+(file:///D:/realworkstu
+dio/bookease/node_modul
+es/[4m.pnpm[24m/@pris
+ma+adapter-pg@7.4.1/nod
+e_modules/[4m@prisma/a
+dapter-pg[24m/dist/ind
+ex.mjs:566:30)
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44403[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:44843[90m
+)[39m
+        at 
+e.interpretNode [90m(D
+:\realworkstudio\bookea
+se\apps\api\[39msrc\ge
+nerated\client\runtime\
+client.js:15:46032[90m
+)[39m
+        at e.run [90m(
+D:\realworkstudio\booke
+ase\apps\api\[39msrc\g
+enerated\client\runtime
+\client.js:15:43121[90
+m)[39m
+        at execute [90
+m(D:\realworkstudio\boo
+kease\apps\api\[39msrc
+\generated\client\runti
+me\client.js:61:815[90
+m)[39m
+        at qt.request 
+[90m(D:\realworkstudio\
+bookease\apps\api\[39m
+src\generated\client\ru
+ntime\client.js:62:2327
+[90m)[39m {
+      cause: 
+[36m[Object][39m
+    }
+  },
+  clientVersion: 
+[32m'7.4.1'[39m
+}
+
+[90mstdout[2m | tests/tenant.test.ts[2m > [22m[2mTenant Module
+[22m[39mprisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+Raw query failed. Code: `40P01`. Message: `deadlock detected`
+
+ [32mΓ£ô[39m tests/tenant.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 11383[2mms[22m[39m
+[90mstdout[2m | tests/simple_check.test.ts[2m > [22m[2mSimple Audit & Timeline Check
+[22m[39mprisma:error deadlock detected
+
+ [31mΓ¥»[39m tests/simple_check.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m[33m 3212[2mms[22m[39m
+     [2m[90mΓåô[39m[22m should create an audit log on manual entry
+[90mstdout[2m | tests/recurring_appointment.test.ts[2m > [22m[2mRecurring Appointment Integration[2m > [22m[2mshould cancel all future occurrences with scope=series
+[22m[39mprisma:error deadlock detected
+
+[90mstderr[2m | tests
+/recurring_appointment.
+test.ts[2m > 
+[22m[2mRecurring 
+Appointment 
+Integration[2m > 
+[22m[2mshould cancel 
+all future occurrences 
+with scope=series
+[22m[39mRecurring 
+Booking Error: 
+DriverAdapterError: 
+deadlock detected
+    at PrismaPgAdapter.
+onError (file:///D:/rea
+lworkstudio/bookease/no
+de_modules/[4m.pnpm[2
+4m/@prisma+adapter-pg@7
+.4.1/node_modules/[4m@
+prisma/adapter-pg[24m/
+dist/index.mjs:651:11)
+    at PrismaPgAdapter.
+performIO (file:///D:/r
+ealworkstudio/bookease/
+node_modules/[4m.pnpm
+[24m/@prisma+adapter-pg
+@7.4.1/node_modules/[4
+m@prisma/adapter-pg[24
+m/dist/index.mjs:646:12
+)
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at PrismaPgAdapter.
+queryRaw (file:///D:/re
+alworkstudio/bookease/n
+ode_modules/[4m.pnpm[
+24m/@prisma+adapter-pg@
+7.4.1/node_modules/[4m
+@prisma/adapter-pg[24m
+/dist/index.mjs:566:30)
+    at e.interpretNode 
+[90m(D:\realworkstudio
+\bookease\apps\api\[39
+msrc\generated\client\r
+untime\client.js:15:444
+03[90m)[39m
+    at e.interpretNode 
+[90m(D:\realworkstudio
+\bookease\apps\api\[39
+msrc\generated\client\r
+untime\client.js:15:448
+43[90m)[39m
+    at e.interpretNode 
+[90m(D:\realworkstudio
+\bookease\apps\api\[39
+msrc\generated\client\r
+untime\client.js:15:460
+32[90m)[39m
+    at e.run [90m(D:\r
+ealworkstudio\bookease\
+apps\api\[39msrc\gener
+ated\client\runtime\cli
+ent.js:15:43121[90m)[
+39m
+    at execute [90m(D:
+\realworkstudio\bookeas
+e\apps\api\[39msrc\gen
+erated\client\runtime\c
+lient.js:61:815[90m)[
+39m
+    at qt.request [90m
+(D:\realworkstudio\book
+ease\apps\api\[39msrc\
+generated\client\runtim
+e\client.js:62:2327[90
+m)[39m {
+  cause: {
+    originalCode: 
+[32m'40P01'[39m,
+    originalMessage: 
+[32m'deadlock 
+detected'[39m,
+    kind: 
+[32m'postgres'[39m,
+    code: 
+[32m'40P01'[39m,
+    severity: 
+[32m'ERROR'[39m,
+    message: 
+[32m'deadlock 
+detected'[39m,
+    detail: 
+[32m'Process 17920 
+waits for RowShareLock 
+on relation 31961 of 
+database 16394; 
+blocked by process 
+13996.\n'[39m +
+      [32m'Process 
+13996 waits for 
+AccessExclusiveLock on 
+relation 32074 of 
+database 16394; 
+blocked by process 
+17920.'[39m,
+    column: 
+[90mundefined[39m,
+    hint: [32m'See 
+server log for query 
+details.'[39m
+  },
+  clientVersion: 
+[32m'7.4.1'[39m
+}
+
+ [31mΓ¥»[39m tests/consent.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 12905[2mms[22m[39m
+[31m     [31m├ù[31m should reject booking without consent flag[39m[33m 592[2mms[22m[39m
+[31m     [31m├ù[31m should create consent record on successful booking[39m[32m 27[2mms[22m[39m
+[31m     [31m├ù[31m should snapshot the historical policy text even if profile changes later[39m[32m 56[2mms[22m[39m
+ [31mΓ¥»[39m tests/auth.test.ts [2m([22m[2m7 tests[22m[2m | [22m[33m7 skipped[39m[2m)[22m[33m 13170[2mms[22m[39m
+       [2m[90mΓåô[39m[22m should return 200 and a token for valid credentials
+       [2m[90mΓåô[39m[22m should return 401 for wrong password
+       [2m[90mΓåô[39m[22m should return 401 for cross-tenant login attempt
+       [2m[90mΓåô[39m[22m should return current user for valid token
+       [2m[90mΓåô[39m[22m should return 401 for missing token
+       [2m[90mΓåô[39m[22m should return 401 for token-tenant mismatch
+       [2m[90mΓåô[39m[22m should block staff from admin-protected logic (if any)
+ [32mΓ£ô[39m tests/business-profile.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 13387[2mms[22m[39m
+ [31mΓ¥»[39m tests/recurring_appointment.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[33m 13503[2mms[22m[39m
+[31m     [31m├ù[31m should create a weekly series of 4 appointments on correct 4 Mondays[39m[33m 1535[2mms[22m[39m
+[31m     [31m├ù[31m should return conflict error if one slot in series is taken[39m[33m 1013[2mms[22m[39m
+[31m     [31m├ù[31m should cancel only one occurrence with scope=single[39m[33m 855[2mms[22m[39m
+[31m     [31m├ù[31m should cancel all future occurrences with scope=series[39m[33m 2071[2mms[22m[39m
+[31m     [31m├ù[31m should reschedule all future occurrences with scope=series[39m[33m 873[2mms[22m[39m
+[90mstderr[2m | tests
+/policy_engine.test.ts
+[2m > [22m[2mPolicy 
+Engine Integration[2m 
+> [22m[2mshould 
+reject staff 
+cancellation within 
+24h window
+[22m[39mCancel 
+Error: Error: 
+Cancellation window 
+has closed
+    at AppointmentServi
+ce.cancelAppointment (D
+:/realworkstudio/bookea
+se/apps/api/src/modules
+/appointment/appointmen
+t.service.ts:361:19)
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at cancel (D:/realw
+orkstudio/bookease/apps
+/api/src/modules/appoin
+tment/appointment.contr
+oller.ts:191:28)
+
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould allow admin override for cancellation within window
+[22m[39m[TimelineService] Creating event for appt: da106387-b3a8-464c-ac1f-abb9779d9cb1, type: ADMIN_OVERRIDE
+
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould allow admin override for cancellation within window
+[22m[39m[TimelineService] Created event ID: 4874421d-9a60-4c3d-9186-ba9f1792443f
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould create a slot lock and then book an appointment
+[22m[39m[TimelineService] Creating event for appt: 4dab03c3-6f29-4e3d-bf05-c9e2bab41ded, type: CREATED
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould create a slot lock and then book an appointment
+[22m[39m[TimelineService] Created event ID: c8498f10-87fd-45d5-9e09-570b2c1304cd
+
+[90mstderr[2m | tests
+/policy_engine.test.ts
+[2m > [22m[2mPolicy 
+Engine Integration[2m 
+> [22m[2mshould 
+reject reschedule if 
+limit reached 
+(maxReschedules: 1)
+[22m[39mReschedule 
+Error: Error: 
+Reschedule limit 
+reached
+    at AppointmentServi
+ce.rescheduleAppointmen
+t (D:/realworkstudio/bo
+okease/apps/api/src/mod
+ules/appointment/appoin
+tment.service.ts:413:19
+)
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at reschedule (D:/r
+ealworkstudio/bookease/
+apps/api/src/modules/ap
+pointment/appointment.c
+ontroller.ts:156:28)
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould reject a second lock on the same slot
+[22m[39mprisma:error 
+Invalid `prisma.slotLock.create()` invocation in
+D:/realworkstudio/bookease/apps/api/src/modules/appointment/appointment.repository.ts:103:32
+
+  100     sessionToken: string;
+  101     expiresAt: Date;
+  102 }) {
+ΓåÆ 103     return prisma.slotLock.create(
+Unique constraint failed on the fields: (`"tenantId"`, `"staffId"`, `"startTimeUtc"`)
+
+[90mstdout[2m | tests/appointment.test.ts[2m > [22m[2mAppointment Engine Integration[2m > [22m[2mshould reject a second lock on the same slot
+[22m[39mDEBUG: Second lock status: [33m409[39m
+DEBUG: Second lock body: {"error":"Slot already locked"}
+
+ [32mΓ£ô[39m tests/appointment.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 5639[2mms[22m[39m
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould mark past confirmed appointments as NO_SHOW via background job
+[22m[39m[TimelineService] Creating event for appt: 3c837879-49bf-4303-b396-e33909df0fda, type: NO_SHOW_MARKED
+Appointment 3c837879-49bf-4303-b396-e33909df0fda marked as NO_SHOW
+
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould mark past confirmed appointments as NO_SHOW via background job
+[22m[39m[TimelineService] Created event ID: 0fb40fe1-1676-47c0-8156-8de6930e8aa6
+
+ [32mΓ£ô[39m tests/policy_engine.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 5967[2mms[22m[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[39m[1m[41m Failed 
+Suites 7 [49m[22m[31
+mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[39m
+
+[41m[1m FAIL 
+[22m[49m 
+tests/auth.test.ts[2m 
+> [22mAuth & RBAC 
+Module
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid 
+`prisma.user.create()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/auth
+.test.ts:38:40
+
+  35 
+  36 const 
+passwordHash = await 
+bcrypt.hash(password, 
+12);
+  37 
+ΓåÆ 38 adminUserA = 
+await 
+prisma.user.create(
+Foreign key constraint 
+violated on the 
+constraint: `User_tenan
+tId_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/auth.test.ts:[2m38:2
+2[22m[39m
+    [90m 36| [39m    
+    [35mconst[39m 
+passwordHash 
+[33m=[39m 
+[35mawait[39m bcrypt
+[33m.[39m[34mhash[39
+m(password[33m,[39m 
+[34m12[39m)[33m;[39m
+    [90m 37| [39m
+    [90m 38| [39m    
+    adminUserA 
+[33m=[39m 
+[35mawait[39m prisma
+[33m.[39muser[33m.[3
+9m[34mcreate[39m({
+    [90m   | [39m    
+                 
+[31m^[39m
+    [90m 39| [39m    
+        
+data[33m:[39m {
+    [90m 40| [39m    
+            
+email[33m:[39m [32m'
+admin@tenant-a.com'[39
+m[33m,[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[1/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/availa
+bility.test.ts[2m > 
+[22mAvailability 
+Engine
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.appoint
+ment.deleteMany()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/avai
+lability.test.ts:18:34
+
+  15 beforeAll(async 
+() => {
+  16     // Cleanup
+  17     await prisma.s
+lotLock.deleteMany();
+ΓåÆ 18     await prisma
+.appointment.deleteMany
+(
+Foreign key constraint 
+violated on the 
+constraint: `Appointmen
+tTimeline_appointmentId
+_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/availability.test.ts:
+[2m18:9[22m[39m
+    [90m 16| [39m    
+    [90m// 
+Cleanup[39m
+    [90m 17| [39m    
+    [35mawait[39m pri
+sma[33m.[39mslotLock
+[33m.[39m[34mdeleteMa
+ny[39m()[33m;[39m
+    [90m 18| [39m    
+    [35mawait[39m pri
+sma[33m.[39mappointme
+nt[33m.[39m[34mdelet
+eMany[39m()[33m;[39m
+    [90m   | [39m    
+    [31m^[39m
+    [90m 19| [39m    
+    [35mawait[39m pri
+sma[33m.[39mstaffBrea
+k[33m.[39m[34mdelete
+Many[39m()[33m;[39m
+    [90m 20| [39m    
+    [35mawait[39m pri
+sma[33m.[39mweeklySch
+edule[33m.[39m[34mde
+leteMany[39m()[33m;[
+39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[2/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/config
+.test.ts[2m > 
+[22mConfiguration 
+Engine
+[41m[1m FAIL 
+[22m[49m tests/simple
+_check.test.ts[2m > 
+[22mSimple Audit & 
+Timeline Check
+[31m[1mDriverAdapterE
+rror[22m: deadlock 
+detected[39m
+[90m [2mΓ¥»[22m Pris
+maPgAdapter.onError ../
+../node_modules/.pnpm/@
+prisma+adapter-pg@7.4.1
+/node_modules/@prisma/a
+dapter-pg/dist/index.mj
+s:[2m651:11[22m[39m
+[90m [2mΓ¥»[22m Pris
+maPgAdapter.performIO .
+./../node_modules/.pnpm
+/@prisma+adapter-pg@7.4
+.1/node_modules/@prisma
+/adapter-pg/dist/index.
+mjs:[2m646:12[22m[39
+m
+[90m [2mΓ¥»[22m Pris
+maPgAdapter.queryRaw ..
+/../node_modules/.pnpm/
+@prisma+adapter-pg@7.4.
+1/node_modules/@prisma/
+adapter-pg/dist/index.m
+js:[2m566:30[22m[39m
+[90m [2mΓ¥»[22m 
+e.interpretNode src/gen
+erated/client/runtime/c
+lient.js:[2m15:44403[
+22m[39m
+[90m [2mΓ¥»[22m 
+e.interpretNode src/gen
+erated/client/runtime/c
+lient.js:[2m15:44843[
+22m[39m
+[90m [2mΓ¥»[22m 
+e.interpretNode src/gen
+erated/client/runtime/c
+lient.js:[2m15:46032[
+22m[39m
+[90m [2mΓ¥»[22m 
+e.run src/generated/cli
+ent/runtime/client.js:
+[2m15:43121[22m[39m
+[90m [2mΓ¥»[22m 
+execute src/generated/c
+lient/runtime/client.js
+:[2m61:815[22m[39m
+[90m [2mΓ¥»[22m 
+qt.request src/generate
+d/client/runtime/client
+.js:[2m62:2327[22m[3
+9m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[3/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/servic
+e.test.ts[2m > 
+[22mServices Module
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.service
+.deleteMany()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/serv
+ice.test.ts:16:30
+
+  13 
+  14 beforeAll(async 
+() => {
+  15     // Cleanup
+ΓåÆ 16     await prisma
+.service.deleteMany(
+Foreign key constraint 
+violated on the 
+constraint: `Appointmen
+t_serviceId_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/service.test.ts:[2m1
+6:9[22m[39m
+    [90m 14| [39m    
+[34mbeforeAll[39m([3
+5masync[39m () 
+[33m=>[39m {
+    [90m 15| [39m    
+    [90m// 
+Cleanup[39m
+    [90m 16| [39m    
+    [35mawait[39m pri
+sma[33m.[39mservice[
+33m.[39m[34mdeleteMan
+y[39m()[33m;[39m
+    [90m   | [39m    
+    [31m^[39m
+    [90m 17| [39m    
+    [35mawait[39m pri
+sma[33m.[39muser[33m
+.[39m[34mdeleteMany[
+39m()[33m;[39m
+    [90m 18| [39m    
+    [35mawait[39m pri
+sma[33m.[39mtenant[3
+3m.[39m[34mdeleteMany
+[39m()[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[4/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/staff.
+test.ts[2m > 
+[22mStaff Module
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.staff.d
+eleteMany()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/staf
+f.test.ts:22:28
+
+  19 await prisma.staff
+Break.deleteMany();
+  20 await prisma.weekl
+ySchedule.deleteMany();
+  21 await prisma.staff
+Service.deleteMany();
+ΓåÆ 22 await prisma.sta
+ff.deleteMany(
+Foreign key constraint 
+violated on the 
+constraint: `Appointmen
+t_staffId_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/staff.test.ts:[2m22:
+9[22m[39m
+    [90m 20| [39m    
+    [35mawait[39m pri
+sma[33m.[39mweeklySch
+edule[33m.[39m[34mde
+leteMany[39m()[33m;[
+39m
+    [90m 21| [39m    
+    [35mawait[39m pri
+sma[33m.[39mstaffServ
+ice[33m.[39m[34mdele
+teMany[39m()[33m;[39
+m
+    [90m 22| [39m    
+    [35mawait[39m pri
+sma[33m.[39mstaff[33
+m.[39m[34mdeleteMany
+[39m()[33m;[39m
+    [90m   | [39m    
+    [31m^[39m
+    [90m 23| [39m    
+    [35mawait[39m pri
+sma[33m.[39mservice[
+33m.[39m[34mdeleteMan
+y[39m()[33m;[39m
+    [90m 24| [39m    
+    [35mawait[39m pri
+sma[33m.[39muser[33m
+.[39m[34mdeleteMany[
+39m()[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[5/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/tenant
+-resolution.test.ts[2m
+ > [22mTenant 
+Resolution Middleware
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.tenant.
+deleteMany()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/tena
+nt-resolution.test.ts:1
+3:29
+
+  10 
+  11 beforeAll(async 
+() => {
+  12     // Cleanup
+ΓåÆ 13     await prisma
+.tenant.deleteMany(
+Foreign key constraint 
+violated on the 
+constraint: `User_tenan
+tId_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/tenant-resolution.tes
+t.ts:[2m13:9[22m[39m
+    [90m 11| [39m    
+[34mbeforeAll[39m([3
+5masync[39m () 
+[33m=>[39m {
+    [90m 12| [39m    
+    [90m// 
+Cleanup[39m
+    [90m 13| [39m    
+    [35mawait[39m pri
+sma[33m.[39mtenant[3
+3m.[39m[34mdeleteMany
+[39m()[33m;[39m
+    [90m   | [39m    
+    [31m^[39m
+    [90m 14| [39m
+    [90m 15| [39m    
+    tenantA 
+[33m=[39m 
+[35mawait[39m prisma
+[33m.[39mtenant[33m.
+[39m[34mcreate[39m({
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[6/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/tenant
+-resolution.test.ts[2m
+ > [22mTenant 
+Resolution Middleware
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.tenant.
+deleteMany()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/tena
+nt-resolution.test.ts:4
+2:29
+
+  39 });
+  40 
+  41 afterAll(async () 
+=> {
+ΓåÆ 42     await prisma
+.tenant.deleteMany(
+Foreign key constraint 
+violated on the 
+constraint: `Customer_t
+enantId_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/tenant-resolution.tes
+t.ts:[2m42:9[22m[39m
+    [90m 40| [39m
+    [90m 41| [39m    
+[34mafterAll[39m([35
+masync[39m () 
+[33m=>[39m {
+    [90m 42| [39m    
+    [35mawait[39m pri
+sma[33m.[39mtenant[3
+3m.[39m[34mdeleteMany
+[39m()[33m;[39m
+    [90m   | [39m    
+    [31m^[39m
+    [90m 43| [39m    
+})[33m;[39m
+    [90m 44| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[7/21]ΓÄ»[22m
+[39m
+
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[39m[1m[41m Failed 
+Tests 13 [49m[22m[31
+mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/audit_
+timeline.test.ts[2m > 
+[22mAudit & Timeline 
+Integration[2m > 
+[22mshould create a 
+timeline event when an 
+appointment is booked
+[31m[1mAssertionError
+[22m: expected 403 to 
+be 201 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 201[39m
+[31m+ 403[39m
+
+[36m [2mΓ¥»[22m test
+s/audit_timeline.test.t
+s:[2m100:28[22m[39m
+    [90m 98| [39m    
+        
+console.error('TEST 
+FAILURE BODY:', JSON.st
+ringify(res.bodΓÇª
+    [90m 99| [39m    
+    }
+    [90m100| [39m    
+    [34mexpect[39m(re
+s[33m.[39mstatus)[33
+m.[39m[34mtoBe[39m(
+[34m201[39m)[33m;[39
+m
+    [90m   | [39m    
+                       
+[31m^[39m
+    [90m101| [39m    
+    [35mconst[39m 
+appointmentId 
+[33m=[39m res[33m.[
+39mbody[33m.[39mid 
+[33m||[39m res[33m.
+[39mbody[33m.[39mappo
+intment[33m?.[39mid[
+33m;[39m
+    [90m102| [39m    
+    console.log("TEST 
+1 APPOINTMENT ID is:", 
+appointmentId, "Body 
+ΓÇª
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[8/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/audit_
+timeline.test.ts[2m > 
+[22mAudit & Timeline 
+Integration[2m > 
+[22mshould create a 
+timeline event and 
+audit log on status 
+change
+[31m[1mTypeError[22m
+: Cannot read 
+properties of null 
+(reading 'id')[39m
+[36m [2mΓ¥»[22m test
+s/audit_timeline.test.t
+s:[2m136:89[22m[39m
+    [90m134| [39m    
+            
+serviceId[33m,[39m
+    [90m135| [39m    
+            
+staffId[33m,[39m
+    [90m136| [39m    
+            
+customerId: (await pris
+ma.customer.findFirst({
+ where: ΓÇª
+    [90m   | [39m    
+                       
+                       
+                       
+               
+[31m^[39m
+    [90m137| [39m    
+            
+referenceId[33m:[39m 
+[32m'AUDIT-001'[39m[
+33m,[39m
+    [90m138| [39m    
+            startTimeUt
+c[33m:[39m 
+[35mnew[39m [33mDate
+[39m()[33m,[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»[9/21]ΓÄ»[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/audit_
+timeline.test.ts[2m > 
+[22mAudit & Timeline 
+Integration[2m > 
+[22mshould create 
+ADMIN_OVERRIDE event 
+when cancelling with 
+override
+[31m[1mTypeError[22m
+: Cannot read 
+properties of null 
+(reading 'id')[39m
+[36m [2mΓ¥»[22m test
+s/audit_timeline.test.t
+s:[2m190:89[22m[39m
+    [90m188| [39m    
+            
+serviceId[33m,[39m
+    [90m189| [39m    
+            
+staffId[33m,[39m
+    [90m190| [39m    
+            
+customerId: (await pris
+ma.customer.findFirst({
+ where: ΓÇª
+    [90m   | [39m    
+                       
+                       
+                       
+               
+[31m^[39m
+    [90m191| [39m    
+            
+referenceId[33m:[39m 
+[32m'AUDIT-OVERRIDE-00
+1'[39m[33m,[39m
+    [90m192| [39m    
+            
+startTimeUtc: new 
+Date(Date.now() + 10 * 
+60 * 1000), /ΓÇª
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[10/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/audit_
+timeline.test.ts[2m > 
+[22mAudit & Timeline 
+Integration[2m > 
+[22mshould not allow 
+deleting timeline 
+events via API 
+(regression check)
+[31m[1mAssertionError
+[22m: expected 403 to 
+be 404 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 404[39m
+[31m+ 403[39m
+
+[36m [2mΓ¥»[22m test
+s/audit_timeline.test.t
+s:[2m233:28[22m[39m
+    [90m231| [39m    
+        [33m.[39m[35
+mset[39m([32m'x-tenan
+t-id'[39m[33m,[39m 
+tenantId)[33m;[39m
+    [90m232| [39m
+    [90m233| [39m    
+    [34mexpect[39m(re
+s[33m.[39mstatus)[33
+m.[39m[34mtoBe[39m(
+[34m404[39m)[33m;[39
+m
+    [90m   | [39m    
+                       
+[31m^[39m
+    [90m234| [39m    
+})[33m;[39m
+    [90m235| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[11/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/audit_
+timeline.test.ts[2m > 
+[22mAudit & Timeline 
+Integration[2m > 
+[22mshould not fail 
+the main request if 
+audit logging fails 
+(resilience)
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.appoint
+ment.create()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/audi
+t_timeline.test.ts:241:
+47
+
+  238 const spy = 
+vi.spyOn(auditService, 
+'logEvent')
+  239     
+.mockRejectedValue(new 
+Error('Audit DB 
+Down'));
+  240 
+ΓåÆ 241 const appt = 
+await prisma.appointmen
+t.create(
+Foreign key constraint 
+violated on the 
+constraint: `Appointmen
+t_tenantId_fkey`[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/audit_timeline.test.t
+s:[2m241:22[22m[39m
+    [90m239| [39m    
+        [33m.[39m[34
+mmockRejectedValue[39m
+([35mnew[39m [33mErr
+or[39m([32m'Audit DB 
+Down'[39m))[33m;[39m
+    [90m240| [39m
+    [90m241| [39m    
+    [35mconst[39m 
+appt [33m=[39m 
+[35mawait[39m prisma
+[33m.[39mappointment[
+33m.[39m[34mcreate[3
+9m({
+    [90m   | [39m    
+                 
+[31m^[39m
+    [90m242| [39m    
+        
+data[33m:[39m {
+    [90m243| [39m    
+            
+tenantId[33m,[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[12/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/consen
+t.test.ts[2m > 
+[22mConsent Capture 
+Module[2m > 
+[22mshould reject 
+booking without 
+consent flag
+[31m[1mAssertionError
+[22m: expected 403 to 
+be 400 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 403[39m
+
+[36m [2mΓ¥»[22m test
+s/consent.test.ts:[2m7
+2:33[22m[39m
+    [90m 70| [39m    
+        })[33m;[39m
+    [90m 71| [39m
+    [90m 72| [39m    
+    [34mexpect[39m(re
+sponse[33m.[39mstatus
+)[33m.[39m[34mtoBe[
+39m([34m400[39m)[33m
+;[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m 73| [39m    
+    [34mexpect[39m(re
+sponse[33m.[39mbody[
+33m.[39msuccess)[33m.
+[39m[34mtoBe[39m([3
+5mfalse[39m)[33m;[39
+m
+    [90m 74| [39m    
+})[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[13/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/consen
+t.test.ts[2m > 
+[22mConsent Capture 
+Module[2m > 
+[22mshould create 
+consent record on 
+successful booking
+[31m[1mAssertionError
+[22m: expected 403 to 
+be 201 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 201[39m
+[31m+ 403[39m
+
+[36m [2mΓ¥»[22m test
+s/consent.test.ts:[2m9
+5:33[22m[39m
+    [90m 93| [39m    
+        })[33m;[39m
+    [90m 94| [39m
+    [90m 95| [39m    
+    [34mexpect[39m(re
+sponse[33m.[39mstatus
+)[33m.[39m[34mtoBe[
+39m([34m201[39m)[33m
+;[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m 96| [39m
+    [90m 97| [39m    
+    [90m// Verify 
+record in DB[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[14/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/consen
+t.test.ts[2m > 
+[22mConsent Capture 
+Module[2m > 
+[22mshould snapshot 
+the historical policy 
+text even if profile 
+changes later
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.busines
+sProfile.update()` 
+invocation in
+D:/realworkstudio/booke
+ase/apps/api/tests/cons
+ent.test.ts:132:38
+
+  129     });
+  130 
+  131 // 2. Change 
+policy in profile
+ΓåÆ 132 await prisma.bu
+sinessProfile.update(
+An operation failed 
+because it depends on 
+one or more records 
+that were required but 
+not found. No record 
+was found for an 
+update.[39m
+[90m [2mΓ¥»[22m 
+zr.handleRequestError s
+rc/generated/client/run
+time/client.js:[2m69:8
+286[22m[39m
+[90m [2mΓ¥»[22m zr.h
+andleAndLogRequestError
+ src/generated/client/r
+untime/client.js:[2m69
+:7581[22m[39m
+[90m [2mΓ¥»[22m 
+zr.request src/generate
+d/client/runtime/client
+.js:[2m69:7288[22m[3
+9m
+[90m [2mΓ¥»[22m a sr
+c/generated/client/runt
+ime/client.js:[2m79:58
+16[22m[39m
+[36m [2mΓ¥»[22m test
+s/consent.test.ts:[2m1
+32:9[22m[39m
+    [90m130| [39m
+    [90m131| [39m    
+    [90m// 2. Change 
+policy in profile[39m
+    [90m132| [39m    
+    [35mawait[39m pri
+sma[33m.[39mbusinessP
+rofile[33m.[39m[34mu
+pdate[39m({
+    [90m   | [39m    
+    [31m^[39m
+    [90m133| [39m    
+        
+where[33m:[39m { 
+tenantId[33m:[39m 
+tenantA[33m.[39mid 
+}[33m,[39m
+    [90m134| [39m    
+        
+data[33m:[39m { 
+policyText[33m:[39m 
+[32m'New policy 
+v2'[39m }[33m,[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[15/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould create a 
+weekly series of 4 
+appointments on 
+correct 4 Mondays
+[31m[1mAssertionError
+[22m: expected 500 to 
+be 201 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 201[39m
+[31m+ 500[39m
+
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m71:28[22m
+[39m
+    [90m 69| [39m    
+        
+console.error('Test 
+Failed with body:', 
+JSON.stringify(resΓÇª
+    [90m 70| [39m    
+    }
+    [90m 71| [39m    
+    [34mexpect[39m(re
+s[33m.[39mstatus)[33
+m.[39m[34mtoBe[39m(
+[34m201[39m)[33m;[39
+m
+    [90m   | [39m    
+                       
+[31m^[39m
+    [90m 72| [39m    
+    [34mexpect[39m(re
+s[33m.[39mbody[33m.
+[39mappointments)[33m.
+[39m[34mtoHaveLength
+[39m([34m4[39m)[33m;
+[39m
+    [90m 73| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[16/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould return 
+conflict error if one 
+slot in series is taken
+[31m[1mDriverAdapterE
+rror[22m: deadlock 
+detected[39m
+[90m [2mΓ¥»[22m Pris
+maPgAdapter.onError ../
+../node_modules/.pnpm/@
+prisma+adapter-pg@7.4.1
+/node_modules/@prisma/a
+dapter-pg/dist/index.mj
+s:[2m651:11[22m[39m
+[90m [2mΓ¥»[22m Pris
+maPgAdapter.performIO .
+./../node_modules/.pnpm
+/@prisma+adapter-pg@7.4
+.1/node_modules/@prisma
+/adapter-pg/dist/index.
+mjs:[2m646:12[22m[39
+m
+[90m [2mΓ¥»[22m Pris
+maPgAdapter.queryRaw ..
+/../node_modules/.pnpm/
+@prisma+adapter-pg@7.4.
+1/node_modules/@prisma/
+adapter-pg/dist/index.m
+js:[2m566:30[22m[39m
+[90m [2mΓ¥»[22m 
+e.interpretNode src/gen
+erated/client/runtime/c
+lient.js:[2m15:44403[
+22m[39m
+[90m [2mΓ¥»[22m 
+e.interpretNode src/gen
+erated/client/runtime/c
+lient.js:[2m15:44843[
+22m[39m
+[90m [2mΓ¥»[22m 
+e.interpretNode src/gen
+erated/client/runtime/c
+lient.js:[2m15:46032[
+22m[39m
+[90m [2mΓ¥»[22m 
+e.run src/generated/cli
+ent/runtime/client.js:
+[2m15:43121[22m[39m
+[90m [2mΓ¥»[22m 
+execute src/generated/c
+lient/runtime/client.js
+:[2m61:815[22m[39m
+[90m [2mΓ¥»[22m 
+qt.request src/generate
+d/client/runtime/client
+.js:[2m62:2327[22m[3
+9m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[17/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould cancel 
+only one occurrence 
+with scope=single
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'1')[39m
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m148:33[22
+m[39m
+    [90m146| [39m    
+        })[33m;[39m
+    [90m147| [39m
+    [90m148| [39m    
+    [35mconst[39m 
+app2Id [33m=[39m res
+[33m.[39mbody[33m.[3
+9mappointments[[34m1[
+39m][33m.[39mid[33m;
+[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m149| [39m
+    [90m150| [39m    
+    [35mconst[39m 
+cancelRes [33m=[39m 
+[35mawait[39m 
+[34mrequest[39m(app)
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[18/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould cancel all 
+future occurrences 
+with scope=series
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'2')[39m
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m183:33[22
+m[39m
+    [90m181| [39m    
+        })[33m;[39m
+    [90m182| [39m
+    [90m183| [39m    
+    [35mconst[39m 
+app3Id [33m=[39m res
+[33m.[39mbody[33m.[3
+9mappointments[[34m2[
+39m][33m.[39mid[33m;
+[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m184| [39m
+    [90m185| [39m    
+    [35mconst[39m 
+cancelRes [33m=[39m 
+[35mawait[39m 
+[34mrequest[39m(app)
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[19/21]ΓÄ»[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m tests/recurr
+ing_appointment.test.ts
+[2m > [22mRecurring 
+Appointment 
+Integration[2m > 
+[22mshould reschedule 
+all future occurrences 
+with scope=series
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'0')[39m
+[36m [2mΓ¥»[22m test
+s/recurring_appointment
+.test.ts:[2m217:33[22
+m[39m
+    [90m215| [39m    
+        })[33m;[39m
+    [90m216| [39m
+    [90m217| [39m    
+    [35mconst[39m 
+app1Id [33m=[39m res
+[33m.[39mbody[33m.[3
+9mappointments[[34m0[
+39m][33m.[39mid[33m;
+[39m
+    [90m   | [39m    
+                       
+     [31m^[39m
+    [90m218| [39m    
+    const newStart = 
+new 
+Date(start.getTime() + 
+2 * 60 * 60 * 1000ΓÇª
+    [90m219| [39m    
+    [35mconst[39m 
+newEnd [33m=[39m 
+[35mnew[39m [33mDate
+[39m(newStart[33m.[3
+9m[34mgetTime[39m() 
+[33m+[39m 
+[34m60[39m 
+[33m*[39m 
+[34m60[39m 
+[33m*[39m [34m1000[
+39m)[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[20/21]ΓÄ»[22m[
+39m
+
+
+[2m Test Files [22m [1m[31m10 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[31m13 failed[39m[22m[2m | [22m[1m[32m19 passed[39m[22m[2m | [22m[33m38 skipped[39m[90m (70)[39m
+[2m   Start at [22m 15:51:48
+[2m   Duration [22m 24.80s[2m (transform 9.61s, setup 0ms, import 125.68s, tests 105.95s, environment 10ms)[22m
+
+ΓÇëELIFECYCLEΓÇë Test failed. See above for more details.

@@ -1,40 +1,40 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { prisma } from '../../lib/prisma';
 import { env } from '../../config/env';
 import { LoginInput } from './auth.schema';
-import { User } from '@prisma/client';
+import { User, UserRole } from '../../generated/client';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import { AppError } from '../../lib/errors';
 
 export class AuthService {
     private readonly saltRounds = 12;
 
-    async login(tenantId: string, { email, password }: LoginInput) {
+    async login(tenantId: string, input: LoginInput) {
+        // Since schema doesn't have tenantSlug in User, we check if user exists in that tenant
         const user = await prisma.user.findFirst({
             where: {
                 tenantId,
-                email,
-                isActive: true,
-            },
-        }) as User | null;
+                email: input.email,
+            }
+        });
 
-        if (!user) {
-            throw this.invalidCredentialsError();
+        if (!user || !user.passwordHash) {
+            throw new AppError('Invalid credentials', 401, 'UNAUTHORIZED');
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-
-        if (!isPasswordValid) {
-            throw this.invalidCredentialsError();
+        const isValid = await bcrypt.compare(input.password, user.passwordHash);
+        if (!isValid) {
+            throw new AppError('Invalid credentials', 401, 'UNAUTHORIZED');
         }
 
         const token = jwt.sign(
             {
-                sub: user.id,
-                tenantId: user.tenantId,
+                sub: user.id, // Using 'sub' to match AuthMiddleware expected decoded token
                 role: user.role,
+                tenantId: user.tenantId
             },
             env.JWT_SECRET,
-            { expiresIn: '8h' }
+            { expiresIn: '24h' }
         );
 
         return {
@@ -43,14 +43,10 @@ export class AuthService {
                 id: user.id,
                 email: user.email,
                 role: user.role,
-            },
+                tenantId: user.tenantId
+            }
         };
     }
-
-    private invalidCredentialsError() {
-        const error = new Error('Invalid credentials');
-        (error as any).code = 'UNAUTHORIZED';
-        (error as any).status = 401;
-        return error;
-    }
 }
+
+export const authService = new AuthService();

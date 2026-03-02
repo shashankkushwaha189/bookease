@@ -1,0 +1,107 @@
+﻿
+> @bookease/api@1.0.0 test D:\realworkstudio\bookease\apps\api
+> vitest run "tests/audit_timeline.test.ts"
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/realworkstudio/bookease/apps/api[39m
+
+[90mstdout[2m | tests/audit_timeline.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ≡ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+node.exe : Sourcemap 
+for "D:/realworkstudio/
+bookease/node_modules/.
+pnpm/node-cron@4.2.1/no
+de_modules/node-cron/di
+st/esm/node-cron.js" 
+points to missing 
+source files
+At C:\Users\shash\AppDa
+ta\Roaming\npm\pnpm.ps1
+:24 char:5
++     & "node$exe"  "$b
+asedir/node_modules/pnp
+m/bin/pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Sourcemap for   
+  "...ng source fil    
+es:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Creating event for appt: cf021f41-a489-456f-a9e8-b09b1e9e6812, type: CREATED
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Created event ID: f887988d-f681-45a7-857d-883ad752ce49
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39mTEST 1 APPOINTMENT ID is: cf021f41-a489-456f-a9e8-b09b1e9e6812 Body was: {
+  id: [32m'cf021f41-a489-456f-a9e8-b09b1e9e6812'[39m,
+  tenantId: [32m'2b93f3fb-e7d4-45d1-a563-5e9a3ce81999'[39m,
+  serviceId: [32m'65eadd6f-f8e3-455c-8c59-cf160897b3cd'[39m,
+  staffId: [32m'7a3610a7-6a29-438d-9241-232cc7e7e75e'[39m,
+  customerId: [32m'99fafbe2-01e0-44c7-92d4-a5804a9f23a1'[39m,
+  referenceId: [32m'BK-2026-00001'[39m,
+  startTimeUtc: [32m'2026-03-02T10:18:18.879Z'[39m,
+  endTimeUtc: [32m'2026-03-02T10:48:18.879Z'[39m,
+  status: [32m'BOOKED'[39m,
+  notes: [1mnull[22m,
+  createdBy: [1mnull[22m,
+  createdAt: [32m'2026-03-01T10:18:19.072Z'[39m,
+  updatedAt: [32m'2026-03-01T10:18:19.072Z'[39m,
+  seriesId: [1mnull[22m,
+  seriesIndex: [1mnull[22m
+}
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Fetching timeline for appt: cf021f41-a489-456f-a9e8-b09b1e9e6812, tenant: 2b93f3fb-e7d4-45d1-a563-5e9a3ce81999
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event when an appointment is booked
+[22m[39m[TimelineService] Found 1 events
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Creating event for appt: cafe40bb-1a7c-41ba-930c-6f251f4c055d, type: CONFIRMED
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Created event ID: ec663de4-4aa8-4bdd-95cf-a8006143aebb
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Fetching timeline for appt: cafe40bb-1a7c-41ba-930c-6f251f4c055d, tenant: 2b93f3fb-e7d4-45d1-a563-5e9a3ce81999
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create a timeline event and audit log on status change
+[22m[39m[TimelineService] Found 1 events
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Creating event for appt: 8ead2f1f-4a57-4305-9b7e-e2b155e52cbb, type: ADMIN_OVERRIDE
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Created event ID: 345ce262-5b50-47de-927e-f0f29c337b72
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Fetching timeline for appt: 8ead2f1f-4a57-4305-9b7e-e2b155e52cbb, tenant: 2b93f3fb-e7d4-45d1-a563-5e9a3ce81999
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould create ADMIN_OVERRIDE event when cancelling with override
+[22m[39m[TimelineService] Found 1 events
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould not fail the main request if audit logging fails (resilience)
+[22m[39m[TimelineService] Creating event for appt: 9793a8a7-9a51-4bf6-a76a-bc6871b25712, type: CONFIRMED
+
+[90mstdout[2m | tests/audit_timeline.test.ts[2m > [22m[2mAudit & Timeline Integration[2m > [22m[2mshould not fail the main request if audit logging fails (resilience)
+[22m[39m[TimelineService] Created event ID: 62045016-1cd4-4255-a904-5056cc18f92a
+
+ [32mΓ£ô[39m tests/audit_timeline.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2517[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should create a timeline event when an appointment is booked [33m 505[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should create a timeline event and audit log on status change [33m 351[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 15:48:11
+[2m   Duration [22m 8.91s[2m (transform 1.03s, setup 0ms, import 5.78s, tests 2.52s, environment 0ms)[22m
+

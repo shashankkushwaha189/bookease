@@ -1,0 +1,3 @@
+﻿src/modules/auth/auth.controller.ts(9,68): error TS2554: Expected 1 arguments, but got 2.
+tests/staff.test.ts(19,22): error TS2339: Property 'break' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+tests/staff.test.ts(67,22): error TS2339: Property 'break' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.

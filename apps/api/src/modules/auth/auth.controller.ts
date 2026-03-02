@@ -1,12 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from './auth.service';
+import { AppError } from '../../lib/errors';
 
 export class AuthController {
     constructor(private service: AuthService) { }
 
     login = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = await this.service.login(req.tenantId!, req.body);
+            const tenantId = req.header('X-Tenant-ID');
+            if (!tenantId) {
+                return next(new AppError('X-Tenant-ID header is missing', 400, 'TENANT_ID_REQUIRED'));
+            }
+            const result = await this.service.login(tenantId, req.body);
             res.json({
                 success: true,
                 data: result,

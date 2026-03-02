@@ -1,0 +1,1 @@
+﻿tests/staff.test.ts(67,22): error TS2339: Property 'break' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.

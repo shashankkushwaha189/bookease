@@ -5,6 +5,7 @@ import { app } from '../src/app';
 import { prisma } from '../src/lib/prisma';
 import jwt from 'jsonwebtoken';
 import { env } from '../src/config/env';
+import { cleanupDatabase } from './helpers';
 
 describe('Auth & RBAC Module', () => {
     let tenantA: any;
@@ -14,10 +15,7 @@ describe('Auth & RBAC Module', () => {
     const password = 'Password@123';
 
     beforeAll(async () => {
-        // Cleanup
-        await prisma.user.deleteMany();
-        await prisma.businessProfile.deleteMany();
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
 
         tenantA = await prisma.tenant.create({
             data: {
@@ -57,8 +55,7 @@ describe('Auth & RBAC Module', () => {
     });
 
     afterAll(async () => {
-        await prisma.user.deleteMany();
-        await prisma.tenant.deleteMany();
+        await cleanupDatabase();
     });
 
     describe('POST /api/auth/login', () => {
@@ -164,6 +161,9 @@ describe('Auth & RBAC Module', () => {
                 .post('/api/auth/login')
                 .set('X-Tenant-ID', tenantA.id)
                 .send({ email: 'staff@tenant-a.com', password });
+
+            expect(loginStaff.body).toHaveProperty('data');
+            expect(loginStaff.body.data).toHaveProperty('token');
 
             const staffToken = loginStaff.body.data.token;
             const decoded = jwt.decode(staffToken) as any;

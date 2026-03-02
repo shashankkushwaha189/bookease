@@ -1,0 +1,103 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/realworkstudio/bookease/apps/api[39m
+
+[90mstdout[2m | tests/policy_engine.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+
+node.exe : Sourcemap 
+for "D:/realworkstudio/
+bookease/node_modules/.
+pnpm/node-cron@4.2.1/no
+de_modules/node-cron/di
+st/esm/node-cron.js" 
+points to missing 
+source files
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Users\shash\AppData
+\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Sourcemap for   
+  "...ng source fil    
+es:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+[90mstderr[2m | tests
+/policy_engine.test.ts
+[2m > [22m[2mPolicy 
+Engine Integration[2m 
+> [22m[2mshould 
+reject staff 
+cancellation within 
+24h window
+[22m[39mCancel 
+Error: Error: 
+Cancellation window 
+has closed
+    at AppointmentServi
+ce.cancelAppointment (D
+:/realworkstudio/bookea
+se/apps/api/src/modules
+/appointment/appointmen
+t.service.ts:277:19)
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at cancel (D:/realw
+orkstudio/bookease/apps
+/api/src/modules/appoin
+tment/appointment.contr
+oller.ts:189:28)
+
+ [32mΓ£ô[39m tests/policy_engine.test.ts[2m > [22mPolicy Engine Integration[2m > [22mshould reject staff cancellation within 24h window[32m 220[2mms[22m[39m
+[90mstderr[2m | tests
+/policy_engine.test.ts
+[2m > [22m[2mPolicy 
+Engine Integration[2m 
+> [22m[2mshould 
+reject reschedule if 
+limit reached 
+(maxReschedules: 1)
+[22m[39mReschedule 
+Error: Error: 
+Reschedule limit 
+reached
+    at AppointmentServi
+ce.rescheduleAppointmen
+t (D:/realworkstudio/bo
+okease/apps/api/src/mod
+ules/appointment/appoin
+tment.service.ts:305:19
+)
+[90m    at processTick
+sAndRejections (node:in
+ternal/process/task_que
+ues:105:5)[39m
+    at reschedule (D:/r
+ealworkstudio/bookease/
+apps/api/src/modules/ap
+pointment/appointment.c
+ontroller.ts:154:28)
+
+ [32mΓ£ô[39m tests/policy_engine.test.ts[2m > [22mPolicy Engine Integration[2m > [22mshould allow admin override for cancellation within window[32m 74[2mms[22m[39m
+ [32mΓ£ô[39m tests/policy_engine.test.ts[2m > [22mPolicy Engine Integration[2m > [22mshould reject reschedule if limit reached (maxReschedules: 1)[32m 37[2mms[22m[39m
+[90mstdout[2m | tests/policy_engine.test.ts[2m > [22m[2mPolicy Engine Integration[2m > [22m[2mshould mark past confirmed appointments as NO_SHOW via background job
+[22m[39mAppointment 27c35289-9fe5-4c5e-a0d6-b2c3b0ff0727 marked as NO_SHOW
+
+ [32mΓ£ô[39m tests/policy_engine.test.ts[2m > [22mPolicy Engine Integration[2m > [22mshould mark past confirmed appointments as NO_SHOW via background job[32m 23[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 11:44:06
+[2m   Duration [22m 3.45s[2m (transform 605ms, setup 0ms, import 2.64s, tests 567ms, environment 0ms)[22m
+

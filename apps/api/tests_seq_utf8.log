@@ -1,0 +1,81 @@
+﻿node.exe : file:///D:/r
+ealworkstudio/bookease/
+node_modules/.pnpm/vite
+st@4.0.18_@types+node@2
+5.3.1_jiti@2.6.1/node_m
+odules/vitest/dist/chun
+ks/cac.DVeoLl0M.js:404
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Users\shash\AppData
+\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (file:///D:/re   
+ al...DVeoLl0M.js:4    
+04:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+          throw new 
+CACError(`Unknown 
+option \`${name.length 
+> 1 ? `--${name}` : 
+`-${name}`}\``);
+                ^
+
+CACError: Unknown 
+option `--poolOptions`
+    at Command.checkUnk
+nownOptions (file:///D:
+/realworkstudio/bookeas
+e/node_modules/.pnpm/vi
+test@4.0.18_@types+node
+@25.3.1_jiti@2.6.1/node
+_modules/vitest/dist/ch
+unks/cac.DVeoLl0M.js:40
+4:17)
+    at 
+CAC.runMatchedCommand (
+file:///D:/realworkstud
+io/bookease/node_module
+s/.pnpm/vitest@4.0.18_@
+types+node@25.3.1_jiti@
+2.6.1/node_modules/vite
+st/dist/chunks/cac.DVeo
+Ll0M.js:604:13)
+    at CAC.parse (file:
+///D:/realworkstudio/bo
+okease/node_modules/.pn
+pm/vitest@4.0.18_@types
++node@25.3.1_jiti@2.6.1
+/node_modules/vitest/di
+st/chunks/cac.DVeoLl0M.
+js:545:12)
+    at file:///D:/realw
+orkstudio/bookease/node
+_modules/.pnpm/vitest@4
+.0.18_@types+node@25.3.
+1_jiti@2.6.1/node_modul
+es/vitest/dist/cli.js:2
+8:13
+    at ModuleJob.run (n
+ode:internal/modules/es
+m/module_job:345:25)
+    at async onImport.t
+racePromise.__proto__ (
+node:internal/modules/e
+sm/loader:665:26)
+    at async asyncRunEn
+tryPointWithESMLoader (
+node:internal/modules/r
+un_main:117:5)
+
+Node.js v22.20.0

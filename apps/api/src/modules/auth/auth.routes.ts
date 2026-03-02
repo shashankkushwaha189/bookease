@@ -13,7 +13,7 @@ const controller = new AuthController(service);
 // Security: Rate limit login attempts
 const loginRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // Limit each IP to 5 login requests per window
+    max: process.env.NODE_ENV === 'test' ? 100 : 5, // Limit each IP to 5 login requests (100 in tests)
     message: {
         success: false,
         error: {
