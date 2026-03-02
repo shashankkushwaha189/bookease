@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit2, Trash2, Scissors, ChevronUp, ChevronDown } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import Skeleton from '../../components/ui/Skeleton';
 import ServiceModal from '../../components/ServiceModal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import { useToastStore } from '../../stores/toast.store';

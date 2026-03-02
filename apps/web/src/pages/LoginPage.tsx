@@ -46,6 +46,15 @@ const LoginPage: React.FC = () => {
     }
   }, [isAuthenticated, user, navigate, searchParams]);
 
+  // Ensure tenant ID is set for login
+  useEffect(() => {
+    const DEMO_TENANT_ID = '259ccbbf-2587-4eee-a214-43713a1f0bde';
+    const { tenantId, setTenantId } = useTenantStore.getState();
+    if (!tenantId) {
+      setTenantId(DEMO_TENANT_ID);
+    }
+  }, []);
+
   const onSubmit = async (data: LoginFormData) => {
     setSubmitError('');
     

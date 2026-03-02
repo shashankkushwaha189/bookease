@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: bookease-api
+    env: node
+    buildCommand: cd .. && pnpm install && cd apps/api && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://bookease.vercel.app
+        sync: false
+      - key: PORT
+        value: 10000
+databases:
+  - name: bookease-db
+    databaseName: bookease
+    user: bookease

@@ -1,27 +1,41 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import BookingPage from './pages/public/BookingPage';
-import BookingConfirmPage from './pages/BookingConfirmPage';
-import DashboardPage from './pages/DashboardPage';
-import AppointmentsPage from './pages/AppointmentsPage';
-import CalendarPage from './pages/CalendarPage';
-import ServicesPage from './pages/ServicesPage';
-import StaffPage from './pages/StaffPage';
-import CustomersPage from './pages/CustomersPage';
-import ReportsPage from './pages/ReportsPage';
-import ConfigPage from './pages/ConfigPage';
-import ImportPage from './pages/ImportPage';
-import BusinessProfilePage from './pages/admin/BusinessProfilePage';
-import MySchedulePage from './pages/MySchedulePage';
-import MyAppointmentsPage from './pages/MyAppointmentsPage';
-import NotFoundPage from './pages/NotFoundPage';
-import ForbiddenPage from './pages/ForbiddenPage';
+
+// Lazy load all pages for better performance
+const LoginPage = React.lazy(() => import('./pages/LoginPage'));
+const BookingPage = React.lazy(() => import('./pages/public/BookingPage'));
+const BookingConfirmPage = React.lazy(() => import('./pages/BookingConfirmPage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const AppointmentsPage = React.lazy(() => import('./pages/AppointmentsPage'));
+const CalendarPage = React.lazy(() => import('./pages/CalendarPage'));
+const ServicesPage = React.lazy(() => import('./pages/ServicesPage'));
+const StaffPage = React.lazy(() => import('./pages/StaffPage'));
+const CustomersPage = React.lazy(() => import('./pages/CustomersPage'));
+const ReportsPage = React.lazy(() => import('./pages/ReportsPage'));
+const ConfigPage = React.lazy(() => import('./pages/ConfigPage'));
+const ImportPage = React.lazy(() => import('./pages/ImportPage'));
+const BusinessProfilePage = React.lazy(() => import('./pages/admin/BusinessProfilePage'));
+const MySchedulePage = React.lazy(() => import('./pages/MySchedulePage'));
+const MyAppointmentsPage = React.lazy(() => import('./pages/MyAppointmentsPage'));
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
+const ForbiddenPage = React.lazy(() => import('./pages/ForbiddenPage'));
+
+// Layout Components
 import PublicLayout from './components/layout/PublicLayout';
 import AdminLayout from './components/layout/AdminLayout';
-import ProtectedRoute from './components/ProtectedRoute';
 
-// Complete router with all pages
+// Route Components
+import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
+
+// Loading component for lazy loading
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
+
+// Production-ready router with lazy loading and error boundaries
 const router = createBrowserRouter([
   {
     path: '/',
@@ -30,25 +44,37 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: (
-      <PublicLayout>
-        <LoginPage />
-      </PublicLayout>
+      <Suspense fallback={<PageLoader />}>
+        <PublicLayout>
+          <ErrorBoundary>
+            <LoginPage />
+          </ErrorBoundary>
+        </PublicLayout>
+      </Suspense>
     ),
   },
   {
     path: '/:tenantSlug/book',
     element: (
-      <PublicLayout>
-        <BookingPage />
-      </PublicLayout>
+      <Suspense fallback={<PageLoader />}>
+        <PublicLayout>
+          <ErrorBoundary>
+            <BookingPage />
+          </ErrorBoundary>
+        </PublicLayout>
+      </Suspense>
     ),
   },
   {
     path: '/:tenantSlug/book/confirm',
     element: (
-      <PublicLayout>
-        <BookingConfirmPage />
-      </PublicLayout>
+      <Suspense fallback={<PageLoader />}>
+        <PublicLayout>
+          <ErrorBoundary>
+            <BookingConfirmPage />
+          </ErrorBoundary>
+        </PublicLayout>
+      </Suspense>
     ),
   },
   {
@@ -65,43 +91,103 @@ const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <DashboardPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <DashboardPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'business-profile',
-        element: <BusinessProfilePage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <BusinessProfilePage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'appointments',
-        element: <AppointmentsPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <AppointmentsPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'calendar',
-        element: <CalendarPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <CalendarPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'services',
-        element: <ServicesPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <ServicesPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'staff',
-        element: <StaffPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <StaffPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'customers',
-        element: <CustomersPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <CustomersPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'reports',
-        element: <ReportsPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <ReportsPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'config',
-        element: <ConfigPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <ConfigPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'import',
-        element: <ImportPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <ImportPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
     ],
   },
@@ -119,21 +205,45 @@ const router = createBrowserRouter([
       },
       {
         path: 'schedule',
-        element: <MySchedulePage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <MySchedulePage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
       {
         path: 'appointments',
-        element: <MyAppointmentsPage />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <MyAppointmentsPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
       },
     ],
   },
   {
     path: '/403',
-    element: <ForbiddenPage />,
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <ErrorBoundary>
+          <ForbiddenPage />
+        </ErrorBoundary>
+      </Suspense>
+    ),
   },
   {
     path: '*',
-    element: <NotFoundPage />,
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <ErrorBoundary>
+          <NotFoundPage />
+        </ErrorBoundary>
+      </Suspense>
+    ),
   },
 ]);
 

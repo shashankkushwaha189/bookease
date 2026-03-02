@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { applyTenantTheme } from '../utils/theme';
 import { BusinessProfile } from '../types/tenant';
-import api from '../api/client'; // Notice this will be built next
+import api from '../api/client';
 
 interface TenantState {
     tenantId: string | null;
@@ -26,16 +26,15 @@ export const useTenantStore = create<TenantState>((set, get) => ({
         if (!tenantId) return;
 
         try {
-            const response = await api.get<{ data: BusinessProfile }>('/api/public/profile');
-            const profile = response.data.data;
+            const response = await api.get<BusinessProfile>('/api/public/profile');
+            const profile = response.data;
 
-            // Inject CSS variables directly into DOM root on load
             applyTenantTheme(profile.brandColor, profile.accentColor);
 
             set({ businessProfile: profile, themeLoaded: true, isError: false });
         } catch (e) {
             console.error('Failed to load Tenant profile:', e);
-            set({ isError: true, themeLoaded: true }); // Still mark loaded to prevent infinite spinners
+            set({ isError: true, themeLoaded: true });
         }
     }
 }));
