@@ -6,8 +6,8 @@
     "scripts": {
         "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
         "build": "tsc --build",
-        "start": "cd dist && npm install --production && node index.js",
-        "postbuild": "prisma generate && npx copyfiles -u 1 'node_modules/@prisma/**/*' dist/",
+        "start": "node dist/index.js",
+        "postbuild": "prisma generate && npx copyfiles -u 1 'node_modules/**/*' dist/",
         "prisma:generate": "prisma generate",
         "prisma:migrate": "prisma migrate dev",
         "db:seed": "ts-node prisma/seed.ts",
