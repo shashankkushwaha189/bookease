@@ -19,7 +19,7 @@
     "dependencies": {
         "@bookease/logger": "workspace:*",
         "@bookease/types": "workspace:*",
-        "@prisma/client": "latest",
+        "@prisma/client": "^6.19.2",
         "bcrypt": "^6.0.0",
         "compression": "latest",
         "cors": "latest",
@@ -51,7 +51,7 @@
         "@vitest/coverage-v8": "latest",
         "copyfiles": "^2.4.1",
         "dotenv": "latest",
-        "prisma": "latest",
+        "prisma": "^6.19.2",
         "supertest": "latest",
         "ts-node": "^10.9.2",
         "ts-node-dev": "latest",

@@ -1,11 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { Pool } from 'pg';
 import { logger } from '@bookease/logger';
 import { env } from '../config/env';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
-
-const pool = new Pool({ connectionString: env.DATABASE_URL });
 
 export const prisma =
     globalForPrisma.prisma ||
