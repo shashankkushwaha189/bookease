@@ -161,6 +161,8 @@ model StaffTimeOff {
   createdAt DateTime  @default(now())
 
   staff Staff @relation(fields: [staffId], references: [id])
+
+  @@index([staffId, date])
 }
 
 model Appointment {
@@ -193,6 +195,8 @@ model Appointment {
   @@index([tenantId, startTimeUtc])
   @@index([referenceId])
   @@index([status, createdAt])
+  @@index([tenantId, status])
+  @@index([tenantId, customerId])
 }
 
 enum AppointmentStatus {
@@ -261,6 +265,8 @@ model RecurringAppointmentSeries {
   tenant              Tenant               @relation(fields: [tenantId], references: [id])
   appointments        Appointment[]
   appointmentArchives AppointmentArchive[]
+
+  @@index([tenantId])
 }
 
 enum RecurringFrequency {
@@ -362,6 +368,8 @@ model AppointmentArchive {
   @@index([tenantId, staffId, startTimeUtc])
   @@index([tenantId, startTimeUtc])
   @@index([referenceId])
+  @@index([status, createdAt])
+  @@index([tenantId, status])
 }
 
 model ApiToken {
