@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  output          = "../dist/generated/client"
+  output          = "../src/generated/client"
   previewFeatures = ["driverAdapters"]
 }
 
