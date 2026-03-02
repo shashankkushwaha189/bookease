@@ -2,7 +2,12 @@ import { z } from 'zod';
 import dotenv from 'dotenv';
 import path from 'path';
 
+// Load .env file if it exists, but don't fail if it doesn't
 dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+
+// Debug logging for PORT
+console.log('🔍 Debug - process.env.PORT:', process.env.PORT);
+console.log('🔍 Debug - process.env:', Object.keys(process.env).filter(k => k.includes('PORT')));
 
 const envSchema = z.object({
     PORT: z.coerce.number().default(3000),
@@ -20,3 +25,6 @@ if (!envParseResult.success) {
 }
 
 export const env = envParseResult.data;
+
+// Debug logging for final env
+console.log('🔍 Debug - env.PORT:', env.PORT);
