@@ -37,9 +37,13 @@ app.use(correlationIdMiddleware);
 // Rate Limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 1000, // Increased from 100 to 1000 for development
     standardHeaders: true,
     legacyHeaders: false,
+    skip: (req) => {
+        // Skip rate limiting for development/demo
+        return env.NODE_ENV === 'development' || !!req.headers['user-agent']?.includes('Mozilla');
+    },
     message: {
         success: false,
         error: {
