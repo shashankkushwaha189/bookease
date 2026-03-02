@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.availabilityRepository = exports.AvailabilityRepository = void 0;
 const prisma_1 = require("../../lib/prisma");
-const client_1 = require("../../generated/client");
+const client_1 = require("@prisma/client");
 const date_fns_tz_1 = require("date-fns-tz");
 class AvailabilityRepository {
     async getService(serviceId, tenantId) {

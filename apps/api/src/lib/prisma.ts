@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/client';
+import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import { logger } from '@bookease/logger';
 import { env } from '../config/env';

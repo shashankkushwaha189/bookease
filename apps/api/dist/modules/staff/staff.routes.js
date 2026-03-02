@@ -4,7 +4,7 @@ const express_1 = require("express");
 const staff_controller_1 = require("./staff.controller");
 const auth_middleware_1 = require("../../middleware/auth.middleware");
 const role_middleware_1 = require("../../middleware/role.middleware");
-const client_1 = require("../../generated/client");
+const client_1 = require("@prisma/client");
 const router = (0, express_1.Router)();
 // Public & Authenticated list route
 router.get('/', (req, res, next) => {

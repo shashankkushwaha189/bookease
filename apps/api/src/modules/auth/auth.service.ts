@@ -1,7 +1,7 @@
 import { prisma } from '../../lib/prisma';
 import { env } from '../../config/env';
 import { LoginInput } from './auth.schema';
-import { User, UserRole } from '../../generated/client';
+import { User, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { AppError } from '../../lib/errors';

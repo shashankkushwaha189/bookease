@@ -1,4 +1,4 @@
-import { AppointmentStatus, UserRole } from "../../generated/client";
+import { AppointmentStatus, UserRole } from "@prisma/client";
 import { BookEaseConfig } from "../config/config.schema";
 
 export interface PolicyCheckResult {

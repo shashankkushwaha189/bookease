@@ -1,4 +1,4 @@
-import { TimelineEvent } from '../../generated/client';
+import { TimelineEvent } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class TimelineService {

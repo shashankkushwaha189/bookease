@@ -1,5 +1,5 @@
 import { AppointmentRepository } from "./appointment.repository";
-import { AppointmentStatus, Prisma, RecurringFrequency, UserRole } from "../../generated/client";
+import { AppointmentStatus, Prisma, RecurringFrequency, UserRole } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import cron from "node-cron";
 import { addWeeks, addMonths } from "date-fns";
@@ -7,7 +7,7 @@ import { configService } from "../config/config.service";
 import { policyService } from "../policy/policy.service";
 import { timelineService } from "../appointment-timeline/timeline.service";
 import { auditService } from "../audit/audit.service";
-import { TimelineEvent } from "../../generated/client";
+import { TimelineEvent } from "@prisma/client";
 
 export class AppointmentService {
     private repository: AppointmentRepository;

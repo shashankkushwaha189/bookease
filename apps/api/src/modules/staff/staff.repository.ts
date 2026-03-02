@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import { Prisma } from '../../generated/client';
+import { Prisma } from '@prisma/client';
 
 export class StaffRepository {
     async findAll(tenantId: string, activeOnly: boolean = false) {

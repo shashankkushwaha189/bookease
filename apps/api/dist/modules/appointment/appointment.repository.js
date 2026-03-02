@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentRepository = void 0;
 const prisma_1 = require("../../lib/prisma");
-const client_1 = require("../../generated/client");
+const client_1 = require("@prisma/client");
 class AppointmentRepository {
     async createWithLockAndConsent(data) {
         return prisma_1.prisma.$transaction(async (tx) => {

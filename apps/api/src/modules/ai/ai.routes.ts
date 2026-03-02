@@ -3,7 +3,7 @@ import { aiController } from './ai.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { tenantMiddleware } from '../../middleware/tenant.middleware';
 import { requireRole } from '../../middleware/role.middleware';
-import { UserRole } from '../../generated/client';
+import { UserRole } from '@prisma/client';
 
 const router = Router();
 

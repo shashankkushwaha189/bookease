@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import { AppointmentStatus } from '../../generated/client';
+import { AppointmentStatus } from '@prisma/client';
 import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 import { startOfDay, endOfDay } from 'date-fns';
 

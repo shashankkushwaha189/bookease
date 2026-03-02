@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
 import { prisma } from '../lib/prisma';
 import { logger } from '@bookease/logger';
-import { User } from '../generated/client';
+import { User } from '@prisma/client';
 
 export const authMiddleware = async (
     req: Request,

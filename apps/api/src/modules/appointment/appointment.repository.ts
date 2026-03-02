@@ -1,5 +1,5 @@
 import { prisma } from "../../lib/prisma";
-import { AppointmentStatus, Prisma, RecurringFrequency, TimelineEvent } from "../../generated/client";
+import { AppointmentStatus, Prisma, RecurringFrequency, TimelineEvent } from "@prisma/client";
 
 export class AppointmentRepository {
     async createWithLockAndConsent(data: {

@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import { BookEaseConfig } from './config.schema';
-import { Prisma } from '../../generated/client';
+import { Prisma } from '@prisma/client';
 
 export class ConfigRepository {
     async findCurrent(tenantId: string) {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AppointmentService } from "./appointment.service";
-import { AppointmentStatus, UserRole } from "../../generated/client";
+import { AppointmentStatus, UserRole } from "@prisma/client";
 
 export class AppointmentController {
     private service: AppointmentService;

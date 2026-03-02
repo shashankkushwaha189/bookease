@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import { AppError } from '../../lib/errors';
-import { TimelineEvent } from '../../generated/client';
+import { TimelineEvent } from '@prisma/client';
 import { z } from 'zod';
 
 const AiResponseSchema = z.object({

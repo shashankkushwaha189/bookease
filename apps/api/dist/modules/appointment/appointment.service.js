@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentService = void 0;
 const appointment_repository_1 = require("./appointment.repository");
-const client_1 = require("../../generated/client");
+const client_1 = require("@prisma/client");
 const prisma_1 = require("../../lib/prisma");
 const node_cron_1 = __importDefault(require("node-cron"));
 const date_fns_1 = require("date-fns");
@@ -13,7 +13,7 @@ const config_service_1 = require("../config/config.service");
 const policy_service_1 = require("../policy/policy.service");
 const timeline_service_1 = require("../appointment-timeline/timeline.service");
 const audit_service_1 = require("../audit/audit.service");
-const client_2 = require("../../generated/client");
+const client_2 = require("@prisma/client");
 class AppointmentService {
     repository;
     constructor() {

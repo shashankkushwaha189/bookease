@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import { ConsentRecord } from '../../generated/client';
+import { ConsentRecord } from '@prisma/client';
 
 export class ConsentRepository {
     async create(data: {

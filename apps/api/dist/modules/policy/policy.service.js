@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.policyService = exports.PolicyService = void 0;
-const client_1 = require("../../generated/client");
+const client_1 = require("@prisma/client");
 class PolicyService {
     /**
      * Function 1: Check if an appointment can be cancelled based on time window.
