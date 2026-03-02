@@ -48,7 +48,7 @@ const LoginPage: React.FC = () => {
 
   // Ensure tenant ID is set for login
   useEffect(() => {
-    const DEMO_TENANT_ID = '259ccbbf-2587-4eee-a214-43713a1f0bde';
+    const DEMO_TENANT_ID = 'b18e0808-27d1-4253-aca9-453897585106';
     const { tenantId, setTenantId } = useTenantStore.getState();
     if (!tenantId) {
       setTenantId(DEMO_TENANT_ID);

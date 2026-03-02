@@ -1,4 +1,4 @@
-import { UserRole, AppointmentStatus, TimelineEvent, RecurringFrequency } from '../src/generated/client';
+import { UserRole, AppointmentStatus, TimelineEvent, RecurringFrequency } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { addDays, setHours, setMinutes, subDays, addHours } from 'date-fns';
 import { prisma } from '../src/lib/prisma';
