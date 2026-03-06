@@ -23,12 +23,15 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             isLoading: false,
 
-            setAuth: (user, token) =>
+            setAuth: (user, token) => {
+                console.log('🔑 Setting auth state:', { user, token: token?.substring(0, 50) + '...' });
                 set({
                     user,
                     token,
                     isAuthenticated: true,
-                }),
+                });
+                console.log('✅ Auth state set successfully');
+            },
 
             logout: () =>
                 set({
@@ -45,6 +48,8 @@ export const useAuthStore = create<AuthState>()(
                     setTenantId(DEMO_TENANT_ID);
                 }
 
+                console.log('🔐 Login attempt:', { email, tenantId: useTenantStore.getState().tenantId });
+                
                 set({ isLoading: true });
                 try {
                     const response = await api.post<AuthResponse>('/api/auth/login', {
@@ -52,8 +57,43 @@ export const useAuthStore = create<AuthState>()(
                         password,
                     });
 
-                    const { token, user } = response.data;
+                    console.log('✅ Login response:', response.data);
+                    console.log('🔍 Response structure:', JSON.stringify(response.data, null, 2));
+                    
+                    // Handle different response structures
+                    let token: string;
+                    let user: User;
+                    
+                    if (response.data?.data) {
+                        // Nested structure: { success: true, data: { token, user } }
+                        const { data: authData } = response.data;
+                        token = authData.token;
+                        user = authData.user;
+                    } else if (response.data?.token && response.data?.user) {
+                        // Flat structure: { success: true, token, user }
+                        token = (response.data as any).token;
+                        user = (response.data as any).user;
+                    } else {
+                        console.error('❌ Unexpected response structure:', response.data);
+                        throw new Error('Invalid login response structure');
+                    }
+                    
+                    console.log('🔑 Extracted auth:', { token: token?.substring(0, 50) + '...', user: user?.email });
+                    
+                    // Set auth state immediately
                     get().setAuth(user, token);
+                    
+                    // Small delay to ensure state is set
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    console.log('📊 Final auth state:', {
+                        isAuthenticated: get().isAuthenticated,
+                        user: get().user,
+                        token: get().token?.substring(0, 50) + '...'
+                    });
+                } catch (error: any) {
+                    console.error('❌ Login error:', error);
+                    throw error;
                 } finally {
                     set({ isLoading: false });
                 }

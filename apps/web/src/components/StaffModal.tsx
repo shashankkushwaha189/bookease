@@ -12,6 +12,7 @@ interface Staff {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   bio?: string;
   photoUrl?: string;
   assignedServices: string[];
@@ -38,10 +39,11 @@ interface StaffModalProps {
 const staffSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Valid email is required"),
+  phone: z.string().optional(),
   bio: z.string().optional(),
   photoUrl: z.string().optional(),
   assignedServices: z.array(z.string()).min(1, "At least one service must be assigned"),
-  hasAccount: z.boolean().default(false),
+  hasAccount: z.boolean(),
   accountEmail: z.string().email("Valid account email is required").optional(),
 });
 
@@ -70,6 +72,7 @@ const StaffModal: React.FC<StaffModalProps> = ({
     defaultValues: {
       name: '',
       email: '',
+      phone: '',
       bio: '',
       photoUrl: '',
       assignedServices: [],
@@ -87,6 +90,7 @@ const StaffModal: React.FC<StaffModalProps> = ({
       reset({
         name: staff.name,
         email: staff.email,
+        phone: staff.phone || '',
         bio: staff.bio || '',
         photoUrl: staff.photoUrl || '',
         assignedServices: staff.assignedServices,
@@ -97,6 +101,7 @@ const StaffModal: React.FC<StaffModalProps> = ({
       reset({
         name: '',
         email: '',
+        phone: '',
         bio: '',
         photoUrl: '',
         assignedServices: [],
@@ -246,6 +251,17 @@ const StaffModal: React.FC<StaffModalProps> = ({
               error={errors.email?.message}
               placeholder="staff@business.com"
               required
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <Input
+              label="Phone"
+              type="tel"
+              {...register('phone')}
+              error={errors.phone?.message}
+              placeholder="+1 (555) 123-4567"
             />
           </div>
 

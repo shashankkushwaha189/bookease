@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentController = void 0;
 const appointment_service_1 = require("./appointment.service");
+const logger_1 = require("@bookease/logger");
 class AppointmentController {
     service;
     constructor() {
@@ -15,10 +16,13 @@ class AppointmentController {
                 tenantId,
                 ipAddress: String(req.ip || "0.0.0.0"),
             });
-            res.status(201).json(appointment);
+            res.status(201).json({
+                success: true,
+                data: appointment
+            });
         }
         catch (error) {
-            console.error("Booking Error:", error);
+            logger_1.logger.error({ error: error.message, tenantId: req.headers["x-tenant-id"] }, 'Booking creation failed');
             if (error.message === "CONSENT_REQUIRED") {
                 return res.status(400).json({
                     success: false,
@@ -29,9 +33,80 @@ class AppointmentController {
                 });
             }
             if (error.message === "SLOT_TAKEN") {
-                return res.status(409).json({ error: "Slot is already booked or locked" });
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: "SLOT_TAKEN",
+                        message: "Slot is already booked or locked"
+                    }
+                });
             }
-            res.status(500).json({ error: error.message, stack: error.stack });
+            res.status(500).json({
+                success: false,
+                error: {
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to create booking"
+                }
+            });
+        }
+    };
+    createManualBooking = async (req, res) => {
+        try {
+            const tenantId = String(req.headers["x-tenant-id"] || "");
+            const userId = String(req.user?.id || req.headers["x-user-id"] || "");
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    error: {
+                        code: "UNAUTHORIZED",
+                        message: "User authentication required for manual booking"
+                    }
+                });
+            }
+            const appointment = await this.service.createManualBooking({
+                ...req.body,
+                tenantId,
+                createdBy: userId,
+                ipAddress: String(req.ip || "0.0.0.0"),
+            });
+            logger_1.logger.info({
+                tenantId,
+                appointmentId: appointment.id,
+                referenceId: appointment.referenceId,
+                createdBy: userId
+            }, 'Manual booking created successfully');
+            res.status(201).json({
+                success: true,
+                data: appointment
+            });
+        }
+        catch (error) {
+            logger_1.logger.error({ error: error.message, tenantId: req.headers["x-tenant-id"] }, 'Manual booking failed');
+            if (error.message.startsWith("BOOKING_CONFLICT:")) {
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: "BOOKING_CONFLICT",
+                        message: error.message.substring("BOOKING_CONFLICT:".length)
+                    }
+                });
+            }
+            if (error.message === "SLOT_TAKEN") {
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: "SLOT_TAKEN",
+                        message: "Slot is already booked"
+                    }
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: {
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to create manual booking"
+                }
+            });
         }
     };
     createRecurringBooking = async (req, res) => {
@@ -138,6 +213,62 @@ class AppointmentController {
             res.status(500).json({ error: error.message, stack: error.stack });
         }
     };
+    getRecurringSeries = async (req, res) => {
+        try {
+            const seriesId = String(req.params.seriesId || "");
+            const series = await this.service.getRecurringSeries(seriesId);
+            res.json({
+                success: true,
+                data: series
+            });
+        }
+        catch (error) {
+            logger_1.logger.error({ error: error.message, seriesId: req.params.seriesId }, 'Get recurring series failed');
+            if (error.message === "SERIES_NOT_FOUND") {
+                return res.status(404).json({
+                    success: false,
+                    error: {
+                        code: "SERIES_NOT_FOUND",
+                        message: "Recurring series not found"
+                    }
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: {
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to get recurring series"
+                }
+            });
+        }
+    };
+    getRecurringSeriesList = async (req, res) => {
+        try {
+            const tenantId = String(req.headers["x-tenant-id"] || "");
+            const { staffId, customerId, status, limit = 50, offset = 0 } = req.query;
+            const series = await this.service.getRecurringSeriesByTenant(tenantId, {
+                staffId: staffId,
+                customerId: customerId,
+                status: status,
+                limit: Number(limit),
+                offset: Number(offset)
+            });
+            res.json({
+                success: true,
+                data: series
+            });
+        }
+        catch (error) {
+            logger_1.logger.error({ error: error.message, tenantId: req.headers["x-tenant-id"] }, 'Get recurring series list failed');
+            res.status(500).json({
+                success: false,
+                error: {
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to get recurring series list"
+                }
+            });
+        }
+    };
     reschedule = async (req, res) => {
         try {
             const id = String(req.params.id || "");
@@ -147,21 +278,75 @@ class AppointmentController {
             const rawRole = req.user?.role || req.headers["x-user-role"];
             const userRole = (rawRole === "ADMIN" ? "ADMIN" : "STAFF");
             if (!userId) {
-                return res.status(401).json({ error: "Unauthorized" });
+                return res.status(401).json({
+                    success: false,
+                    error: {
+                        code: "UNAUTHORIZED",
+                        message: "User authentication required"
+                    }
+                });
             }
             const result = await this.service.rescheduleAppointment(id, scope, startTimeUtc, endTimeUtc, { id: userId, role: userRole }, overrideReason);
-            res.json(result);
+            logger_1.logger.info({
+                tenantId: req.headers["x-tenant-id"],
+                appointmentId: id,
+                userId,
+                scope,
+                newStartTime: startTimeUtc,
+                overrideReason
+            }, 'Appointment rescheduled successfully');
+            res.json({
+                success: true,
+                data: result
+            });
         }
         catch (error) {
-            console.error("Reschedule Error:", error);
+            logger_1.logger.error({ error: error.message, tenantId: req.headers["x-tenant-id"] }, 'Reschedule failed');
+            if (error.message.startsWith("RESCHEDULE_CONFLICT:")) {
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: "RESCHEDULE_CONFLICT",
+                        message: error.message.substring("RESCHEDULE_CONFLICT:".length)
+                    }
+                });
+            }
             if (error.message.startsWith("SLOT_TAKEN:")) {
                 const date = error.message.substring("SLOT_TAKEN:".length);
-                return res.status(409).json({ error: "Reschedule conflict", conflict: date });
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: "SLOT_TAKEN",
+                        message: "Reschedule conflict",
+                        conflict: date
+                    }
+                });
             }
             if (error.message === "Reschedule limit reached") {
-                return res.status(403).json({ error: error.message });
+                return res.status(403).json({
+                    success: false,
+                    error: {
+                        code: "RESCHEDULE_LIMIT_REACHED",
+                        message: error.message
+                    }
+                });
             }
-            res.status(500).json({ error: error.message, stack: error.stack });
+            if (error.message === "APPOINTMENT_NOT_FOUND") {
+                return res.status(404).json({
+                    success: false,
+                    error: {
+                        code: "APPOINTMENT_NOT_FOUND",
+                        message: "Appointment not found"
+                    }
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: {
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to reschedule appointment"
+                }
+            });
         }
     };
     cancel = async (req, res) => {

@@ -176,8 +176,8 @@ const BusinessProfilePage: React.FC = () => {
     if (!data) return null;
 
     return (
-      <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-neutral-900 mb-4">Live Preview</h3>
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
         
         {/* Preview Header */}
         <div className="text-center mb-6">
@@ -247,7 +247,7 @@ const BusinessProfilePage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -257,11 +257,11 @@ const BusinessProfilePage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Business Profile</h1>
-          <p className="text-neutral-600">Manage your business information and branding</p>
+          <h1 className="text-2xl font-bold text-gray-900">Business Profile</h1>
+          <p className="text-gray-600">Manage your business information and branding</p>
           {hasUnsavedChanges && (
-            <span className="inline-flex items-center mt-2 text-sm text-warning">
-              <span className="w-2 h-2 bg-warning rounded-full mr-2"></span>
+            <span className="inline-flex items-center mt-2 text-sm text-amber-500">
+              <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
               You have unsaved changes
             </span>
           )}
@@ -273,31 +273,31 @@ const BusinessProfilePage: React.FC = () => {
         <div className="lg:col-span-3">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Section 1 - Identity */}
-            <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-neutral-900 mb-4">Identity</h2>
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Identity</h2>
               
               {/* Logo Upload */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-neutral-900 mb-2">Business Logo</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Business Logo</label>
                 <div className="flex items-center space-x-4">
                   {logoPreview || formValues.logoUrl ? (
                     <div className="relative">
                       <img 
                         src={logoPreview || formValues.logoUrl} 
                         alt="Business logo" 
-                        className="w-20 h-20 rounded-lg object-cover border border-neutral-200"
+                        className="w-20 h-20 rounded-lg object-cover border border-gray-200"
                       />
                       <button
                         type="button"
                         onClick={handleLogoRemove}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-danger text-white rounded-full flex items-center justify-center hover:bg-danger-90"
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
                       >
                         <X className="w-3 h-3" />
                       </button>
                     </div>
                   ) : (
-                    <div className="w-20 h-20 bg-neutral-100 rounded-lg flex items-center justify-center border-2 border-dashed border-neutral-300">
-                      <Building className="w-8 h-8 text-neutral-400" />
+                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                      <Building className="w-8 h-8 text-gray-400" />
                     </div>
                   )}
                   
@@ -311,12 +311,12 @@ const BusinessProfilePage: React.FC = () => {
                     />
                     <label
                       htmlFor="logo-upload"
-                      className="cursor-pointer inline-flex items-center px-3 py-2 border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50"
+                      className="cursor-pointer inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Logo
                     </label>
-                    <p className="text-xs text-neutral-500 mt-1">PNG, JPEG, WebP (max 2MB)</p>
+                    <p className="text-xs text-gray-500 mt-1">PNG, JPEG, WebP (max 2MB)</p>
                   </div>
                 </div>
               </div>
@@ -331,21 +331,21 @@ const BusinessProfilePage: React.FC = () => {
 
               {/* Description */}
               <div className="mt-4">
-                <label className="block text-sm font-medium text-neutral-900 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   Description
                 </label>
                 <textarea
                   {...register('description')}
                   rows={3}
                   maxLength={500}
-                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   placeholder="Describe your business..."
                 />
                 <div className="flex justify-between mt-1">
                   {errors.description?.message && (
-                    <span className="text-sm text-danger">{errors.description.message}</span>
+                    <span className="text-sm text-red-500">{errors.description.message}</span>
                   )}
-                  <span className="text-xs text-neutral-500">
+                  <span className="text-xs text-gray-500">
                     {formValues.description?.length || 0}/500
                   </span>
                 </div>
@@ -353,8 +353,8 @@ const BusinessProfilePage: React.FC = () => {
             </div>
 
             {/* Section 2 - Contact */}
-            <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-neutral-900 mb-4">Contact Information</h2>
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
               
               <div className="space-y-4">
                 <Input
@@ -371,27 +371,27 @@ const BusinessProfilePage: React.FC = () => {
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-2">Address</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Address</label>
                   <textarea
                     {...register('address')}
                     rows={3}
-                    className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                     placeholder="Enter your business address..."
                   />
                   {errors.address?.message && (
-                    <span className="text-sm text-danger">{errors.address.message}</span>
+                    <span className="text-sm text-red-500">{errors.address.message}</span>
                   )}
                 </div>
               </div>
             </div>
 
             {/* Section 3 - Branding */}
-            <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-neutral-900 mb-4">Branding</h2>
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Branding</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     <Palette className="w-4 h-4 inline mr-2" />
                     Primary Brand Color
                   </label>
@@ -399,7 +399,7 @@ const BusinessProfilePage: React.FC = () => {
                     <input
                       type="color"
                       {...register('brandColor')}
-                      className="h-10 w-20 border border-neutral-200 rounded cursor-pointer"
+                      className="h-10 w-20 border border-gray-200 rounded cursor-pointer"
                     />
                     <Input
                       placeholder="#000000"
@@ -409,12 +409,12 @@ const BusinessProfilePage: React.FC = () => {
                     />
                   </div>
                   {errors.brandColor?.message && (
-                    <span className="text-sm text-danger">{errors.brandColor.message}</span>
+                    <span className="text-sm text-red-500">{errors.brandColor.message}</span>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     <Palette className="w-4 h-4 inline mr-2" />
                     Accent Color
                   </label>
@@ -422,7 +422,7 @@ const BusinessProfilePage: React.FC = () => {
                     <input
                       type="color"
                       {...register('accentColor')}
-                      className="h-10 w-20 border border-neutral-200 rounded cursor-pointer"
+                      className="h-10 w-20 border border-gray-200 rounded cursor-pointer"
                     />
                     <Input
                       placeholder="#000000"
@@ -432,30 +432,30 @@ const BusinessProfilePage: React.FC = () => {
                     />
                   </div>
                   {errors.accentColor?.message && (
-                    <span className="text-sm text-danger">{errors.accentColor.message}</span>
+                    <span className="text-sm text-red-500">{errors.accentColor.message}</span>
                   )}
                 </div>
               </div>
             </div>
 
             {/* Section 4 - Policy */}
-            <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-neutral-900 mb-4">Policy Text</h2>
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Policy Text</h2>
               
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   Cancellation & Booking Policy
                 </label>
                 <textarea
                   {...register('policyText')}
                   rows={4}
-                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   placeholder="Enter your booking and cancellation policy..."
                 />
                 {errors.policyText?.message && (
-                  <span className="text-sm text-danger">{errors.policyText.message}</span>
+                  <span className="text-sm text-red-500">{errors.policyText.message}</span>
                 )}
-                <p className="text-xs text-neutral-500 mt-1">
+                <p className="text-xs text-gray-500 mt-1">
                   This text appears to customers before they book
                 </p>
               </div>
@@ -465,7 +465,7 @@ const BusinessProfilePage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 {profile?.updatedAt && (
-                  <p className="text-sm text-neutral-500">
+                  <p className="text-sm text-gray-500">
                     Last updated by {profile.updatedBy} at {new Date(profile.updatedAt).toLocaleString()}
                   </p>
                 )}

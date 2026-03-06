@@ -52,6 +52,16 @@ describe('Auth & RBAC Module', () => {
                 tenantId: tenantA.id,
             },
         });
+
+        // Add a USER role customer for testing
+        await prisma.user.create({
+            data: {
+                email: 'customer@tenant-a.com',
+                passwordHash,
+                role: 'USER',
+                tenantId: tenantA.id,
+            },
+        });
     });
 
     afterAll(async () => {
@@ -102,6 +112,22 @@ describe('Auth & RBAC Module', () => {
             expect(response.status).toBe(401);
             expect(response.body.error.message).toBe('Invalid credentials');
         });
+
+        it('should return 200 and USER token for customer login', async () => {
+            const response = await request(app)
+                .post('/api/auth/login')
+                .set('X-Tenant-ID', tenantA.id)
+                .send({
+                    email: 'customer@tenant-a.com',
+                    password,
+                });
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toHaveProperty('token');
+            expect(response.body.data.user.email).toBe('customer@tenant-a.com');
+            expect(response.body.data.user.role).toBe('USER');
+        });
     });
 
     describe('GET /api/auth/me', () => {
@@ -151,23 +177,66 @@ describe('Auth & RBAC Module', () => {
     });
 
     describe('RBAC & Role Guards', () => {
-        // We haven't applied requireRole to any routes yet in this task, 
-        // but we can test the middleware behavior by creating a mock route if needed.
-        // However, the service and controller are already using req.user.role.
+        it('should generate correct tokens for all user roles', async () => {
+            // Test ADMIN role
+            const loginAdmin = await request(app)
+                .post('/api/auth/login')
+                .set('X-Tenant-ID', tenantA.id)
+                .send({ email: 'admin@tenant-a.com', password });
 
-        it('should block staff from admin-protected logic (if any)', async () => {
-            // For now, let's verify that the tokens have correct roles
+            const adminToken = loginAdmin.body.data.token;
+            const adminDecoded = jwt.decode(adminToken) as any;
+            expect(adminDecoded.role).toBe('ADMIN');
+
+            // Test STAFF role
             const loginStaff = await request(app)
                 .post('/api/auth/login')
                 .set('X-Tenant-ID', tenantA.id)
                 .send({ email: 'staff@tenant-a.com', password });
 
-            expect(loginStaff.body).toHaveProperty('data');
-            expect(loginStaff.body.data).toHaveProperty('token');
-
             const staffToken = loginStaff.body.data.token;
-            const decoded = jwt.decode(staffToken) as any;
-            expect(decoded.role).toBe('STAFF');
+            const staffDecoded = jwt.decode(staffToken) as any;
+            expect(staffDecoded.role).toBe('STAFF');
+
+            // Test USER role
+            const loginUser = await request(app)
+                .post('/api/auth/login')
+                .set('X-Tenant-ID', tenantA.id)
+                .send({ email: 'customer@tenant-a.com', password });
+
+            const userToken = loginUser.body.data.token;
+            const userDecoded = jwt.decode(userToken) as any;
+            expect(userDecoded.role).toBe('USER');
+        });
+
+        it('should block non-ADMIN users from admin routes', async () => {
+            // Test STAFF access to admin route
+            const staffLogin = await request(app)
+                .post('/api/auth/login')
+                .set('X-Tenant-ID', tenantA.id)
+                .send({ email: 'staff@tenant-a.com', password });
+
+            const staffResponse = await request(app)
+                .get('/api/config/current')
+                .set('X-Tenant-ID', tenantA.id)
+                .set('Authorization', `Bearer ${staffLogin.body.data.token}`);
+
+            expect(staffResponse.status).toBe(403);
+            expect(staffResponse.body.error.code).toBe('FORBIDDEN');
+
+            // Test USER access to admin route
+            const userLogin = await request(app)
+                .post('/api/auth/login')
+                .set('X-Tenant-ID', tenantA.id)
+                .send({ email: 'customer@tenant-a.com', password });
+
+            const userResponse = await request(app)
+                .get('/api/config/current')
+                .set('X-Tenant-ID', tenantA.id)
+                .set('Authorization', `Bearer ${userLogin.body.data.token}`);
+
+            expect(userResponse.status).toBe(403);
+            expect(userResponse.body.error.code).toBe('FORBIDDEN');
         });
     });
 });

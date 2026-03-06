@@ -10,18 +10,19 @@ import { tenantMiddleware } from './middleware/tenant.middleware';
 import tenantRoutes from './modules/tenant/tenant.routes';
 import businessProfileRoutes from './modules/business-profile/business-profile.routes';
 import authRoutes from './modules/auth/auth.routes';
-import bookingRoutes from './modules/booking/booking.routes';
 import configRoutes from './modules/config/config.routes';
 import availabilityRoutes from './modules/availability/availability.routes';
 import serviceRoutes from './modules/service/service.routes';
 import staffRoutes from './modules/staff/staff.routes';
-import auditRoutes from './modules/audit/audit.routes';
 import { appointmentRouter } from './modules/appointment/appointment.routes';
-import reportRoutes from './modules/report/report.routes';
-import importRoutes from './modules/import/import.routes';
-import apiTokenRoutes from './modules/api-token/api-token.routes';
 import { aiRoutes } from './modules/ai/ai.routes';
-
+import auditRoutes from './modules/audit/audit.routes';
+import reportRoutes from './modules/report/report.routes';
+import archiveRoutes from './modules/archival/archive.routes';
+import apiTokenRoutes from './modules/api-token/api-token.routes';
+import policyRoutes from './modules/policy/policy.routes';
+import customerRoutes from './modules/customer/customer.routes'; // Re-enabled
+import importRoutes from './modules/import/import.routes'; // Re-enabled
 
 const app = express();
 
@@ -93,7 +94,8 @@ const protectedRoutes = [
     '/api/audit',
     '/api/auth',
     '/api/reports',
-    '/api/import',
+    '/api/customers', // Re-enabled
+    '/api/import', // Re-enabled
     '/api/tokens',
 ];
 
@@ -115,8 +117,11 @@ app.use('/api/appointments', aiRoutes);
 app.use('/api/public/bookings', appointmentRouter);
 app.use('/api/audit', auditRoutes);
 app.use('/api/reports', reportRoutes);
-app.use('/api/import', importRoutes);
+app.use('/api/archive', archiveRoutes);
+app.use('/api/customers', customerRoutes); // Re-enabled
+app.use('/api/import', importRoutes); // Re-enabled
 app.use('/api/tokens', apiTokenRoutes);
+app.use('/api/policy', policyRoutes);
 
 
 // 404 Handler

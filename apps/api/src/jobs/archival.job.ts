@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { prisma } from '../lib/prisma';
-import { logger } from '@bookease/logger';
+import { logger } from '../utils/logger';
 import { subMonths } from 'date-fns';
 
 export class ArchivalJob {
@@ -115,7 +115,7 @@ export class ArchivalJob {
 
             logger.info(`Archival Process completed successfully. Total archived: ${totalArchived}`);
         } catch (error) {
-            logger.error({ err: error }, 'Error during Archival Process');
+            logger.error('Error during Archival Process', { error });
             throw error;
         } finally {
             this.isRunning = false;

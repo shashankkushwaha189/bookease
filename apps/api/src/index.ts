@@ -1,6 +1,6 @@
 import { app } from './app';
 import { env } from './config/env';
-import { logger } from '@bookease/logger';
+import { logger } from './utils/logger';
 import { archivalJob } from './jobs/archival.job';
 
 // Init background jobs
@@ -8,12 +8,12 @@ archivalJob.init();
 
 // Global Error Handlers
 process.on('unhandledRejection', (reason) => {
-    logger.fatal({ reason, msg: 'Unhandled Promise Rejection' });
+    logger.fatal('Unhandled Promise Rejection', { reason });
     process.exit(1);
 });
 
 process.on('uncaughtException', (err) => {
-    logger.fatal({ err, msg: 'Uncaught Exception' });
+    logger.fatal('Uncaught Exception', { err });
     process.exit(1);
 });
 

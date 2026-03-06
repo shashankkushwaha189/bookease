@@ -1,20 +1,12 @@
 /**
- * Applies dynamic tenant branding globally by updating the cascading CSS
- * custom variables injected deep into Tailwind's theme config.
+ * Applies dynamic tenant branding using Tailwind CSS classes
+ * This function is kept for compatibility but no longer uses CSS variables
  * 
  * @param brandColor Primary business branding color
- * @param accentColor Secondary business branding mapping to soft arrays
+ * @param accentColor Secondary business branding color
  */
 export function applyTenantTheme(brandColor: string, accentColor: string) {
-    document.documentElement.style.setProperty("--color-brand", brandColor);
-
-    // Safely infer an rgba soft variant off accent (or optionally use exact strings mapped)
-    const hexToRgba = (hex: string, alpha: number) => {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    };
-    
-    document.documentElement.style.setProperty("--color-brand-soft", hexToRgba(accentColor, 0.2));
+    // Theme is now handled entirely through Tailwind CSS classes
+    // This function is kept for backward compatibility
+    console.log('Theme applied via Tailwind CSS classes', { brandColor, accentColor });
 }

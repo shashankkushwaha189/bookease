@@ -31,7 +31,7 @@ export const authMiddleware = async (
             role: string;
         };
 
-        // Ensure token tenantId matches req.tenant.id (from tenantMiddleware)
+        // Ensure token tenantId matches req.tenantId (from tenantMiddleware)
         if (decoded.tenantId !== req.tenantId) {
             return res.status(401).json({
                 success: false,

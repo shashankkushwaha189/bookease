@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ConsentService } from '../consent/consent.service';
+import { availabilityController } from '../availability/availability.controller';
 import { logger } from '@bookease/logger';
 
 export class BookingController {
@@ -29,13 +30,25 @@ export class BookingController {
                 ipAddress
             );
 
-            // 3. (Mock) Create booking logic...
+            // 3. Invalidate availability cache for this tenant since booking changes availability
+            const invalidatedCount = availabilityController.invalidateCache(req.tenantId!);
+            logger.info({ 
+                tenantId: req.tenantId, 
+                customerEmail, 
+                invalidatedCount 
+            }, 'Availability cache invalidated after booking');
+
+            // 4. (Mock) Create booking logic...
             // For this task, we focus on the consent capture part
             logger.info({ tenantId: req.tenantId, customerEmail }, 'Public booking created with consent');
 
             res.status(201).json({
                 success: true,
                 message: 'Booking created successfully',
+                cacheInvalidated: {
+                    invalidatedCount,
+                    message: 'Availability cache refreshed'
+                }
             });
         } catch (error) {
             next(error);

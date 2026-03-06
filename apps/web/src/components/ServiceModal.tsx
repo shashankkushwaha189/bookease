@@ -12,6 +12,7 @@ interface Service {
   id: string;
   name: string;
   description?: string;
+  category: string;
   duration: number;
   bufferBefore: number;
   bufferAfter: number;
@@ -32,11 +33,12 @@ interface ServiceModalProps {
 const serviceSchema = z.object({
   name: z.string().min(1, "Service name is required"),
   description: z.string().optional(),
+  category: z.string().min(1, "Category is required"),
   duration: z.number().min(5, "Duration must be at least 5 minutes").max(480, "Duration must be less than 8 hours"),
   bufferBefore: z.number().min(0, "Buffer time cannot be negative"),
   bufferAfter: z.number().min(0, "Buffer time cannot be negative"),
   price: z.number().optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 type ServiceFormData = z.infer<typeof serviceSchema>;
@@ -54,7 +56,6 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
     register,
     handleSubmit,
     formState: { errors, isDirty },
-    setValue,
     watch,
     reset,
   } = useForm<ServiceFormData>({
@@ -63,6 +64,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
     defaultValues: {
       name: '',
       description: '',
+      category: 'General',
       duration: 30,
       bufferBefore: 0,
       bufferAfter: 0,
@@ -81,6 +83,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
       reset({
         name: service.name,
         description: service.description || '',
+        category: service.category,
         duration: service.duration,
         bufferBefore: service.bufferBefore,
         bufferAfter: service.bufferAfter,
@@ -91,6 +94,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
       reset({
         name: '',
         description: '',
+        category: 'General',
         duration: 30,
         bufferBefore: 0,
         bufferAfter: 0,
@@ -153,6 +157,29 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
               placeholder="e.g., Haircut, Beard Trim"
               required
             />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-medium text-neutral-900 mb-2">
+              Category
+            </label>
+            <select
+              {...register('category')}
+              className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            >
+              <option value="General">General</option>
+              <option value="Haircut">Haircut</option>
+              <option value="Massage">Massage</option>
+              <option value="Consultation">Consultation</option>
+              <option value="Treatment">Treatment</option>
+              <option value="Styling">Styling</option>
+              <option value="Grooming">Grooming</option>
+              <option value="Wellness">Wellness</option>
+            </select>
+            {errors.category?.message && (
+              <p className="text-sm text-danger mt-1">{errors.category.message}</p>
+            )}
           </div>
 
           {/* Description */}

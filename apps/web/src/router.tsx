@@ -8,8 +8,8 @@ const BookingConfirmPage = React.lazy(() => import('./pages/BookingConfirmPage')
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const AppointmentsPage = React.lazy(() => import('./pages/AppointmentsPage'));
 const CalendarPage = React.lazy(() => import('./pages/CalendarPage'));
-const ServicesPage = React.lazy(() => import('./pages/ServicesPage'));
-const StaffPage = React.lazy(() => import('./pages/StaffPage'));
+const ServicesPage = React.lazy(() => import('./pages/admin/ServicesPage'));
+const StaffPage = React.lazy(() => import('./pages/admin/StaffPage'));
 const CustomersPage = React.lazy(() => import('./pages/CustomersPage'));
 const ReportsPage = React.lazy(() => import('./pages/ReportsPage'));
 const ConfigPage = React.lazy(() => import('./pages/ConfigPage'));
@@ -17,12 +17,17 @@ const ImportPage = React.lazy(() => import('./pages/ImportPage'));
 const BusinessProfilePage = React.lazy(() => import('./pages/admin/BusinessProfilePage'));
 const MySchedulePage = React.lazy(() => import('./pages/MySchedulePage'));
 const MyAppointmentsPage = React.lazy(() => import('./pages/MyAppointmentsPage'));
+const StaffAvailabilityPage = React.lazy(() => import('./pages/StaffAvailabilityPage'));
+const StaffPerformancePage = React.lazy(() => import('./pages/StaffPerformancePage'));
+const CustomerBookingsPage = React.lazy(() => import('./pages/CustomerBookingsPage'));
+const CustomerProfilePage = React.lazy(() => import('./pages/CustomerProfilePage'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 const ForbiddenPage = React.lazy(() => import('./pages/ForbiddenPage'));
 
 // Layout Components
 import PublicLayout from './components/layout/PublicLayout';
 import AdminLayout from './components/layout/AdminLayout';
+import CustomerLayout from './components/layout/CustomerLayout';
 
 // Route Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -30,8 +35,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 // Loading component for lazy loading
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen bg-background">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
   </div>
 );
 
@@ -219,6 +224,60 @@ const router = createBrowserRouter([
           <Suspense fallback={<PageLoader />}>
             <ErrorBoundary>
               <MyAppointmentsPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
+      },
+      {
+        path: 'availability',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <StaffAvailabilityPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
+      },
+      {
+        path: 'performance',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <StaffPerformancePage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: '/customer',
+    element: (
+      <ProtectedRoute requiredRole="USER">
+        <CustomerLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/customer/bookings" replace />,
+      },
+      {
+        path: 'bookings',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <CustomerBookingsPage />
+            </ErrorBoundary>
+          </Suspense>
+        ),
+      },
+      {
+        path: 'profile',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+              <CustomerProfilePage />
             </ErrorBoundary>
           </Suspense>
         ),

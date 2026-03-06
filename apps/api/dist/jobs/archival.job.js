@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.archivalJob = exports.ArchivalJob = void 0;
 const node_cron_1 = __importDefault(require("node-cron"));
 const prisma_1 = require("../lib/prisma");
-const logger_1 = require("@bookease/logger");
+const logger_1 = require("../utils/logger");
 const date_fns_1 = require("date-fns");
 class ArchivalJob {
     isRunning = false;
@@ -107,7 +107,7 @@ class ArchivalJob {
             logger_1.logger.info(`Archival Process completed successfully. Total archived: ${totalArchived}`);
         }
         catch (error) {
-            logger_1.logger.error({ err: error }, 'Error during Archival Process');
+            logger_1.logger.error('Error during Archival Process', { error });
             throw error;
         }
         finally {

@@ -215,7 +215,7 @@ class AppointmentRepository {
                         serviceId: appData.serviceId,
                         staffId: appData.staffId,
                         customerId: appData.customerId,
-                        referenceId: appData.referenceIds[i],
+                        referenceId: appData.referenceId,
                         startTimeUtc: appData.startTimeUtc,
                         endTimeUtc: appData.endTimeUtc,
                         notes: appData.notes,
@@ -303,6 +303,38 @@ class AppointmentRepository {
                 },
             });
             // Timeline handled by service
+            return appointment;
+        });
+    }
+    async createManualBooking(data) {
+        return prisma_1.prisma.$transaction(async (tx) => {
+            // Double-booking check for manual booking
+            const existing = await tx.appointment.findFirst({
+                where: {
+                    tenantId: data.tenantId,
+                    staffId: data.staffId,
+                    startTimeUtc: data.startTimeUtc,
+                    status: { not: client_1.AppointmentStatus.CANCELLED },
+                },
+            });
+            if (existing) {
+                throw new Error("SLOT_TAKEN");
+            }
+            // Create appointment without lock (manual booking)
+            const appointment = await tx.appointment.create({
+                data: {
+                    tenantId: data.tenantId,
+                    serviceId: data.serviceId,
+                    staffId: data.staffId,
+                    customerId: data.customerId,
+                    referenceId: data.referenceId,
+                    startTimeUtc: data.startTimeUtc,
+                    endTimeUtc: data.endTimeUtc,
+                    notes: data.notes,
+                    createdBy: data.createdBy,
+                    status: data.status,
+                },
+            });
             return appointment;
         });
     }

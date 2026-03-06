@@ -22,7 +22,7 @@ const authMiddleware = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
     try {
         const decoded = jsonwebtoken_1.default.verify(token, env_1.env.JWT_SECRET);
-        // Ensure token tenantId matches req.tenant.id (from tenantMiddleware)
+        // Ensure token tenantId matches req.tenantId (from tenantMiddleware)
         if (decoded.tenantId !== req.tenantId) {
             return res.status(401).json({
                 success: false,

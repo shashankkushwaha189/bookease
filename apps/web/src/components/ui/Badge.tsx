@@ -12,17 +12,17 @@ const Badge: React.FC<BadgeProps> = ({ status, variant, children }) => {
   const getStatusClasses = (status: AppointmentStatus): string => {
     switch (status) {
       case 'booked':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-primary-50 text-primary-700 border-primary-200';
       case 'confirmed':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+        return 'bg-primary-100 text-primary-800 border-primary-300';
       case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-success-50 text-success-700 border-success-200';
       case 'cancelled':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-neutral-100 text-neutral-700 border-neutral-200';
       case 'no_show':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-danger-50 text-danger-700 border-danger-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-neutral-100 text-neutral-700 border-neutral-200';
     }
   };
 

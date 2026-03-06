@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { useToastStore } from '../../stores/toast.store';
+import { importApi } from '../../api/import';
 
 // Types
 interface ImportStep {
@@ -45,32 +46,61 @@ interface ExportOptions {
   tags?: string[];
 }
 
-// API Hooks (mock implementations - replace with actual API calls)
+// API Hooks (real API implementations)
 const useImport = (type: 'customers' | 'services' | 'staff') => {
   const [isImporting, setIsImporting] = React.useState(false);
+  const toastStore = useToastStore();
 
-  const parseCSV = async (file: File): Promise<ParsedRow[]> => {
-    // Mock CSV parsing - replace with actual CSV parsing logic
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const mockData: ParsedRow[] = [
-      {
-        id: 1,
-        data: { name: 'John Smith', email: 'john.smith@email.com', phone: '+1 (555) 123-4567' },
-        errors: [],
-        isValid: true
-      },
-      {
-        id: 2,
-        data: { name: 'Emma Davis', email: 'emma.davis@email.com', phone: '+1 (555) 987-6543' },
-        errors: [],
-        isValid: true
-      },
-      {
-        id: 3,
-        data: { name: 'Robert Brown', email: 'invalid-email', phone: '+1 (555) 456-7890' },
-        errors: ['Invalid email format'],
-        isValid: false
+  const validateCSV = async (file: File): Promise<any> => {
+    try {
+      let response;
+      switch (type) {
+        case 'customers':
+          response = await importApi.validateCustomers(file);
+          break;
+        case 'services':
+          response = await importApi.validateServices(file);
+          break;
+        case 'staff':
+          response = await importApi.validateStaff(file);
+          break;
+        default:
+          throw new Error('Invalid import type');
+      }
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Validation failed:', error);
+      throw error;
+    }
+  };
+
+  const importData = async (file: File, options?: any): Promise<any> => {
+    setIsImporting(true);
+    try {
+      let response;
+      switch (type) {
+        case 'customers':
+          response = await importApi.importCustomers(file, options);
+          break;
+        case 'services':
+          response = await importApi.importServices(file, options);
+          break;
+        case 'staff':
+          response = await importApi.importStaff(file, options);
+          break;
+        default:
+          throw new Error('Invalid import type');
+      }
+      toastStore.success(`${type} imported successfully`);
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Import failed:', error);
+      toastStore.error(`Failed to import ${type}: ${error.message}`);
+      throw error;
+    } finally {
+      setIsImporting(false);
+    }
+  };
       },
       {
         id: 4,

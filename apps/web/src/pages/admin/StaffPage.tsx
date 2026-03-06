@@ -5,12 +5,14 @@ import Input from '../../components/ui/Input';
 import StaffModal from '../../components/StaffModal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import { useToastStore } from '../../stores/toast.store';
+import { staffApi } from '../../api/staff';
 
 // Types
 interface Staff {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   bio?: string;
   photoUrl?: string;
   assignedServices: string[];
@@ -44,51 +46,38 @@ interface TimeOffBlock extends ScheduleBlock {
 const useStaff = () => {
   const [staff, setStaff] = React.useState<Staff[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const toastStore = useToastStore();
 
   useEffect(() => {
     const fetchStaff = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 600));
+        const response = await staffApi.getStaff({
+          includeServices: true
+        });
         
-        const mockStaff: Staff[] = [
-          {
-            id: '1',
-            name: 'Sarah Johnson',
-            email: 'sarah.johnson@salon.com',
-            bio: 'Senior stylist with 10+ years experience in modern cuts and coloring',
-            assignedServices: ['1', '3', '4'],
-            hasAccount: true,
-            accountEmail: 'sarah.j@personal.com',
-            createdAt: '2024-03-01T10:00:00',
-            updatedAt: '2024-03-01T10:00:00'
-          },
-          {
-            id: '2',
-            name: 'Mike Wilson',
-            email: 'mike.wilson@salon.com',
-            bio: 'Specialist in men\'s grooming and beard styling',
-            assignedServices: ['1', '2', '3'],
-            hasAccount: false,
-            createdAt: '2024-03-01T10:30:00',
-            updatedAt: '2024-03-01T10:30:00'
-          },
-          {
-            id: '3',
-            name: 'Emma Davis',
-            email: 'emma.davis@salon.com',
-            bio: 'Expert in color treatments, highlights, and styling',
-            assignedServices: ['4', '5'],
-            hasAccount: true,
-            accountEmail: 'emma.d@personal.com',
-            createdAt: '2024-03-01T11:00:00',
-            updatedAt: '2024-03-01T11:00:00'
-          }
-        ];
+        // Transform API data to frontend format
+        const transformedStaff = response.data.data.map((staffMember: any) => ({
+          id: staffMember.id,
+          name: staffMember.name,
+          email: staffMember.email,
+          phone: staffMember.phone,
+          bio: staffMember.bio,
+          photoUrl: staffMember.photoUrl,
+          assignedServices: staffMember.services?.map((service: any) => service.id) || [],
+          hasAccount: staffMember.hasAccount || false,
+          accountEmail: staffMember.accountEmail,
+          createdAt: staffMember.createdAt,
+          updatedAt: staffMember.updatedAt
+        }));
         
-        setStaff(mockStaff);
-      } catch (error) {
-        console.error('Failed to fetch staff:', error);
+        setStaff(transformedStaff);
+      } catch (err: any) {
+        console.error('Failed to fetch staff:', err);
+        setError(err.message || 'Failed to load staff');
+        toastStore.error('Failed to load staff');
       } finally {
         setIsLoading(false);
       }
@@ -99,8 +88,7 @@ const useStaff = () => {
 
   const updateStaff = async (staffId: string, updates: Partial<Staff>) => {
     try {
-      // Mock API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await staffApi.updateStaff(staffId, updates);
       
       setStaff(prev => prev.map(member => 
         member.id === staffId 
@@ -108,47 +96,58 @@ const useStaff = () => {
           : member
       ));
       
+      toastStore.success('Staff updated successfully');
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update staff:', error);
+      toastStore.error('Failed to update staff');
       return false;
     }
   };
 
   const deleteStaff = async (staffId: string) => {
     try {
-      // Mock API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await staffApi.deleteStaff(staffId);
       
       setStaff(prev => prev.filter(member => member.id !== staffId));
+      toastStore.success('Staff deleted successfully');
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete staff:', error);
+      toastStore.error('Failed to delete staff');
       return false;
     }
   };
 
   const createStaff = async (staffData: Omit<Staff, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      // Mock API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const response = await staffApi.createStaff(staffData);
       
       const newStaff: Staff = {
-        ...staffData,
-        id: `staff-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        id: response.data.data.id,
+        name: response.data.data.name,
+        email: response.data.data.email,
+        phone: response.data.data.phone,
+        bio: response.data.data.bio,
+        photoUrl: response.data.data.photoUrl,
+        assignedServices: response.data.data.services?.map((service: any) => service.id) || [],
+        hasAccount: response.data.data.hasAccount || false,
+        accountEmail: response.data.data.accountEmail,
+        createdAt: response.data.data.createdAt,
+        updatedAt: response.data.data.updatedAt
       };
       
       setStaff(prev => [...prev, newStaff]);
+      toastStore.success('Staff created successfully');
       return newStaff;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create staff:', error);
+      toastStore.error('Failed to create staff');
       return null;
     }
   };
 
-  return { staff, isLoading, updateStaff, deleteStaff, createStaff };
+  return { staff, isLoading, error, updateStaff, deleteStaff, createStaff };
 };
 
 const useServices = () => {
@@ -158,18 +157,15 @@ const useServices = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 400));
+        const { servicesApi } = await import('../../api/services');
+        const response = await servicesApi.getServices();
         
-        const mockServices: Service[] = [
-          { id: '1', name: 'Haircut' },
-          { id: '2', name: 'Beard Trim' },
-          { id: '3', name: 'Haircut & Beard' },
-          { id: '4', name: 'Color & Style' },
-          { id: '5', name: 'Full Service' },
-        ];
+        const transformedServices = response.data.data.map((service: any) => ({
+          id: service.id,
+          name: service.name
+        }));
         
-        setServices(mockServices);
+        setServices(transformedServices);
       } catch (error) {
         console.error('Failed to fetch services:', error);
       } finally {
@@ -315,10 +311,10 @@ const StaffCard: React.FC<{
   };
 
   return (
-    <div className="bg-surface border border-neutral-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-start space-x-4">
         {/* Avatar */}
-        <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+        <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
           {staff.photoUrl ? (
             <img 
               src={staff.photoUrl} 
@@ -326,7 +322,7 @@ const StaffCard: React.FC<{
               className="w-16 h-16 rounded-full object-cover"
             />
           ) : (
-            <span className="text-xl font-medium text-primary-soft">
+            <span className="text-xl font-medium text-white">
               {getInitials(staff.name)}
             </span>
           )}
@@ -334,11 +330,11 @@ const StaffCard: React.FC<{
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-medium text-neutral-900 mb-1">{staff.name}</h3>
-          <p className="text-sm text-neutral-600 mb-2">{staff.email}</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-1">{staff.name}</h3>
+          <p className="text-sm text-gray-600 mb-2">{staff.email}</p>
           
           {staff.bio && (
-            <p className="text-sm text-neutral-600 mb-3 line-clamp-2">{staff.bio}</p>
+            <p className="text-sm text-gray-600 mb-3 line-clamp-2">{staff.bio}</p>
           )}
 
           {/* Service Tags */}
@@ -346,7 +342,7 @@ const StaffCard: React.FC<{
             {getServiceNames().map((serviceName, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-soft text-primary"
+                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-600"
               >
                 {serviceName}
               </span>
@@ -355,7 +351,7 @@ const StaffCard: React.FC<{
 
           {/* Account Status */}
           {staff.hasAccount && (
-            <div className="flex items-center text-xs text-neutral-500 mb-3">
+            <div className="flex items-center text-xs text-gray-500 mb-3">
               <Users className="w-3 h-3 mr-1" />
               Account linked: {staff.accountEmail}
             </div>

@@ -26,6 +26,7 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Skeleton from '../../components/ui/Skeleton';
 import { useToastStore } from '../../stores/toast.store';
+import { reportsApi } from '../../api/reports';
 
 // Types
 interface ReportSummary {
@@ -58,29 +59,37 @@ interface PeakTimeData {
   count: number;
 }
 
-// API Hooks (mock implementations - replace with actual API calls)
+// API Hooks (real API implementations)
 const useReportSummary = (fromDate: string, toDate: string) => {
   const [data, setData] = React.useState<ReportSummary | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const toastStore = useToastStore();
 
   useEffect(() => {
     const fetchSummary = async () => {
       setIsLoading(true);
+      setError(null);
       try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 800));
+        const response = await reportsApi.getSummary({ 
+          fromDate: fromDate, 
+          toDate: toDate 
+        });
         
-        const mockSummary: ReportSummary = {
-          totalAppointments: 342,
-          completed: 298,
-          cancelled: 28,
-          noShows: 16,
-          revenue: 15420
+        // Transform API data to frontend format
+        const summary: ReportSummary = {
+          totalAppointments: response.data.data.totalAppointments || 0,
+          completed: response.data.data.completedCount || 0,
+          cancelled: response.data.data.cancelledCount || 0,
+          noShows: response.data.data.noShowCount || 0,
+          revenue: response.data.data.revenue || 0
         };
         
-        setData(mockSummary);
-      } catch (error) {
-        console.error('Failed to fetch summary:', error);
+        setData(summary);
+      } catch (err: any) {
+        console.error('Failed to fetch summary:', err);
+        setError(err.message || 'Failed to load summary');
+        toastStore.error('Failed to load summary');
       } finally {
         setIsLoading(false);
       }

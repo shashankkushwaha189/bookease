@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import Button from './ui/Button';
 import { useToastStore } from '../stores/toast.store';
+import { useAuthStore } from '../stores/auth.store';
 
 // API Hook (mock implementation - replace with actual API call)
 const useDemoReset = () => {
@@ -33,31 +34,8 @@ const useDemoReset = () => {
 // Main Component
 const DemoBanner: React.FC = () => {
   const { resetDemoData, isResetting } = useDemoReset();
-  const [isAdmin, setIsAdmin] = React.useState(false);
-
-  // Check if user is admin (mock implementation - replace with actual auth check)
-  useEffect(() => {
-    // In a real implementation, this would check the user's role
-    // For demo purposes, we'll simulate admin check
-    const checkAdminStatus = () => {
-      // Mock admin check - replace with actual auth logic
-      const userRole = localStorage.getItem('userRole');
-      setIsAdmin(userRole === 'admin');
-    };
-
-    checkAdminStatus();
-    
-    // Listen for auth changes
-    const handleStorageChange = () => {
-      checkAdminStatus();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  const { user, isAuthenticated } = useAuthStore();
+  const isAdmin = isAuthenticated && user?.role === 'ADMIN';
 
   // Only show in demo mode
   if (!import.meta.env.VITE_DEMO_MODE) {

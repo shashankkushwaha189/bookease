@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Edit2, Trash2, Scissors, ChevronUp, ChevronDown } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Scissors } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
-import Skeleton from '../../components/ui/Skeleton';
-import ServiceModal from '../../components/ServiceModal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import ServiceModal from '../../components/ServiceModal';
 import { useToastStore } from '../../stores/toast.store';
+import { servicesApi } from '../../api/services';
 
 // Types
 interface Service {
   id: string;
   name: string;
   description?: string;
+  category: string;
   duration: number;
   bufferBefore: number;
   bufferAfter: number;
@@ -21,509 +22,315 @@ interface Service {
   updatedAt: string;
 }
 
-type SortField = 'name' | 'duration';
-type SortDirection = 'asc' | 'desc';
+const ServicesPage: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [services, setServices] = useState<Service[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [serviceIdToDelete, setServiceIdToDelete] = useState<string | null>(null);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
 
-// API Hook (mock implementation - replace with actual API)
-const useServices = () => {
-  const [services, setServices] = React.useState<Service[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const toastStore = useToastStore();
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 600));
+  // Fetch services
+  const fetchServices = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await servicesApi.getServices();
+      
+      // Transform API data to frontend format
+      const transformedServices = response.data.data.map((service: any) => ({
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        category: service.category || 'General',
+        duration: service.durationMinutes,
+        bufferBefore: service.bufferBefore || 0,
+        bufferAfter: service.bufferAfter || 0,
+        price: service.price ? (typeof service.price === 'string' ? parseFloat(service.price) : service.price) : undefined,
+        isActive: service.isActive !== false,
+        createdAt: service.createdAt,
+        updatedAt: service.updatedAt
+      }));
+      
+      setServices(transformedServices);
+    } catch (err: any) {
+      console.error('Failed to fetch services:', err);
+      setError(err.message || 'Failed to load services');
+      toastStore.error('Failed to load services');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Delete service
+  const handleDeleteService = async (serviceId: string) => {
+    try {
+      await servicesApi.deleteService(serviceId);
+      setServices(prev => prev.filter(service => service.id !== serviceId));
+      toastStore.success('Service deleted successfully');
+      setIsDeleteDialogOpen(false);
+      setServiceIdToDelete(null);
+    } catch (err: any) {
+      console.error('Failed to delete service:', err);
+      toastStore.error('Failed to delete service');
+    }
+  };
+
+  // Save service (create or update)
+  const handleSaveService = async (serviceData: Omit<Service, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      if (editingService) {
+        // Update existing service
+        const response = await servicesApi.updateService(editingService.id, {
+          name: serviceData.name,
+          description: serviceData.description,
+          category: serviceData.category,
+          durationMinutes: serviceData.duration,
+          bufferBefore: serviceData.bufferBefore,
+          bufferAfter: serviceData.bufferAfter,
+          price: serviceData.price,
+          isActive: serviceData.isActive,
+        });
         
-        const mockServices: Service[] = [
-          {
-            id: '1',
-            name: 'Haircut',
-            description: 'Professional haircut with styling',
-            duration: 30,
-            bufferBefore: 5,
-            bufferAfter: 10,
-            price: 45,
-            isActive: true,
-            createdAt: '2024-03-01T10:00:00',
-            updatedAt: '2024-03-01T10:00:00'
-          },
-          {
-            id: '2',
-            name: 'Beard Trim',
-            description: 'Precision beard trimming and shaping',
-            duration: 15,
-            bufferBefore: 0,
-            bufferAfter: 5,
-            price: 25,
-            isActive: true,
-            createdAt: '2024-03-01T10:30:00',
-            updatedAt: '2024-03-01T10:30:00'
-          },
-          {
-            id: '3',
-            name: 'Haircut & Beard',
-            description: 'Complete haircut and beard service',
-            duration: 45,
-            bufferBefore: 5,
-            bufferAfter: 15,
-            price: 65,
-            isActive: true,
-            createdAt: '2024-03-01T11:00:00',
-            updatedAt: '2024-03-01T11:00:00'
-          },
-          {
-            id: '4',
-            name: 'Color & Style',
-            description: 'Full hair coloring and styling service',
-            duration: 120,
-            bufferBefore: 15,
-            bufferAfter: 20,
-            price: 120,
-            isActive: true,
-            createdAt: '2024-03-01T11:30:00',
-            updatedAt: '2024-03-01T11:30:00'
-          },
-          {
-            id: '5',
-            name: 'Full Service',
-            description: 'Premium haircut, beard, and treatment',
-            duration: 90,
-            bufferBefore: 10,
-            bufferAfter: 15,
-            price: 95,
-            isActive: false,
-            createdAt: '2024-03-01T12:00:00',
-            updatedAt: '2024-03-01T12:00:00'
-          }
-        ];
+        setServices(prev => prev.map(service => 
+          service.id === editingService.id 
+            ? {
+                ...service,
+                name: response.data.data.name,
+                description: response.data.data.description,
+                category: response.data.data.category,
+                duration: response.data.data.durationMinutes,
+                bufferBefore: response.data.data.bufferBefore,
+                bufferAfter: response.data.data.bufferAfter,
+                price: response.data.data.price ? (typeof response.data.data.price === 'string' ? parseFloat(response.data.data.price) : response.data.data.price) : undefined,
+                isActive: response.data.data.isActive,
+                updatedAt: response.data.data.updatedAt,
+              }
+            : service
+        ));
         
-        setServices(mockServices);
-      } catch (error) {
-        console.error('Failed to fetch services:', error);
-      } finally {
-        setIsLoading(false);
+        toastStore.success('Service updated successfully');
+      } else {
+        // Create new service
+        const response = await servicesApi.createService({
+          name: serviceData.name,
+          description: serviceData.description,
+          category: serviceData.category,
+          durationMinutes: serviceData.duration,
+          bufferBefore: serviceData.bufferBefore,
+          bufferAfter: serviceData.bufferAfter,
+          price: serviceData.price,
+          isActive: serviceData.isActive,
+        });
+        
+        const newService = {
+          id: response.data.data.id,
+          name: response.data.data.name,
+          description: response.data.data.description,
+          category: response.data.data.category,
+          duration: response.data.data.durationMinutes,
+          bufferBefore: response.data.data.bufferBefore,
+          bufferAfter: response.data.data.bufferAfter,
+          price: response.data.data.price ? (typeof response.data.data.price === 'string' ? parseFloat(response.data.data.price) : response.data.data.price) : undefined,
+          isActive: response.data.data.isActive,
+          createdAt: response.data.data.createdAt,
+          updatedAt: response.data.data.updatedAt,
+        };
+        
+        setServices(prev => [newService, ...prev]);
+        toastStore.success('Service created successfully');
       }
-    };
+      
+      setIsServiceModalOpen(false);
+      setEditingService(null);
+    } catch (err: any) {
+      console.error('Failed to save service:', err);
+      toastStore.error('Failed to save service');
+      throw err;
+    }
+  };
 
+  // Filter services based on search
+  const filteredServices = services.filter(service =>
+    service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (service.description && service.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  // Load services on mount
+  useEffect(() => {
     fetchServices();
   }, []);
 
-  const updateService = async (serviceId: string, updates: Partial<Service>) => {
-    try {
-      // Mock API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setServices(prev => prev.map(service => 
-        service.id === serviceId 
-          ? { ...service, ...updates, updatedAt: new Date().toISOString() }
-          : service
-      ));
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to update service:', error);
-      return false;
-    }
-  };
-
-  const deleteService = async (serviceId: string) => {
-    try {
-      // Mock API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setServices(prev => prev.filter(service => service.id !== serviceId));
-      return true;
-    } catch (error) {
-      console.error('Failed to delete service:', error);
-      return false;
-    }
-  };
-
-  const createService = async (serviceData: Omit<Service, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      // Mock API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const newService: Service = {
-        ...serviceData,
-        id: `service-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      
-      setServices(prev => [...prev, newService]);
-      return newService;
-    } catch (error) {
-      console.error('Failed to create service:', error);
-      return null;
-    }
-  };
-
-  return { services, isLoading, updateService, deleteService, createService };
-};
-
-// Components
-const StatusToggle: React.FC<{
-  isActive: boolean;
-  serviceId: string;
-  onUpdate: (serviceId: string, isActive: boolean) => void;
-}> = ({ isActive, serviceId, onUpdate }) => {
-  const [isUpdating, setIsUpdating] = React.useState(false);
-
-  const handleToggle = async () => {
-    setIsUpdating(true);
-    try {
-      await onUpdate(serviceId, !isActive);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
   return (
-    <button
-      onClick={handleToggle}
-      disabled={isUpdating}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        isActive ? 'bg-success' : 'bg-neutral-300'
-      } ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-    >
-      <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-          isActive ? 'translate-x-6' : 'translate-x-1'
-        }`}
-      />
-    </button>
-  );
-};
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Services</h1>
+        <p className="text-gray-600">Manage your service offerings</p>
+      </div>
 
-const SortableHeader: React.FC<{
-  label: string;
-  field: SortField;
-  currentSort: SortField;
-  currentDirection: SortDirection;
-  onSort: (field: SortField) => void;
-}> = ({ label, field, currentSort, currentDirection, onSort }) => {
-  const isActive = currentSort === field;
-  const direction = isActive ? currentDirection : null;
-
-  return (
-    <button
-      onClick={() => onSort(field)}
-      className="flex items-center space-x-1 text-xs font-medium text-neutral-600 uppercase tracking-wider hover:text-neutral-900"
-    >
-      <span>{label}</span>
-      {direction && (
-        direction === 'asc' ? (
-          <ChevronUp className="w-3 h-3" />
-        ) : (
-          <ChevronDown className="w-3 h-3" />
-        )
-      )}
-    </button>
-  );
-};
-
-// Main Component
-const ServicesPage: React.FC = () => {
-  const { success, error } = useToastStore();
-  const { services, isLoading, updateService, deleteService, createService } = useServices();
-  
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [sortField, setSortField] = React.useState<SortField>('name');
-  const [sortDirection, setSortDirection] = React.useState<SortDirection>('asc');
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [editingService, setEditingService] = React.useState<Service | null>(null);
-  const [deletingService, setDeletingService] = React.useState<Service | null>(null);
-
-  // Filter and sort services
-  const filteredServices = React.useMemo(() => {
-    let filtered = services;
-
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(service =>
-        service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        service.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Apply sorting
-    filtered = [...filtered].sort((a, b) => {
-      let comparison = 0;
-      
-      if (sortField === 'name') {
-        comparison = a.name.localeCompare(b.name);
-      } else if (sortField === 'duration') {
-        comparison = a.duration - b.duration;
-      }
-
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-
-    return filtered;
-  }, [services, searchQuery, sortField, sortDirection]);
-
-  // Event handlers
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const handleStatusToggle = async (serviceId: string, isActive: boolean) => {
-    const success = await updateService(serviceId, { isActive });
-    if (success) {
-      success(`Service ${isActive ? 'activated' : 'deactivated'} successfully`);
-    } else {
-      error('Failed to update service status');
-    }
-  };
-
-  const handleEdit = (service: Service) => {
-    setEditingService(service);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = (service: Service) => {
-    setDeletingService(service);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!deletingService) return;
-
-    const success = await deleteService(deletingService.id);
-    if (success) {
-      success('Service deleted successfully');
-      setDeletingService(null);
-    } else {
-      error('Failed to delete service');
-    }
-  };
-
-  const handleAddService = () => {
-    setEditingService(null);
-    setIsModalOpen(true);
-  };
-
-  const handleModalSave = async (serviceData: Omit<Service, 'id' | 'createdAt' | 'updatedAt'>) => {
-    if (editingService) {
-      // Update existing service
-      const success = await updateService(editingService.id, serviceData);
-      if (success) {
-        success('Service updated successfully');
-        setIsModalOpen(false);
-        setEditingService(null);
-      } else {
-        error('Failed to update service');
-      }
-    } else {
-      // Create new service
-      const newService = await createService(serviceData);
-      if (newService) {
-        success('Service created successfully');
-        setIsModalOpen(false);
-      } else {
-        error('Failed to create service');
-      }
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Services</h1>
-          <p className="text-neutral-600">Manage your service offerings and pricing</p>
+      {/* Search and Actions */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <div className="relative">
+            <Input
+              placeholder="Search services..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          </div>
         </div>
-        <Button variant="primary" onClick={handleAddService}>
+        <Button onClick={() => {
+          setEditingService(null);
+          setIsServiceModalOpen(true);
+        }}>
           <Plus className="w-4 h-4 mr-2" />
           Add Service
         </Button>
       </div>
 
-      {/* Search */}
-      <div className="w-full md:w-96">
-        <Input
-          placeholder="Search services..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          leftIcon={<Search className="w-4 h-4" />}
-        />
-      </div>
-
-      {/* Table */}
-      {isLoading ? (
-        <div className="bg-surface border border-neutral-200 rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-neutral-50 border-b border-neutral-200">
-                <tr>
-                  <th className="px-6 py-3 text-left">
-                    <Skeleton variant="text" height="16px" width="80px" />
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <Skeleton variant="text" height="16px" width="80px" />
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <Skeleton variant="text" height="16px" width="80px" />
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <Skeleton variant="text" height="16px" width="80px" />
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <Skeleton variant="text" height="16px" width="80px" />
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <Skeleton variant="text" height="16px" width="80px" />
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: 5 }, (_, index) => (
-                  <tr key={index}>
-                    <td className="px-6 py-4"><Skeleton variant="text" height="20px" /></td>
-                    <td className="px-6 py-4"><Skeleton variant="text" height="20px" /></td>
-                    <td className="px-6 py-4"><Skeleton variant="text" height="20px" /></td>
-                    <td className="px-6 py-4"><Skeleton variant="text" height="20px" /></td>
-                    <td className="px-6 py-4"><Skeleton variant="text" height="20px" /></td>
-                    <td className="px-6 py-4"><Skeleton variant="text" height="20px" /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* Error State */}
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-800">{error}</p>
         </div>
-      ) : filteredServices.length > 0 ? (
-        <div className="bg-surface border border-neutral-200 rounded-lg overflow-hidden">
+      )}
+
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
+        /* Services Table */
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-neutral-50 border-b border-neutral-200">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left">
-                    <SortableHeader
-                      label="Name"
-                      field="name"
-                      currentSort={sortField}
-                      currentDirection={sortDirection}
-                      onSort={handleSort}
-                    />
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Service
                   </th>
-                  <th className="px-6 py-3 text-left">
-                    <SortableHeader
-                      label="Duration"
-                      field="duration"
-                      currentSort={sortField}
-                      currentDirection={sortDirection}
-                      onSort={handleSort}
-                    />
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
-                    Buffer Before
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Duration
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
-                    Buffer After
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-neutral-600 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-200">
-                {filteredServices.map((service) => (
-                  <tr key={service.id} className="hover:bg-neutral-50">
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="font-medium text-neutral-900">{service.name}</div>
-                        {service.description && (
-                          <div className="text-sm text-neutral-600 mt-1">{service.description}</div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-neutral-900">{service.duration} min</div>
-                      {service.price && (
-                        <div className="text-sm text-neutral-600">${service.price}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-neutral-900">
-                      {service.bufferBefore} min
-                    </td>
-                    <td className="px-6 py-4 text-sm text-neutral-900">
-                      {service.bufferAfter} min
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusToggle
-                        isActive={service.isActive}
-                        serviceId={service.id}
-                        onUpdate={handleStatusToggle}
-                      />
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(service)}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(service)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredServices.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                      No services found
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredServices.map((service) => (
+                    <tr key={service.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <Scissors className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{service.name}</div>
+                            {service.description && (
+                              <div className="text-sm text-gray-500">{service.description}</div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                          {service.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {service.duration} min
+                        {(service.bufferBefore > 0 || service.bufferAfter > 0) && (
+                          <div className="text-xs text-gray-500">
+                            +{service.bufferBefore}min / +{service.bufferAfter}min buffer
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {service.price ? `$${service.price}` : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          service.isActive
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {service.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={() => {
+                            setEditingService(service);
+                            setIsServiceModalOpen(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900 mr-3"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setServiceIdToDelete(service.id);
+                            setIsDeleteDialogOpen(true);
+                          }}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
-      ) : (
-        <div className="bg-surface border border-neutral-200 rounded-lg p-12 text-center">
-          <div className="w-16 h-16 bg-primary-soft rounded-full flex items-center justify-center mx-auto mb-4">
-            <Scissors className="w-8 h-8 text-primary" />
-          </div>
-          <h3 className="text-lg font-medium text-neutral-900 mb-2">No services yet</h3>
-          <p className="text-neutral-600 mb-6">Get started by adding your first service</p>
-          <Button variant="primary" onClick={handleAddService}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add your first service
-          </Button>
-        </div>
       )}
-
-      {/* Service Modal */}
-      <ServiceModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingService(null);
-        }}
-        service={editingService}
-        onSave={handleModalSave}
-      />
 
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
-        isOpen={!!deletingService}
-        onClose={() => setDeletingService(null)}
+        isOpen={isDeleteDialogOpen}
         title="Delete Service"
-        message={`Are you sure you want to delete "${deletingService?.name}"? This action cannot be undone.`}
-        confirmText="Delete Service"
-        onConfirm={handleConfirmDelete}
-        variant="danger"
+        message="Are you sure you want to delete this service? This action cannot be undone."
+        onConfirm={() => serviceIdToDelete && handleDeleteService(serviceIdToDelete)}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false);
+          setServiceIdToDelete(null);
+        }}
+      />
+
+      {/* Service Modal */}
+      <ServiceModal
+        isOpen={isServiceModalOpen}
+        onClose={() => {
+          setIsServiceModalOpen(false);
+          setEditingService(null);
+        }}
+        service={editingService}
+        onSave={handleSaveService}
       />
     </div>
   );

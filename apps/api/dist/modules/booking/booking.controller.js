@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookingController = void 0;
+const availability_controller_1 = require("../availability/availability.controller");
 const logger_1 = require("@bookease/logger");
 class BookingController {
     consentService;
@@ -23,12 +24,23 @@ class BookingController {
             // 2. Capture and store consent snapshot
             const ipAddress = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '0.0.0.0');
             await this.consentService.captureConsent(req.tenantId, customerEmail, ipAddress);
-            // 3. (Mock) Create booking logic...
+            // 3. Invalidate availability cache for this tenant since booking changes availability
+            const invalidatedCount = availability_controller_1.availabilityController.invalidateCache(req.tenantId);
+            logger_1.logger.info({
+                tenantId: req.tenantId,
+                customerEmail,
+                invalidatedCount
+            }, 'Availability cache invalidated after booking');
+            // 4. (Mock) Create booking logic...
             // For this task, we focus on the consent capture part
             logger_1.logger.info({ tenantId: req.tenantId, customerEmail }, 'Public booking created with consent');
             res.status(201).json({
                 success: true,
                 message: 'Booking created successfully',
+                cacheInvalidated: {
+                    invalidatedCount,
+                    message: 'Availability cache refreshed'
+                }
             });
         }
         catch (error) {

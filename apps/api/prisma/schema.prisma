@@ -71,6 +71,7 @@ model User {
 enum UserRole {
   ADMIN
   STAFF
+  USER
 }
 
 model Service {
@@ -78,6 +79,7 @@ model Service {
   tenantId        String
   name            String
   description     String?
+  category        String   @default("General")
   durationMinutes Int
   bufferBefore    Int      @default(0)
   bufferAfter     Int      @default(0)

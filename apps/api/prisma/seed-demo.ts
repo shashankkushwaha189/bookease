@@ -30,6 +30,7 @@ async function main() {
     // 1. Create Demo Tenant
     const tenant = await prisma.tenant.create({
         data: {
+            id: 'b18e0808-27d1-4253-aca9-453897585106', // Use the hardcoded ID that frontend expects
             name: 'HealthFirst Clinic',
             slug: 'demo-clinic',
             timezone: 'Asia/Kolkata',
@@ -300,7 +301,7 @@ async function main() {
         }
     }
 
-    // 9 & 10. Demo Users (Admin and Staff)
+    // 9 & 10. Demo Users (Admin, Staff, and Customer)
     const passwordHash = await bcrypt.hash('demo123456', 10);
 
     await prisma.user.create({
@@ -321,13 +322,23 @@ async function main() {
         }
     });
 
+    // Create customer user
+    await prisma.user.create({
+        data: {
+            tenantId: tenant.id,
+            email: 'customer@demo.com',
+            passwordHash,
+            role: UserRole.USER,
+        }
+    });
+
     // Link one of the staff profiles to the login user account natively
     await prisma.staff.update({
         where: { id: priya.id },
         data: { userId: staffUser.id }
     });
 
-    console.log('Created Demo Users (admin@demo.com & staff@demo.com [demo123456])');
+    console.log('Created Demo Users (admin@demo.com, staff@demo.com, customer@demo.com [demo123456])');
     console.log('🌱 Seed demo completed successfully.');
 }
 

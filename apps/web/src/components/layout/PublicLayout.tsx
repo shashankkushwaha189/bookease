@@ -1,31 +1,21 @@
-import LoginPage from '../../pages/LoginPage';
+import React from 'react';
 
-const PublicLayout = () => {
+type PublicLayoutProps = {
+  children: React.ReactNode;
+};
+
+const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#f3f4f6',
-        padding: '24px',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '420px',
-          background: '#ffffff',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow:
-            '0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.1)',
-          border: '1px solid #e5e7eb',
-        }}
-      >
-        <LoginPage />
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        {children}
       </div>
+
+      <footer className="mt-6 text-xs text-gray-600">
+        <span>Secure booking</span>
+        <span className="text-gray-400"> • </span>
+        <span>Your data is protected</span>
+      </footer>
     </div>
   );
 };

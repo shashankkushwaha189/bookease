@@ -259,7 +259,7 @@ export class AppointmentRepository {
             customerId: string;
             startTimeUtc: Date;
             endTimeUtc: Date;
-            referenceIds: string[]; // references for each occurrence
+            referenceId: string; // Single reference ID per appointment
             notes?: string;
             createdBy?: string;
         }>;
@@ -297,7 +297,7 @@ export class AppointmentRepository {
                         serviceId: appData.serviceId,
                         staffId: appData.staffId,
                         customerId: appData.customerId,
-                        referenceId: appData.referenceIds[i],
+                        referenceId: appData.referenceId,
                         startTimeUtc: appData.startTimeUtc,
                         endTimeUtc: appData.endTimeUtc,
                         notes: appData.notes,
@@ -403,6 +403,53 @@ export class AppointmentRepository {
             });
 
             // Timeline handled by service
+
+            return appointment;
+        });
+    }
+
+    async createManualBooking(data: {
+        tenantId: string;
+        serviceId: string;
+        staffId: string;
+        customerId: string;
+        startTimeUtc: Date;
+        endTimeUtc: Date;
+        referenceId: string;
+        notes?: string;
+        createdBy: string;
+        status: AppointmentStatus;
+    }) {
+        return prisma.$transaction(async (tx) => {
+            // Double-booking check for manual booking
+            const existing = await tx.appointment.findFirst({
+                where: {
+                    tenantId: data.tenantId,
+                    staffId: data.staffId,
+                    startTimeUtc: data.startTimeUtc,
+                    status: { not: AppointmentStatus.CANCELLED },
+                },
+            });
+
+            if (existing) {
+                throw new Error("SLOT_TAKEN");
+            }
+
+            // Create appointment without lock (manual booking)
+            const appointment = await tx.appointment.create({
+                data: {
+                    tenantId: data.tenantId,
+                    serviceId: data.serviceId,
+                    staffId: data.staffId,
+                    customerId: data.customerId,
+                    referenceId: data.referenceId,
+                    startTimeUtc: data.startTimeUtc,
+                    endTimeUtc: data.endTimeUtc,
+                    notes: data.notes,
+                    createdBy: data.createdBy,
+                    status: data.status,
+                },
+            });
 
             return appointment;
         });

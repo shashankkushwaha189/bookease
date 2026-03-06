@@ -1,415 +1,161 @@
-import React, { Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { 
   Calendar, 
-  Clock, 
-  UserX, 
   Users, 
+  Clock, 
   TrendingUp, 
-  TrendingDown,
+  BarChart3,
+  Activity,
+  Settings,
   Plus,
-  ChevronRight
+  ChevronRight,
+  Home
 } from 'lucide-react';
-import Button from '../components/ui/Button';
+import dashboardApi, { DashboardSummary, Appointment, PeakTime } from '../api/dashboard';
+import { useAuthStore } from '../stores/auth.store';
 import Badge from '../components/ui/Badge';
-import Skeleton from '../components/ui/Skeleton';
-import EmptyState from '../components/ui/EmptyState';
 
-// Types
-interface DashboardSummary {
-  todaysBookings: {
-    total: number;
-    confirmed: number;
-    pending: number;
-    trend: number; // percentage change vs yesterday
-  };
-  upcomingBookings: {
-    count: number;
-    nextAppointment?: {
-      time: string;
-      customerName: string;
-    };
-  };
-  noShowRate: {
-    percentage: number;
-    total: number;
-    noShows: number;
-  };
-  staffUtilization: {
-    percentage: number;
-    activeStaff: number;
-  };
-}
-
-interface Appointment {
-  id: string;
-  time: string;
-  customerName: string;
-  service: string;
-  staff: string;
-  status: 'booked' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
-}
-
-interface Insight {
-  type: 'info' | 'warning' | 'success';
-  text: string;
-}
-
-// API Hooks (mock implementations - replace with actual API calls)
-const useDashboardSummary = (date: string) => {
-  const [data, setData] = React.useState<DashboardSummary | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const fetchSummary = async () => {
-      try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        const mockData: DashboardSummary = {
-          todaysBookings: {
-            total: 24,
-            confirmed: 18,
-            pending: 6,
-            trend: 12.5
-          },
-          upcomingBookings: {
-            count: 3,
-            nextAppointment: {
-              time: '2:30 PM',
-              customerName: 'Sarah'
-            }
-          },
-          noShowRate: {
-            percentage: 8.3,
-            total: 24,
-            noShows: 2
-          },
-          staffUtilization: {
-            percentage: 78,
-            activeStaff: 5
-          }
-        };
-        
-        setData(mockData);
-      } catch (error) {
-        console.error('Failed to fetch dashboard summary:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSummary();
-  }, [date]);
-
-  return { data, isLoading };
-};
-
-const useTodayAppointments = () => {
-  const [appointments, setAppointments] = React.useState<Appointment[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 600));
-        
-        const mockAppointments: Appointment[] = [
-          {
-            id: '1',
-            time: '9:00 AM',
-            customerName: 'John Smith',
-            service: 'Haircut',
-            staff: 'Sarah Johnson',
-            status: 'confirmed'
-          },
-          {
-            id: '2',
-            time: '9:30 AM',
-            customerName: 'Emma Davis',
-            service: 'Color & Style',
-            staff: 'Mike Wilson',
-            status: 'confirmed'
-          },
-          {
-            id: '3',
-            time: '10:00 AM',
-            customerName: 'Robert Brown',
-            service: 'Beard Trim',
-            staff: 'Sarah Johnson',
-            status: 'booked'
-          },
-          {
-            id: '4',
-            time: '10:30 AM',
-            customerName: 'Lisa Anderson',
-            service: 'Haircut',
-            staff: 'Mike Wilson',
-            status: 'confirmed'
-          },
-          {
-            id: '5',
-            time: '11:00 AM',
-            customerName: 'James Taylor',
-            service: 'Full Service',
-            staff: 'Sarah Johnson',
-            status: 'completed'
-          }
-        ];
-        
-        setAppointments(mockAppointments);
-      } catch (error) {
-        console.error('Failed to fetch appointments:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAppointments();
-  }, []);
-
-  return { appointments, isLoading };
-};
-
-const useWeekPeakTimes = () => {
-  const [insights, setInsights] = React.useState<Insight[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const fetchInsights = async () => {
-      try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 700));
-        
-        const mockInsights: Insight[] = [
-          {
-            type: 'info',
-            text: 'Peak time: Tuesday 10-11am'
-          },
-          {
-            type: 'success',
-            text: 'Haircut is most booked service this week'
-          },
-          {
-            type: 'warning',
-            text: 'No-show rate increased 5% vs last week'
-          }
-        ];
-        
-        setInsights(mockInsights);
-      } catch (error) {
-        console.error('Failed to fetch insights:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchInsights();
-  }, []);
-
-  return { insights, isLoading };
-};
-
-// Components
+// Enhanced Summary Card with trend and sparkline
 const SummaryCard: React.FC<{
   icon: React.ReactNode;
   title: string;
   value: string | number;
   subtitle: string;
   trend?: number;
-  isLoading?: boolean;
-  color?: 'green' | 'amber' | 'red';
-}> = ({ icon, title, value, subtitle, trend, isLoading, color }) => {
-  if (isLoading) {
+  color?: string;
+  sparkline?: number[];
+}> = ({ icon, title, value, subtitle, trend, color = 'blue', sparkline }) => {
+  const colorClasses: Record<string, string> = {
+    blue: 'bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 border-blue-200 shadow-lg',
+    green: 'bg-gradient-to-br from-green-50 to-green-100 text-green-600 border-green-200 shadow-lg',
+    yellow: 'bg-gradient-to-br from-yellow-50 to-yellow-100 text-yellow-600 border-yellow-200 shadow-lg',
+    purple: 'bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 border-purple-200 shadow-lg',
+    red: 'bg-gradient-to-br from-red-50 to-red-100 text-red-600 border-red-200 shadow-lg'
+  };
+
+  // Simple sparkline visualization
+  const renderSparkline = () => {
+    if (!sparkline || sparkline.length < 2) return null;
+    
+    const max = Math.max(...sparkline);
+    const min = Math.min(...sparkline);
+    const range = max - min || 1;
+    
+    const points = sparkline.map((value, index) => {
+      const x = (index / (sparkline.length - 1)) * 100;
+      const y = 100 - ((value - min) / range) * 100;
+      return `${x},${y}`;
+    }).join(' ');
+
     return (
-      <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-        <Skeleton variant="card" height="96px" />
-      </div>
+      <svg width="60" height="20" className="ml-2">
+        <defs>
+          <linearGradient id={`gradient-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="currentColor" stopOpacity="0.8" />
+          </linearGradient>
+        </defs>
+        <polyline
+          points={points}
+          fill="none"
+          stroke={`url(#gradient-${color})`}
+          strokeWidth="2"
+          className="opacity-80"
+        />
+      </svg>
     );
-  }
-
-  const getTrendIcon = () => {
-    if (!trend) return null;
-    return trend > 0 ? (
-      <TrendingUp className="w-4 h-4 text-success" />
-    ) : (
-      <TrendingDown className="w-4 h-4 text-danger" />
-    );
-  };
-
-  const getTrendColor = () => {
-    if (!trend) return 'text-neutral-600';
-    return trend > 0 ? 'text-success' : 'text-danger';
   };
 
   return (
-    <div className="bg-surface border border-neutral-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center mb-2">
-            <div className="p-2 bg-primary-soft rounded-lg text-primary mr-3">
-              {icon}
-            </div>
-            <h3 className="text-sm font-medium text-neutral-600">{title}</h3>
-          </div>
-          <div className="text-2xl font-bold text-neutral-900 mb-1">{value}</div>
-          <div className="flex items-center text-sm text-neutral-600">
-            <span>{subtitle}</span>
-            {trend && (
-              <span className={`flex items-center ml-2 ${getTrendColor()}`}>
-                {getTrendIcon()}
-                <span className="ml-1">{Math.abs(trend)}%</span>
-              </span>
-            )}
-          </div>
-        </div>
-        {color && (
-          <div className={`w-3 h-3 rounded-full ${
-            color === 'green' ? 'bg-success' : 
-            color === 'amber' ? 'bg-warning' : 'bg-danger'
-          }`} />
-        )}
-      </div>
-    </div>
-  );
-};
-
-const InsightChip: React.FC<{ insight: Insight }> = ({ insight }) => {
-  const getColorClasses = () => {
-    switch (insight.type) {
-      case 'success':
-        return 'bg-success-soft text-success border-success';
-      case 'warning':
-        return 'bg-warning-soft text-warning border-warning';
-      default:
-        return 'bg-primary-soft text-primary border-primary';
-    }
-  };
-
-  return (
-    <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm border ${getColorClasses()}`}>
-      {insight.text}
-    </div>
-  );
-};
-
-const AppointmentRow: React.FC<{ appointment: Appointment; onClick: () => void }> = ({ 
-  appointment, 
-  onClick 
-}) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'confirmed';
-      case 'booked': return 'booked';
-      case 'completed': return 'completed';
-      case 'cancelled': return 'cancelled';
-      case 'no_show': return 'no_show';
-      default: return 'booked';
-    }
-  };
-
-  return (
-    <div 
-      onClick={onClick}
-      className="bg-surface border border-neutral-200 rounded-lg p-4 hover:bg-neutral-50 cursor-pointer transition-colors duration-150"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <div className="flex items-center space-x-4">
-            <div className="text-sm font-medium text-neutral-900 w-16">
-              {appointment.time}
-            </div>
-            <div>
-              <div className="font-medium text-neutral-900">{appointment.customerName}</div>
-              <div className="text-sm text-neutral-600">{appointment.service}</div>
-            </div>
+    <div className={`group relative bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 hover:border-gray-200/80`}>
+      <div className="flex items-center justify-between mb-4">
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 ${colorClasses[color]}`}>
+          <div className="relative">
+            {icon}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
           </div>
         </div>
         <div className="flex items-center space-x-3">
-          <div className="text-sm text-neutral-600">{appointment.staff}</div>
-          <Badge status={getStatusColor(appointment.status)} />
-          <ChevronRight className="w-4 h-4 text-neutral-400" />
+          {trend && (
+            <div className={`flex items-center text-sm font-medium px-3 py-1 rounded-full ${
+              trend > 0 ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-success' : 
+              'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-danger'
+            }`}>
+              <TrendingUp className={`w-4 h-4 ${trend < 0 ? 'rotate-180' : ''}`} />
+              {Math.abs(trend)}%
+            </div>
+          )}
+          {sparkline && renderSparkline()}
         </div>
+      </div>
+      <div>
+        <div className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+          {value}
+        </div>
+        <div className="text-sm text-gray-600 font-medium">{subtitle}</div>
       </div>
     </div>
   );
 };
 
-const MiniCalendar: React.FC = () => {
-  const navigate = useNavigate();
-  const [currentDate] = React.useState(new Date());
-  
-  const getDaysInWeek = () => {
-    const startOfWeek = new Date(currentDate);
-    const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
-    startOfWeek.setDate(diff);
-    
-    const days = [];
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startOfWeek);
-      date.setDate(startOfWeek.getDate() + i);
-      days.push(date);
-    }
-    return days;
-  };
-
-  const handleDayClick = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    navigate(`/admin/calendar?date=${dateStr}`);
-  };
-
-  const handleQuickBook = () => {
-    // Open new appointment modal (to be implemented)
-    console.log('Open quick book modal');
-  };
-
-  const days = getDaysInWeek();
-  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+// Sidebar Navigation Component
+const Sidebar: React.FC<{ activeItem: string; onNavigate: (item: string) => void }> = ({ activeItem, onNavigate }) => {
+  const menuItems = [
+    { id: 'dashboard', icon: <Home className="w-5 h-5" />, label: 'Dashboard' },
+    { id: 'appointments', icon: <Calendar className="w-5 h-5" />, label: 'Appointments' },
+    { id: 'staff', icon: <Users className="w-5 h-5" />, label: 'Staff' },
+    { id: 'analytics', icon: <BarChart3 className="w-5 h-5" />, label: 'Analytics' },
+    { id: 'reports', icon: <Activity className="w-5 h-5" />, label: 'Reports' },
+    { id: 'settings', icon: <Settings className="w-5 h-5" />, label: 'Settings' },
+  ];
 
   return (
-    <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-neutral-900">This Week</h3>
-        <Button variant="ghost" size="sm" onClick={handleQuickBook}>
-          <Plus className="w-4 h-4 mr-1" />
-          Quick Book
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-7 gap-2 mb-4">
-        {dayNames.map((day, index) => (
-          <div key={index} className="text-center text-xs font-medium text-neutral-600 py-2">
-            {day}
+    <div className="w-64 h-full bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700">
+      {/* Logo/Header */}
+      <div className="p-6 border-b border-gray-700">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+            <Calendar className="w-5 h-5 text-white" />
           </div>
-        ))}
+          <div>
+            <h2 className="text-white font-bold text-lg">BookEase</h2>
+            <p className="text-gray-400 text-xs">Management System</p>
+          </div>
+        </div>
       </div>
-      
-      <div className="grid grid-cols-7 gap-2">
-        {days.map((date, index) => {
-          const isToday = date.toDateString() === new Date().toDateString();
-          const hasAppointments = Math.random() > 0.3; // Mock - replace with actual data
-          
-          return (
-            <button
-              key={index}
-              onClick={() => handleDayClick(date)}
-              className={`relative p-2 rounded-lg text-center transition-colors duration-150 ${
-                isToday 
-                  ? 'bg-primary text-primary-soft' 
-                  : 'hover:bg-neutral-100 text-neutral-900'
-              }`}
-            >
-              <div className="text-sm font-medium">{date.getDate()}</div>
-              {hasAppointments && (
-                <div className={`w-1 h-1 rounded-full mx-auto mt-1 ${
-                  isToday ? 'bg-primary-soft' : 'bg-primary'
-                }`} />
-              )}
-            </button>
-          );
-        })}
+
+      {/* Navigation */}
+      <nav className="p-4">
+        <ul className="space-y-2">
+          {menuItems.map((item) => (
+            <li key={item.id}>
+              <button
+                onClick={() => onNavigate(item.id)}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${
+                  activeItem === item.id
+                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                }`}
+              >
+                {item.icon}
+                <span className="font-medium">{item.label}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* User Info */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-700">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center">
+            <Users className="w-4 h-4 text-gray-300" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-sm font-medium truncate">Admin User</p>
+            <p className="text-gray-400 text-xs">admin@demo.com</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -417,123 +163,222 @@ const MiniCalendar: React.FC = () => {
 
 // Main Dashboard Component
 const DashboardPage: React.FC = () => {
-  const today = new Date().toISOString().split('T')[0];
-  
-  const { data: summary, isLoading: summaryLoading } = useDashboardSummary(today);
-  const { appointments, isLoading: appointmentsLoading } = useTodayAppointments();
-  const { insights, isLoading: insightsLoading } = useWeekPeakTimes();
+  const { user } = useAuthStore();
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [peakTimes, setPeakTimes] = useState<PeakTime[]>([]);
+  const [staffUtilization, setStaffUtilization] = useState<{ percentage: number; activeStaff: number }>({ percentage: 0, activeStaff: 0 });
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [appointmentsLoading, setAppointmentsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState('dashboard');
 
-  const handleAppointmentClick = (appointmentId: string) => {
-    // Open appointment detail drawer (to be implemented)
-    console.log('Open appointment:', appointmentId);
-  };
+  // Fetch data
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const data = await dashboardApi.getSummary();
+        setSummary(data);
+      } catch (error) {
+        console.error('Failed to fetch dashboard summary:', error);
+      } finally {
+        setSummaryLoading(false);
+      }
+    };
 
-  const getNoShowColor = (percentage: number) => {
-    if (percentage < 10) return 'green';
-    if (percentage <= 20) return 'amber';
-    return 'red';
+    const fetchAppointments = async () => {
+      try {
+        const data = await dashboardApi.getTodayAppointments();
+        setAppointments(data);
+      } catch (error) {
+        console.error('Failed to fetch appointments:', error);
+      } finally {
+        setAppointmentsLoading(false);
+      }
+    };
+
+    const fetchPeakTimes = async () => {
+      try {
+        const data = await dashboardApi.getPeakTimes();
+        setPeakTimes(data);
+      } catch (error) {
+        console.error('Failed to fetch peak times:', error);
+      }
+    };
+
+    const fetchStaffUtilization = async () => {
+      try {
+        const data = await dashboardApi.getStaffUtilization();
+        setStaffUtilization(data);
+      } catch (error) {
+        console.error('Failed to fetch staff utilization:', error);
+      }
+    };
+
+    fetchSummary();
+    fetchAppointments();
+    fetchPeakTimes();
+    fetchStaffUtilization();
+  }, []);
+
+  const handleNavigation = (section: string) => {
+    setActiveSection(section);
+    // Here you can add actual navigation logic
+    console.log('Navigate to:', section);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Dashboard</h1>
-        <p className="text-neutral-600">Welcome back! Here's what's happening today.</p>
-      </div>
-
-      {/* SECTION 1 - Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <SummaryCard
-          icon={<Calendar className="w-5 h-5" />}
-          title="Today's Bookings"
-          value={summary?.todaysBookings.total || 0}
-          subtitle={`${summary?.todaysBookings.confirmed || 0} confirmed, ${summary?.todaysBookings.pending || 0} pending`}
-          trend={summary?.todaysBookings.trend}
-          isLoading={summaryLoading}
-        />
-        
-        <SummaryCard
-          icon={<Clock className="w-5 h-5" />}
-          title="Upcoming (Next 2 Hours)"
-          value={summary?.upcomingBookings.count || 0}
-          subtitle={summary?.upcomingBookings.nextAppointment 
-            ? `${summary.upcomingBookings.nextAppointment.time} with ${summary.upcomingBookings.nextAppointment.customerName}`
-            : 'No upcoming appointments'
-          }
-          isLoading={summaryLoading}
-        />
-        
-        <SummaryCard
-          icon={<UserX className="w-5 h-5" />}
-          title="No-Show Rate (This Week)"
-          value={`${summary?.noShowRate.percentage || 0}%`}
-          subtitle={`${summary?.noShowRate.noShows || 0} of ${summary?.noShowRate.total || 0} appointments`}
-          isLoading={summaryLoading}
-          color={summary ? getNoShowColor(summary.noShowRate.percentage) : undefined}
-        />
-        
-        <SummaryCard
-          icon={<Users className="w-5 h-5" />}
-          title="Staff Utilization"
-          value={`${summary?.staffUtilization.percentage || 0}%`}
-          subtitle={`${summary?.staffUtilization.activeStaff || 0} staff active today`}
-          isLoading={summaryLoading}
-        />
-      </div>
-
-      {/* SECTION 2 - Insights Strip */}
-      {!insightsLoading && insights.length > 0 && (
-        <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-neutral-900 mb-4">Key Insights</h3>
-          <div className="flex flex-wrap gap-3">
-            {insights.map((insight, index) => (
-              <InsightChip key={index} insight={insight} />
-            ))}
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar activeItem={activeSection} onNavigate={handleNavigation} />
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        {/* Top Bar */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {activeSection === 'dashboard' && 'Dashboard'}
+                {activeSection === 'appointments' && 'Appointments'}
+                {activeSection === 'staff' && 'Staff Management'}
+                {activeSection === 'analytics' && 'Analytics'}
+                {activeSection === 'reports' && 'Reports'}
+                {activeSection === 'settings' && 'Settings'}
+              </h1>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button className="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium shadow-primary hover:shadow-lg transition-all duration-200">
+                <Plus className="w-4 h-4 mr-2" />
+                New Appointment
+              </button>
+              <button className="px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl font-medium border border-gray-300 hover:from-gray-200 hover:to-gray-300 transition-all duration-200">
+                Export Report
+              </button>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* SECTION 3 - Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* LEFT - Today's Appointments (60%) */}
-        <div className="lg:col-span-3">
-          <div className="bg-surface border border-neutral-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Today's Appointments</h3>
-            
-            <Suspense fallback={<Skeleton variant="card" height="400px" />}>
-              {appointmentsLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <Skeleton key={index} variant="card" height="80px" />
-                  ))}
-                </div>
-              ) : appointments.length > 0 ? (
-                <div className="space-y-3">
-                  {appointments.map((appointment) => (
-                    <AppointmentRow
-                      key={appointment.id}
-                      appointment={appointment}
-                      onClick={() => handleAppointmentClick(appointment.id)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState
-                  title="No appointments today"
-                  description="Enjoy the quiet! Maybe it's time for some admin tasks."
-                  icon={<Calendar className="w-12 h-12 text-neutral-400" />}
+        {/* Content Area */}
+        <div className="p-6">
+          {activeSection === 'dashboard' && (
+            <div>
+              {/* Quick Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <SummaryCard
+                  icon={<Calendar className="w-6 h-6 text-blue-600" />}
+                  title="Today's Bookings"
+                  value={summary?.totalAppointments || 0}
+                  subtitle="Total appointments"
+                  trend={5}
+                  color="blue"
+                  sparkline={[3, 5, 4, 7, 6, 8, 5]}
                 />
-              )}
-            </Suspense>
-          </div>
-        </div>
+                <SummaryCard
+                  icon={<Users className="w-6 h-6 text-green-600" />}
+                  title="Confirmed"
+                  value={summary?.completedCount || 0}
+                  subtitle="Completed appointments"
+                  trend={12}
+                  color="green"
+                  sparkline={[2, 3, 4, 3, 5, 4, 6]}
+                />
+                <SummaryCard
+                  icon={<Clock className="w-6 h-6 text-yellow-600" />}
+                  title="Cancelled"
+                  value={summary?.cancelledCount || 0}
+                  subtitle="Cancelled appointments"
+                  trend={-3}
+                  color="yellow"
+                  sparkline={[4, 3, 3, 2, 3, 2, 1]}
+                />
+                <SummaryCard
+                  icon={<TrendingUp className="w-6 h-6 text-purple-600" />}
+                  title="Show Rate"
+                  value={`${Math.round(100 - (summary?.noShowRate || 0))}%`}
+                  subtitle={`No-show rate: ${Math.round(summary?.noShowRate || 0)}%`}
+                  trend={8}
+                  color={summary?.noShowRate && summary.noShowRate > 10 ? 'red' : 'green'}
+                  sparkline={[85, 87, 86, 88, 90, 89, 91]}
+                />
+              </div>
 
-        {/* RIGHT - Mini Calendar (40%) */}
-        <div className="lg:col-span-2">
-          <Suspense fallback={<Skeleton variant="card" height="300px" />}>
-            <MiniCalendar />
-          </Suspense>
+              {/* Today's Appointments */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900">Today's Appointments</h2>
+                  <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    View All
+                  </button>
+                </div>
+                
+                {appointmentsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                        <div className="animate-pulse">
+                          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/2 mb-1"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : appointments.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments today</h3>
+                    <p className="text-gray-600">You're all caught up! No appointments scheduled for today.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {appointments.slice(0, 5).map((appointment) => (
+                      <div
+                        key={appointment.id}
+                        className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow cursor-pointer"
+                        onClick={() => console.log('View appointment:', appointment)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3">
+                              <div className="text-sm font-medium text-gray-900 w-16">
+                                {new Date(appointment.startTimeUtc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {appointment.customer?.name || 'Unknown Customer'}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  {appointment.service?.name || 'Unknown Service'}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className="text-sm text-gray-600">
+                              {appointment.staff?.name || 'Unknown Staff'}
+                            </div>
+                            <Badge status={appointment.status.toLowerCase() as any} />
+                            <ChevronRight className="w-4 h-4 text-gray-400" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {/* Other sections would go here */}
+          {activeSection !== 'dashboard' && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">This section is under development.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

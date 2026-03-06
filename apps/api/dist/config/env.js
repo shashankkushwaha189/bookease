@@ -8,10 +8,7 @@ const zod_1 = require("zod");
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 // Load .env file if it exists, but don't fail if it doesn't
-dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../../../../.env') });
-// Debug logging for PORT
-console.log('🔍 Debug - process.env.PORT:', process.env.PORT);
-console.log('🔍 Debug - process.env:', Object.keys(process.env).filter(k => k.includes('PORT')));
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../../../../.env'), override: true });
 const envSchema = zod_1.z.object({
     PORT: zod_1.z.coerce.number().default(() => {
         // Use Render's port first, then fallback to 3000
@@ -29,5 +26,3 @@ if (!envParseResult.success) {
     process.exit(1);
 }
 exports.env = envParseResult.data;
-// Debug logging for final env
-console.log('🔍 Debug - env.PORT:', exports.env.PORT);
