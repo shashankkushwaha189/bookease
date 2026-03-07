@@ -121,28 +121,20 @@ export class ImportService {
             const totalBytes = buffer.length;
 
             const stream = Readable.from(buffer);
-            const parser = parse({
-                columns: true,
-                skip_empty_lines: true,
-                trim: true,
-                relax_column_count: true,
-                max_file_size: 50 * 1024 * 1024 // 50MB max file size
-            });
+            const parser = parse();
+            
+            stream.pipe(parser);
 
             parser.on('readable', () => {
-                let record;
+                let record: any;
                 while ((record = parser.read()) !== null) {
                     rowCount++;
-                    processedBytes = parser.bytes_read;
+                    processedBytes = (parser as any).bytes_read || 0;
 
                     // Progress logging for large files
                     if (rowCount % 1000 === 0) {
                         const progress = (processedBytes / totalBytes) * 100;
-                        logger.debug({
-                            processedRows: rowCount,
-                            progress: `${progress.toFixed(1)}%`,
-                            bytesProcessed: processedBytes
-                        }, 'CSV parsing progress');
+                        logger.info('Import progress', { processedRows: rowCount, progress: `${((processedBytes / totalBytes) * 100).toFixed(1)}%`, bytesProcessed: processedBytes });
                     }
 
                     if (rowCount > maxRows) {
@@ -194,23 +186,13 @@ export class ImportService {
             });
 
             parser.on('error', (err) => {
-                logger.error({
-                    error: err.message,
-                    bytesProcessed: processedBytes
-                }, 'CSV parsing error');
+                logger.error('CSV parsing error', { error: err instanceof Error ? err.message : String(err), bytesProcessed: processedBytes });
                 reject(err);
             });
 
             parser.on('end', () => {
                 const duration = Date.now() - startTime;
-                logger.info({
-                    totalRows: rowCount,
-                    validRows: results.length,
-                    errorRows: parseErrors.length,
-                    warningRows: parseWarnings.length,
-                    duration,
-                    bytesProcessed: processedBytes
-                }, 'CSV parsing completed');
+                logger.info('CSV parsing completed', { totalRows: rowCount, validRows: results.length, errorRows: parseErrors.length, warningRows: parseWarnings.length, duration, bytesProcessed: processedBytes });
 
                 resolve({ 
                     rows: results, 
@@ -336,15 +318,7 @@ export class ImportService {
 
         const duration = Date.now() - startTime;
         
-        logger.info({
-            tenantId,
-            type: 'customers',
-            imported,
-            skipped,
-            failed: importErrors.length,
-            duration,
-            totalRows: rows.length
-        }, 'Customer import completed');
+        logger.info('Customer import completed', { tenantId, type: 'customers', imported, skipped, failed: importErrors.length, duration, totalRows: rows.length });
 
         return {
             imported,
@@ -429,15 +403,7 @@ export class ImportService {
 
         const duration = Date.now() - startTime;
         
-        logger.info({
-            tenantId,
-            type: 'services',
-            imported,
-            skipped,
-            failed: importErrors.length,
-            duration,
-            totalRows: rows.length
-        }, 'Service import completed');
+        logger.info('Service import completed', { tenantId, type: 'services', imported, skipped, failed: importErrors.length, duration, totalRows: rows.length });
 
         return {
             imported,
@@ -506,8 +472,7 @@ export class ImportService {
                             data: {
                                 tenantId,
                                 name: row.name.trim(),
-                                email: row.email.toLowerCase().trim(),
-                                phone: row.phone?.trim() || null
+                                email: row.email.toLowerCase().trim()
                             }
                         });
 
@@ -547,15 +512,7 @@ export class ImportService {
 
         const duration = Date.now() - startTime;
         
-        logger.info({
-            tenantId,
-            type: 'staff',
-            imported,
-            skipped,
-            failed: importErrors.length,
-            duration,
-            totalRows: rows.length
-        }, 'Staff import completed');
+        logger.info('Staff import completed', { tenantId, type: 'staff', imported, skipped, failed: importErrors.length, duration, totalRows: rows.length });
 
         return {
             imported,

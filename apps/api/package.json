@@ -38,6 +38,7 @@
         "verify:api": "curl -s http://localhost:3000/api/services -H \"x-tenant-id: healthfirst-demo\" | jq ."
     },
     "dependencies": {
+        "@bookease/logger": "workspace:*",
         "@prisma/client": "^6.19.2",
         "axios": "^1.6.0",
         "bcrypt": "^6.0.0",

@@ -151,10 +151,13 @@ const StaffModal: React.FC<StaffModalProps> = ({
 
   // Handle form submission
   const onSubmit = async (data: StaffFormData) => {
+    console.log('📝 StaffModal form submitted with data:', data);
     try {
       await onSave(data);
+      console.log('✅ StaffModal onSave completed successfully');
       onClose();
     } catch (err) {
+      console.error('❌ StaffModal onSubmit error:', err);
       error('Failed to save staff member');
     }
   };
@@ -343,7 +346,7 @@ const StaffModal: React.FC<StaffModalProps> = ({
             <Button
               type="submit"
               variant="primary"
-              disabled={!isDirty}
+              disabled={Object.keys(errors).length > 0}
             >
               {staff ? 'Update Staff Member' : 'Add Staff Member'}
             </Button>

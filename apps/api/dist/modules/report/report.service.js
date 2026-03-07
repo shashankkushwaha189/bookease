@@ -284,7 +284,10 @@ class ReportService {
                             status: { not: 'CANCELLED' }
                         },
                         orderBy: { startTimeUtc: 'desc' },
-                        take: 1
+                        take: 1,
+                        include: {
+                            service: true
+                        }
                     },
                     _count: {
                         select: { appointments: true }
@@ -402,7 +405,7 @@ class ReportService {
             };
         }
         catch (error) {
-            issues.push(`CSV parsing error: ${error.message}`);
+            issues.push(`CSV parsing error: ${error instanceof Error ? error.message : String(error)}`);
             return { isValid: false, issues, recordCount: 0 };
         }
     }

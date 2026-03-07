@@ -68,8 +68,7 @@ export class ApiTokenService {
                 tenantId,
                 name: name.trim(),
                 tokenHash,
-                expiresAt: options.expiresAt,
-                permissions: options.permissions || []
+                expiresAt: options.expiresAt
             }
         });
 
@@ -88,8 +87,8 @@ export class ApiTokenService {
             name: apiToken.name,
             token: fullToken, // Only returned once
             createdAt: apiToken.createdAt,
-            lastUsed: apiToken.lastUsed,
-            expiresAt: apiToken.expiresAt,
+            lastUsed: apiToken.lastUsed || undefined,
+            expiresAt: apiToken.expiresAt || undefined,
             isActive: apiToken.isActive
         };
     }
@@ -106,10 +105,7 @@ export class ApiTokenService {
                 lastUsed: true,
                 expiresAt: true,
                 isActive: true,
-                createdAt: true,
-                _count: {
-                    select: { auditLogs: true }
-                }
+                createdAt: true
             },
             orderBy: { createdAt: 'desc' }
         });
@@ -117,11 +113,11 @@ export class ApiTokenService {
         return tokens.map(token => ({
             id: token.id,
             name: token.name,
-            lastUsed: token.lastUsed,
-            expiresAt: token.expiresAt,
+            lastUsed: token.lastUsed || undefined,
+            expiresAt: token.expiresAt || undefined,
             isActive: token.isActive,
             createdAt: token.createdAt,
-            usageCount: token._count.auditLogs
+            usageCount: 0 // TODO: Implement usage counting
         }));
     }
 
@@ -175,12 +171,7 @@ export class ApiTokenService {
         }
 
         const apiToken = await prisma.apiToken.findUnique({
-            where: { id: tokenId },
-            include: {
-                _count: {
-                    select: { auditLogs: true }
-                }
-            }
+            where: { id: tokenId }
         });
 
         if (!apiToken) {
@@ -408,8 +399,8 @@ export class ApiTokenService {
         return {
             id: updatedToken.id,
             name: updatedToken.name,
-            lastUsed: updatedToken.lastUsed,
-            expiresAt: updatedToken.expiresAt,
+            lastUsed: updatedToken.lastUsed || undefined,
+            expiresAt: updatedToken.expiresAt || undefined,
             isActive: updatedToken.isActive,
             createdAt: updatedToken.createdAt
         };

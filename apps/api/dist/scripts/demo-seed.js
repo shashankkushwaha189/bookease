@@ -401,8 +401,6 @@ class DemoSeeder {
                         email: userData.email,
                         passwordHash: hashedPassword,
                         role: userData.role,
-                        firstName: userData.firstName,
-                        lastName: userData.lastName,
                         tenantId: tenant.id,
                         isActive: true,
                     },
@@ -466,7 +464,7 @@ class DemoSeeder {
             for (const summaryData of this.DEMO_AI_SUMMARIES) {
                 const appointment = appointments[summaryData.appointmentIndex];
                 if (appointment.status === client_2.AppointmentStatus.COMPLETED) {
-                    const aiSummary = await prisma.aISummary.create({
+                    const aiSummary = await prisma.aiSummary.create({
                         data: {
                             appointmentId: appointment.id,
                             tenantId: tenant.id,
@@ -474,12 +472,7 @@ class DemoSeeder {
                             customerIntent: summaryData.customerIntent,
                             followUpSuggestion: summaryData.followUpSuggestion,
                             confidence: summaryData.confidence,
-                            keyPoints: summaryData.keyPoints,
-                            sentimentScore: summaryData.sentiment?.score,
-                            sentimentLabel: summaryData.sentiment?.label,
-                            sentimentConfidence: summaryData.sentiment?.confidence,
-                            model: this.DEMO_TENANT.aiModel,
-                            processingTime: summaryData.processingTime,
+                            model: 'demo-model',
                             accepted: true,
                         },
                     });
@@ -515,7 +508,7 @@ class DemoSeeder {
         logger_1.logger.info('Cleaning existing demo data...');
         try {
             // Delete in order of dependencies
-            await prisma.aISummary.deleteMany({
+            await prisma.aiSummary.deleteMany({
                 where: {
                     tenant: {
                         slug: this.DEMO_TENANT.slug,
@@ -603,7 +596,7 @@ class DemoSeeder {
                 prisma.staff.count({ where: { tenantId: tenant.id } }),
                 prisma.customer.count({ where: { tenantId: tenant.id } }),
                 prisma.appointment.count({ where: { tenantId: tenant.id } }),
-                prisma.aISummary.count({ where: { tenantId: tenant.id } }),
+                prisma.aiSummary.count({ where: { tenantId: tenant.id } }),
             ]);
             return {
                 exists: true,

@@ -8,6 +8,20 @@ export interface User {
     role: UserRole;
     tenantId: string;
     isActive: boolean;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    avatar?: string;
+    bio?: string;
+    timezone?: string;
+    language?: string;
+    notifications?: {
+        email: boolean;
+        push: boolean;
+        sms: boolean;
+    };
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface AuthResponse {

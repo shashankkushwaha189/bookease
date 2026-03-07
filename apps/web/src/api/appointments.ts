@@ -30,61 +30,61 @@ export const appointmentsApi = {
       page: number;
       limit: number;
       totalPages: number;
-    }>>('/appointments', params),
+    }>>('/api/appointments', params),
 
   /**
    * Get single appointment by ID
    */
   getAppointment: (id: string) => 
-    api.get<ApiSuccessResponse<Appointment>>(`/appointments/${id}`),
+    api.get<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}`),
 
   /**
    * Create new appointment
    */
   createAppointment: (data: CreateAppointmentRequest) => 
-    api.post<ApiSuccessResponse<Appointment>>('/appointments', data),
+    api.post<ApiSuccessResponse<Appointment>>('/api/appointments', data),
 
   /**
    * Update appointment
    */
   updateAppointment: (id: string, data: Partial<CreateAppointmentRequest>) => 
-    api.patch<ApiSuccessResponse<Appointment>>(`/appointments/${id}`, data),
+    api.patch<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}`, data),
 
   /**
    * Delete/cancel appointment
    */
   deleteAppointment: (id: string) => 
-    api.delete<ApiSuccessResponse<{ success: boolean }>>(`/appointments/${id}`),
+    api.delete<ApiSuccessResponse<{ success: boolean }>>(`/api/appointments/${id}`),
 
   /**
    * Confirm appointment
    */
   confirmAppointment: (id: string) => 
-    api.post<ApiSuccessResponse<Appointment>>(`/appointments/${id}/confirm`),
+    api.post<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}/confirm`),
 
   /**
    * Reschedule appointment
    */
   rescheduleAppointment: (id: string, data: { startTimeUtc: string; reason?: string }) => 
-    api.post<ApiSuccessResponse<Appointment>>(`/appointments/${id}/reschedule`, data),
+    api.post<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}/reschedule`, data),
 
   /**
    * Mark appointment as no-show
    */
   markNoShow: (id: string, data?: { reason?: string }) => 
-    api.post<ApiSuccessResponse<Appointment>>(`/appointments/${id}/no-show`, data),
+    api.post<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}/no-show`, data),
 
   /**
    * Complete appointment
    */
   completeAppointment: (id: string, data?: { notes?: string }) => 
-    api.post<ApiSuccessResponse<Appointment>>(`/appointments/${id}/complete`, data),
+    api.post<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}/complete`, data),
 
   /**
    * Get availability for booking
    */
   getAvailability: (params: AvailabilityRequest) => 
-    api.get<ApiSuccessResponse<AvailabilityResponse>>('/appointments/availability', params),
+    api.get<ApiSuccessResponse<AvailabilityResponse>>('/api/appointments/availability', params),
 
   /**
    * Get appointment timeline
@@ -96,7 +96,7 @@ export const appointmentsApi = {
       performedBy: string;
       note?: string;
       createdAt: string;
-    }>>>(`/appointments/${id}/timeline`),
+    }>>>(`/api/appointments/${id}/timeline`),
 
   /**
    * Add note to appointment
@@ -106,7 +106,7 @@ export const appointmentsApi = {
       id: string;
       note: string;
       createdAt: string;
-    }>>(`/appointments/${id}/notes`, data),
+    }>>(`/api/appointments/${id}/notes`, data),
 
   /**
    * Get appointment statistics
@@ -117,7 +117,7 @@ export const appointmentsApi = {
       byStatus: Record<string, number>;
       byService: Array<{ serviceName: string; count: number }>;
       byStaff: Array<{ staffName: string; count: number }>;
-    }>>('/appointments/stats', params),
+    }>>('/api/appointments/stats', params),
 
   /**
    * Bulk operations on appointments
@@ -131,5 +131,5 @@ export const appointmentsApi = {
       updated: number;
       failed: number;
       errors: Array<{ appointmentId: string; error: string }>;
-    }>>('/appointments/bulk', data),
+    }>>('/api/appointments/bulk', data),
 };

@@ -1,16 +1,28 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '@bookease/logger';
 import { env } from '../config/env';
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+// Simple Prisma client initialization
+export const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: env.DATABASE_URL
+    }
+  },
+  log: env.NODE_ENV === 'development' 
+    ? ['query', 'info', 'warn', 'error']
+    : ['error'],
+});
 
-export const prisma =
-    globalForPrisma.prisma ||
-    new PrismaClient({
-        log:
-            env.NODE_ENV === 'development'
-                ? ['query', 'info', 'warn', 'error']
-                : ['error'],
-    });
+// Test connection on startup
+async function initializeDatabase() {
+  try {
+    await prisma.$connect();
+    console.log('Database connected successfully');
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    throw error;
+  }
+}
 
-if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Initialize database connection
+initializeDatabase();

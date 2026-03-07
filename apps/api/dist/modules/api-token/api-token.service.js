@@ -36,8 +36,7 @@ class ApiTokenService {
                 tenantId,
                 name: name.trim(),
                 tokenHash,
-                expiresAt: options.expiresAt,
-                permissions: options.permissions || []
+                expiresAt: options.expiresAt
             }
         });
         // The user MUST save this now, it won't be shown again!
@@ -53,8 +52,8 @@ class ApiTokenService {
             name: apiToken.name,
             token: fullToken, // Only returned once
             createdAt: apiToken.createdAt,
-            lastUsed: apiToken.lastUsed,
-            expiresAt: apiToken.expiresAt,
+            lastUsed: apiToken.lastUsed || undefined,
+            expiresAt: apiToken.expiresAt || undefined,
             isActive: apiToken.isActive
         };
     }
@@ -70,21 +69,18 @@ class ApiTokenService {
                 lastUsed: true,
                 expiresAt: true,
                 isActive: true,
-                createdAt: true,
-                _count: {
-                    select: { auditLogs: true }
-                }
+                createdAt: true
             },
             orderBy: { createdAt: 'desc' }
         });
         return tokens.map(token => ({
             id: token.id,
             name: token.name,
-            lastUsed: token.lastUsed,
-            expiresAt: token.expiresAt,
+            lastUsed: token.lastUsed || undefined,
+            expiresAt: token.expiresAt || undefined,
             isActive: token.isActive,
             createdAt: token.createdAt,
-            usageCount: token._count.auditLogs
+            usageCount: 0 // TODO: Implement usage counting
         }));
     }
     /**
@@ -124,12 +120,7 @@ class ApiTokenService {
             return { isValid: false, error: 'Invalid token format' };
         }
         const apiToken = await prisma_1.prisma.apiToken.findUnique({
-            where: { id: tokenId },
-            include: {
-                _count: {
-                    select: { auditLogs: true }
-                }
-            }
+            where: { id: tokenId }
         });
         if (!apiToken) {
             return { isValid: false, error: 'Token not found' };
@@ -313,8 +304,8 @@ class ApiTokenService {
         return {
             id: updatedToken.id,
             name: updatedToken.name,
-            lastUsed: updatedToken.lastUsed,
-            expiresAt: updatedToken.expiresAt,
+            lastUsed: updatedToken.lastUsed || undefined,
+            expiresAt: updatedToken.expiresAt || undefined,
             isActive: updatedToken.isActive,
             createdAt: updatedToken.createdAt
         };

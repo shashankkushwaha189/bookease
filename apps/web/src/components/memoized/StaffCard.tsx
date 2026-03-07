@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit2, Mail, Phone, Calendar } from 'lucide-react';
+import { Edit2, Mail, Phone, Calendar, Trash2 } from 'lucide-react';
 import Button from '../ui/Button';
 
 interface Staff {
@@ -16,6 +16,7 @@ interface Staff {
 interface StaffCardProps {
   staff: Staff;
   onEdit: () => void;
+  onDelete: () => void;
   onViewSchedule: () => void;
   services: { id: string; name: string }[];
 }
@@ -23,6 +24,7 @@ interface StaffCardProps {
 const StaffCard: React.FC<StaffCardProps> = React.memo(({ 
   staff, 
   onEdit, 
+  onDelete,
   onViewSchedule,
   services 
 }) => {
@@ -121,16 +123,36 @@ const StaffCard: React.FC<StaffCardProps> = React.memo(({
             </div>
           </div>
 
-          {/* Action Button */}
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onViewSchedule}
-            className="w-full"
-          >
-            <Calendar className="w-4 h-4 mr-2" />
-            View Schedule
-          </Button>
+          {/* Action Buttons */}
+          <div className="flex space-x-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={onViewSchedule}
+              className="flex-1"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Schedule
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={onEdit}
+              className="flex-1"
+            >
+              <Edit2 className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={onDelete}
+              className="flex-1"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete
+            </Button>
+          </div>
         </div>
       </div>
     </div>

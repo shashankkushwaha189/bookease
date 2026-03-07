@@ -18,6 +18,7 @@ interface Staff {
   assignedServices: string[];
   hasAccount: boolean;
   accountEmail?: string;
+  active: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -69,6 +70,7 @@ const useStaff = () => {
           assignedServices: staffMember.services?.map((service: any) => service.id) || [],
           hasAccount: staffMember.hasAccount || false,
           accountEmail: staffMember.accountEmail,
+          active: staffMember.isActive !== false, // Default to true if not set
           createdAt: staffMember.createdAt,
           updatedAt: staffMember.updatedAt
         }));
@@ -121,18 +123,40 @@ const useStaff = () => {
 
   const createStaff = async (staffData: Omit<Staff, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      const response = await staffApi.createStaff(staffData);
+      console.log('🔧 Creating staff with data:', staffData);
+      
+      // Transform data to match API expectations (backend schema)
+      const apiData: any = {
+        name: staffData.name,
+        email: staffData.email,
+        photoUrl: staffData.photoUrl || null,
+        bio: staffData.bio || null,
+        isActive: true,
+      };
+      
+      console.log('📤 Sending to API:', apiData);
+      
+      const response = await staffApi.createStaff(apiData);
+      
+      console.log('✅ API Response:', response.data);
+      
+      // If services are assigned, create the service assignments
+      if (staffData.assignedServices && staffData.assignedServices.length > 0) {
+        console.log('🔗 Assigning services:', staffData.assignedServices);
+        await staffApi.assignServices(response.data.data.id, staffData.assignedServices);
+      }
       
       const newStaff: Staff = {
         id: response.data.data.id,
         name: response.data.data.name,
         email: response.data.data.email,
-        phone: response.data.data.phone,
+        phone: staffData.phone, // Store phone locally even if not in backend
         bio: response.data.data.bio,
         photoUrl: response.data.data.photoUrl,
-        assignedServices: response.data.data.services?.map((service: any) => service.id) || [],
-        hasAccount: response.data.data.hasAccount || false,
-        accountEmail: response.data.data.accountEmail,
+        assignedServices: staffData.assignedServices,
+        hasAccount: staffData.hasAccount,
+        accountEmail: staffData.accountEmail,
+        active: true, // Add active property
         createdAt: response.data.data.createdAt,
         updatedAt: response.data.data.updatedAt
       };
@@ -141,7 +165,8 @@ const useStaff = () => {
       toastStore.success('Staff created successfully');
       return newStaff;
     } catch (error: any) {
-      console.error('Failed to create staff:', error);
+      console.error('❌ Failed to create staff:', error);
+      console.error('❌ Error details:', error.response?.data || error.message);
       toastStore.error('Failed to create staff');
       return null;
     }
@@ -294,7 +319,8 @@ const StaffCard: React.FC<{
   staff: Staff;
   services: Service[];
   onEdit: () => void;
-}> = ({ staff, services, onEdit }) => {
+  onDelete: () => void;
+}> = ({ staff, services, onEdit, onDelete }) => {
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -314,7 +340,7 @@ const StaffCard: React.FC<{
     <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-start space-x-4">
         {/* Avatar */}
-        <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
           {staff.photoUrl ? (
             <img 
               src={staff.photoUrl} 
@@ -322,9 +348,7 @@ const StaffCard: React.FC<{
               className="w-16 h-16 rounded-full object-cover"
             />
           ) : (
-            <span className="text-xl font-medium text-white">
-              {getInitials(staff.name)}
-            </span>
+            <User className="w-8 h-8 text-white" />
           )}
         </div>
 
@@ -342,7 +366,7 @@ const StaffCard: React.FC<{
             {getServiceNames().map((serviceName, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-600"
+                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-600"
               >
                 {serviceName}
               </span>
@@ -357,11 +381,17 @@ const StaffCard: React.FC<{
             </div>
           )}
 
-          {/* Edit Button */}
-          <Button variant="secondary" size="sm" onClick={onEdit}>
-            <Edit2 className="w-4 h-4 mr-1" />
-            Edit
-          </Button>
+          {/* Action Buttons */}
+          <div className="flex space-x-2">
+            <Button variant="secondary" size="sm" onClick={onEdit} className="flex-1">
+              <Edit2 className="w-4 h-4 mr-1" />
+              Edit
+            </Button>
+            <Button variant="danger" size="sm" onClick={onDelete} className="flex-1">
+              <Trash2 className="w-4 h-4 mr-1" />
+              Delete
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -422,17 +452,36 @@ const ScheduleGrid: React.FC<{
     return 'empty';
   };
 
-  const getCellClasses = (type: string) => {
-    switch (type) {
-      case 'working':
-        return 'bg-primary-soft hover:bg-primary-100 cursor-pointer';
-      case 'break':
-        return 'bg-warning-soft hover:bg-warning-100 cursor-pointer diagonal-stripe';
-      case 'timeoff':
-        return 'bg-danger-soft cursor-not-allowed';
-      default:
-        return 'hover:bg-neutral-100 cursor-pointer';
+  const getCellClasses = (type: string, day: number, hour: number) => {
+    const isSelected = isSelecting && 
+      selectionStart && 
+      selectionEnd &&
+      day >= Math.min(selectionStart.day, selectionEnd.day) &&
+      day <= Math.max(selectionStart.day, selectionEnd.day) &&
+      hour >= Math.min(selectionStart.hour, selectionEnd.hour) &&
+      hour <= Math.max(selectionStart.hour, selectionEnd.hour);
+
+    let baseClasses = 'h-12 border-r border-neutral-100 transition-colors ';
+    
+    if (isSelected) {
+      baseClasses += 'bg-primary-200 border-primary-400 ';
+    } else {
+      switch (type) {
+        case 'working':
+          baseClasses += 'bg-primary-soft hover:bg-primary-100 cursor-pointer ';
+          break;
+        case 'break':
+          baseClasses += 'bg-warning-soft hover:bg-warning-100 cursor-pointer diagonal-stripe ';
+          break;
+        case 'timeoff':
+          baseClasses += 'bg-danger-soft cursor-not-allowed ';
+          break;
+        default:
+          baseClasses += 'hover:bg-neutral-100 cursor-pointer ';
+      }
     }
+    
+    return baseClasses;
   };
 
   const handleCellMouseDown = (day: number, hour: number, minute: number) => {
@@ -458,31 +507,30 @@ const ScheduleGrid: React.FC<{
 
     setIsSelecting(false);
 
-    // Create or remove working hours based on selection
+    // Create working hours based on selection
     const newSchedule = [...schedule];
-    
-    // For simplicity, we'll just toggle working hours for the selected day
     const day = selectionStart.day;
-    const existingWorkingIndex = newSchedule.findIndex(block => 
-      block.day === day && block.type === 'working'
+    
+    // Calculate start and end times
+    const startHour = Math.min(selectionStart.hour, selectionEnd.hour);
+    const endHour = Math.max(selectionStart.hour, selectionEnd.hour);
+    
+    // Remove existing working hours for this day
+    const filteredSchedule = newSchedule.filter(block => 
+      !(block.day === day && block.type === 'working')
     );
 
-    if (existingWorkingIndex >= 0) {
-      // Remove working hours for this day
-      newSchedule.splice(existingWorkingIndex, 1);
-    } else {
-      // Add working hours (9am-5pm default)
-      newSchedule.push({
-        day,
-        startHour: 9,
-        startMinute: 0,
-        endHour: 17,
-        endMinute: 0,
-        type: 'working'
-      });
-    }
+    // Add new working hours
+    filteredSchedule.push({
+      day,
+      startHour,
+      startMinute: 0,
+      endHour: endHour + 1, // Include the end hour
+      endMinute: 0,
+      type: 'working'
+    });
 
-    onScheduleChange(newSchedule);
+    onScheduleChange(filteredSchedule);
     setSelectionStart(null);
     setSelectionEnd(null);
   };
@@ -524,7 +572,7 @@ const ScheduleGrid: React.FC<{
                   {days.map((_, dayIndex) => (
                     <div
                       key={dayIndex}
-                      className={`h-12 border-r border-neutral-100 ${getCellClasses(getBlockType(dayIndex, hour, 0))}`}
+                      className={getCellClasses(getBlockType(dayIndex, hour, 0), dayIndex, hour)}
                       onMouseDown={() => handleCellMouseDown(dayIndex, hour, 0)}
                       onMouseEnter={() => handleCellMouseEnter(dayIndex, hour, 0)}
                     />
@@ -584,6 +632,12 @@ const StaffPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingStaff, setEditingStaff] = React.useState<Staff | null>(null);
+
+  // Debug modal state
+  React.useEffect(() => {
+    console.log('🔍 Modal state changed:', isModalOpen);
+  }, [isModalOpen]);
+
   const [selectedStaffId, setSelectedStaffId] = React.useState<string>('');
   const [deletingStaff, setDeletingStaff] = React.useState<Staff | null>(null);
   const [showTimeOffModal, setShowTimeOffModal] = React.useState(false);
@@ -596,11 +650,32 @@ const StaffPage: React.FC = () => {
   const filteredStaff = React.useMemo(() => {
     if (!searchQuery) return staff;
     
-    return staff.filter(member =>
-      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [staff, searchQuery]);
+    const query = searchQuery.toLowerCase();
+    
+    return staff.filter(member => {
+      // Search by name
+      if (member.name.toLowerCase().includes(query)) return true;
+      
+      // Search by email
+      if (member.email && member.email.toLowerCase().includes(query)) return true;
+      
+      // Search by phone
+      if (member.phone && member.phone.toLowerCase().includes(query)) return true;
+      
+      // Search by assigned services
+      if (member.assignedServices.length > 0) {
+        const serviceNames = member.assignedServices
+          .map(serviceId => services.find(s => s.id === serviceId)?.name)
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        
+        if (serviceNames.includes(query)) return true;
+      }
+      
+      return false;
+    });
+  }, [staff, searchQuery, services]);
 
   // Event handlers
   const handleEdit = (staffMember: Staff) => {
@@ -615,16 +690,19 @@ const StaffPage: React.FC = () => {
   const handleConfirmDelete = async () => {
     if (!deletingStaff) return;
 
-    const success = await deleteStaff(deletingStaff.id);
-    if (success) {
+    const deleteSuccess = await deleteStaff(deletingStaff.id);
+    // Always close the popup regardless of success/failure
+    setDeletingStaff(null);
+    
+    if (deleteSuccess) {
       success('Staff member deleted successfully');
-      setDeletingStaff(null);
     } else {
       error('Failed to delete staff member');
     }
   };
 
   const handleAddStaff = () => {
+    console.log('🔘 Add Staff button clicked!');
     setEditingStaff(null);
     setIsModalOpen(true);
   };
@@ -653,8 +731,8 @@ const StaffPage: React.FC = () => {
   };
 
   const handleScheduleSave = async () => {
-    const success = await saveSchedule(schedule);
-    if (success) {
+    const scheduleSuccess = await saveSchedule(schedule);
+    if (scheduleSuccess) {
       success('Schedule saved successfully');
     } else {
       error('Failed to save schedule');
@@ -666,8 +744,8 @@ const StaffPage: React.FC = () => {
   };
 
   const handleRemoveTimeOff = async (timeOffId: string) => {
-    const success = await removeTimeOff(timeOffId);
-    if (success) {
+    const removeSuccess = await removeTimeOff(timeOffId);
+    if (removeSuccess) {
       success('Time off removed successfully');
     } else {
       error('Failed to remove time off');
@@ -724,7 +802,7 @@ const StaffPage: React.FC = () => {
           {/* Search */}
           <div className="w-full md:w-96">
             <Input
-              placeholder="Search staff members..."
+              placeholder="Search by name, email, phone, or services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftIcon={<Search className="w-4 h-4" />}
@@ -752,6 +830,7 @@ const StaffPage: React.FC = () => {
                   staff={staffMember}
                   services={services}
                   onEdit={() => handleEdit(staffMember)}
+                  onDelete={() => handleDelete(staffMember)}
                 />
               ))}
             </div>
@@ -836,17 +915,19 @@ const StaffPage: React.FC = () => {
         variant="danger"
       />
 
-      <style jsx>{`
-        .diagonal-stripe {
-          background-image: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 2px,
-            rgba(0, 0, 0, 0.1) 2px,
-            rgba(0, 0, 0, 0.1) 4px
-          );
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .diagonal-stripe {
+            background-image: repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 10px,
+              rgba(255, 255, 255, 0.05) 10px,
+              rgba(255, 255, 255, 0.05) 20px
+            );
+          }
+        `
+      }} />
     </div>
   );
 };

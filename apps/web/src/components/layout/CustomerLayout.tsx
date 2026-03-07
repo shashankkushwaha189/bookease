@@ -1,7 +1,7 @@
 import React from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/auth.store';
-import { Calendar, User, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 const CustomerLayout: React.FC = () => {
   const { user, logout } = useAuthStore();
@@ -30,45 +30,20 @@ const CustomerLayout: React.FC = () => {
               </div>
             </div>
             
-            {/* Customer Navigation */}
-            <nav className="flex items-center space-x-6">
-              <Link 
-                to="/customer/bookings" 
-                className="flex items-center text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                My Bookings
-              </Link>
-              <Link 
-                to="/customer/profile" 
-                className="flex items-center text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Profile
-              </Link>
-              <Link 
-                to="/book" 
-                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Book Appointment
-              </Link>
-              
-              {/* User Menu */}
-              <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{user?.email}</p>
-                  <p className="text-xs text-gray-500">Customer</p>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center text-gray-500 hover:text-red-600 p-2 rounded-md hover:bg-gray-100 transition-colors"
-                  title="Logout"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
+            {/* User Menu Only */}
+            <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-900">{user?.email}</p>
+                <p className="text-xs text-gray-500">Customer</p>
               </div>
-            </nav>
+              <button
+                onClick={handleLogout}
+                className="flex items-center text-gray-500 hover:text-red-600 p-2 rounded-md hover:bg-gray-100 transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </header>

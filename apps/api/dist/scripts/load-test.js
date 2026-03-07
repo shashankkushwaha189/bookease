@@ -44,11 +44,11 @@ class LoadTester extends events_1.EventEmitter {
         this.isRunning = true;
         this.startTime = Date.now();
         this.results = this.initializeResults();
-        logger_1.logger.info('Starting load test', {
+        logger_1.logger.info({
             concurrentUsers: this.config.concurrentUsers,
             duration: this.config.duration,
             rampUpTime: this.config.rampUpTime,
-        });
+        }, 'Starting load test');
         this.emit('start', this.config);
         try {
             await this.executeLoadTest();
@@ -200,7 +200,7 @@ class LoadTester extends events_1.EventEmitter {
             return data.data?.token || data.token || null;
         }
         catch (error) {
-            logger_1.logger.error('Failed to get auth token', { error });
+            logger_1.logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to get auth token');
             return null;
         }
     }
@@ -230,7 +230,8 @@ class LoadTester extends events_1.EventEmitter {
         }));
     }
     logResults() {
-        logger_1.logger.info('Load test completed', {
+        logger_1.logger.info(this.results, 'Load test completed');
+        logger_1.logger.info({
             totalRequests: this.results.totalRequests,
             successfulRequests: this.results.successfulRequests,
             failedRequests: this.results.failedRequests,
@@ -241,7 +242,7 @@ class LoadTester extends events_1.EventEmitter {
             duration: this.results.duration,
         });
         if (this.results.errors.length > 0) {
-            logger_1.logger.warn('Load test errors', { errors: this.results.errors });
+            logger_1.logger.error({ errors: this.results.errors }, 'Load test errors');
         }
     }
     delay(ms) {
@@ -307,7 +308,7 @@ exports.LOAD_TEST_CONFIGS = {
             { path: '/health', method: 'GET', weight: 10 },
             { path: '/api/services', method: 'GET', weight: 20 },
             { path: '/api/appointments', method: 'GET', weight: 30 },
-            { path: '/api/customers', method: 'GET', weight: 20 },
+            { path: '/api/customers', method: 'GET', weight: 25 },
             { path: '/api/staff', method: 'GET', weight: 10 },
             { path: '/api/reports/summary', method: 'GET', weight: 5 },
             { path: '/api/ai/configuration', method: 'GET', weight: 5 },

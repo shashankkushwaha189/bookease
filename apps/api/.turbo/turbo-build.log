@@ -1,0 +1,30 @@
+
+> @bookease/api@1.0.0 build D:\realworkstudio\bookease\apps\api
+> prisma generate && tsc --build
+
+[dotenv@17.3.1] injecting env (6) from ..\..\.env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+Loaded Prisma config from prisma.config.ts.
+
+Prisma config detected, skipping environment variable loading.
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v6.19.2) to .\..\..\node_modules\.pnpm\@prisma+client@6.19.2_prism_6b2b1af085fe6797f5a5ea830937a8e3\node_modules\@prisma\client in 445ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+src/middleware/error-handler.ts(3,29): error TS2307: Cannot find module '@bookease/types' or its corresponding type declarations.
+src/modules/archival/archive.controller.ts(263,86): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/archival/archive.service.ts(285,13): error TS2322: Type '{ id: string; referenceId: string; customerName: string; serviceName: string; staffName: string; startTimeUtc: Date; endTimeUtc: Date; status: AppointmentStatus; notes: string | null; archivedAt: Date; originalCreatedAt: Date; }[]' is not assignable to type 'ArchivedAppointment[]'.
+  Type '{ id: string; referenceId: string; customerName: string; serviceName: string; staffName: string; startTimeUtc: Date; endTimeUtc: Date; status: $Enums.AppointmentStatus; notes: string | null; archivedAt: Date; originalCreatedAt: Date; }' is not assignable to type 'ArchivedAppointment'.
+    Types of property 'notes' are incompatible.
+      Type 'string | null' is not assignable to type 'string | undefined'.
+        Type 'null' is not assignable to type 'string | undefined'.
+src/modules/archival/archive.service.ts(337,38): error TS2322: Type '{ _count: { count: string; }; }' is not assignable to type 'AppointmentArchiveOrderByWithAggregationInput | AppointmentArchiveOrderByWithAggregationInput[] | undefined'.
+  Types of property '_count' are incompatible.
+    Object literal may only specify known properties, and 'count' does not exist in type 'AppointmentArchiveCountOrderByAggregateInput'.
+src/modules/audit/audit.service.ts(49,39): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'AuditEventParams'.
+  No index signature with a parameter of type 'string' was found on type 'AuditEventParams'.
+ ELIFECYCLE  Command failed with exit code 1.

@@ -19,7 +19,8 @@ const apiKeyMiddleware = async (req, res, next) => {
         });
     }
     try {
-        const tenantId = await api_token_service_1.apiTokenService.validateToken(apiKey);
+        const validation = await api_token_service_1.apiTokenService.validateToken(apiKey);
+        const tenantId = validation.tenantId || '';
         if (!tenantId) {
             return res.status(401).json({
                 success: false,

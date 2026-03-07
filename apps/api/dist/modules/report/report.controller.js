@@ -84,7 +84,7 @@ class ReportController {
         }
         catch (error) {
             logger_1.logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'report.summary'
             }, 'Report summary failed');
@@ -137,7 +137,7 @@ class ReportController {
         }
         catch (error) {
             logger_1.logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'report.peakTimes'
             }, 'Peak times analysis failed');
@@ -190,7 +190,7 @@ class ReportController {
         }
         catch (error) {
             logger_1.logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'report.staffUtilization'
             }, 'Staff utilization report failed');
@@ -257,7 +257,7 @@ class ReportController {
         }
         catch (error) {
             logger_1.logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'report.exportData'
             }, 'CSV export failed');
@@ -365,7 +365,7 @@ class ReportController {
         }
         catch (error) {
             logger_1.logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'report.testPerformance'
             }, 'Report performance test failed');
@@ -421,7 +421,7 @@ class ReportController {
         }
         catch (error) {
             logger_1.logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'report.validateCsv'
             }, 'CSV validation failed');

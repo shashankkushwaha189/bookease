@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Users, Clock, DollarSign, Calendar, Award, Target } from 'lucide-react';
-import { useAuthStore } from '../stores/auth.store';
+import { TrendingUp, Users, DollarSign, Award, Target } from 'lucide-react';
 import { useToastStore } from '../stores/toast.store';
 import Button from '../components/ui/Button';
 
@@ -28,7 +27,6 @@ const StaffPerformancePage: React.FC = () => {
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('30days');
-  const { user } = useAuthStore();
   const toastStore = useToastStore();
 
   useEffect(() => {
@@ -203,9 +201,9 @@ const StaffPerformancePage: React.FC = () => {
                 <span className="text-gray-700">Punctuality</span>
                 <span className="font-semibold text-gray-900">{metrics.punctualityRate}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-neutral-200 rounded-full h-2">
                 <div 
-                  className="bg-blue-600 h-2 rounded-full" 
+                  className={`bg-brand-600 h-2 rounded-full transition-all duration-300 ease-out`}
                   style={{ width: `${metrics.punctualityRate}%` }}
                 ></div>
               </div>
@@ -215,9 +213,9 @@ const StaffPerformancePage: React.FC = () => {
                 <span className="text-gray-700">Customer Satisfaction</span>
                 <span className="font-semibold text-gray-900">{metrics.customerSatisfaction}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-neutral-200 rounded-full h-2">
                 <div 
-                  className="bg-green-600 h-2 rounded-full" 
+                  className={`bg-success-600 h-2 rounded-full transition-all duration-300 ease-out`}
                   style={{ width: `${metrics.customerSatisfaction}%` }}
                 ></div>
               </div>
@@ -227,9 +225,9 @@ const StaffPerformancePage: React.FC = () => {
                 <span className="text-gray-700">Completion Rate</span>
                 <span className="font-semibold text-gray-900">{metrics.completionRate}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-neutral-200 rounded-full h-2">
                 <div 
-                  className="bg-purple-600 h-2 rounded-full" 
+                  className={`bg-brand-600 h-2 rounded-full transition-all duration-300 ease-out`}
                   style={{ width: `${metrics.completionRate}%` }}
                 ></div>
               </div>

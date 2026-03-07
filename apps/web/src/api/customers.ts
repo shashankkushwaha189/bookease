@@ -22,31 +22,31 @@ export const customersApi = {
       page: number;
       limit: number;
       totalPages: number;
-    }>>('/customers', params),
+    }>>('/api/customers', params),
 
   /**
    * Get single customer by ID
    */
   getCustomer: (id: string) => 
-    api.get<ApiSuccessResponse<Customer>>(`/customers/${id}`),
+    api.get<ApiSuccessResponse<Customer>>(`/api/customers/${id}`),
 
   /**
    * Create new customer
    */
   createCustomer: (data: CreateCustomerRequest) => 
-    api.post<ApiSuccessResponse<Customer>>('/customers', data),
+    api.post<ApiSuccessResponse<Customer>>('/api/customers', data),
 
   /**
    * Update customer
    */
   updateCustomer: (id: string, data: Partial<CreateCustomerRequest>) => 
-    api.patch<ApiSuccessResponse<Customer>>(`/customers/${id}`, data),
+    api.patch<ApiSuccessResponse<Customer>>(`/api/customers/${id}`, data),
 
   /**
    * Delete customer
    */
   deleteCustomer: (id: string) => 
-    api.delete<ApiSuccessResponse<{ success: boolean }>>(`/customers/${id}`),
+    api.delete<ApiSuccessResponse<{ success: boolean }>>(`/api/customers/${id}`),
 
   /**
    * Get customer appointments
@@ -71,7 +71,7 @@ export const customersApi = {
       total: number;
       page: number;
       limit: number;
-    }>>(`/customers/${id}/appointments`, params),
+    }>>(`/api/customers/${id}/appointments`, params),
 
   /**
    * Get customer statistics
@@ -87,7 +87,7 @@ export const customersApi = {
         name: string;
         appointmentCount: number;
       }>;
-    }>>('/customers/stats'),
+    }>>('/api/customers/stats'),
 
   /**
    * Get all customer tags
@@ -96,19 +96,19 @@ export const customersApi = {
     api.get<ApiSuccessResponse<Array<{
       tag: string;
       count: number;
-    }>>>('/customers/tags'),
+    }>>>('/api/customers/tags'),
 
   /**
    * Add tag to customer
    */
   addTag: (id: string, tag: string) => 
-    api.post<ApiSuccessResponse<Customer>>(`/customers/${id}/tags`, { tag }),
+    api.post<ApiSuccessResponse<Customer>>(`/api/customers/${id}/tags`, { tag }),
 
   /**
    * Remove tag from customer
    */
   removeTag: (id: string, tag: string) => 
-    api.delete<ApiSuccessResponse<Customer>>(`/customers/${id}/tags/${tag}`),
+    api.delete<ApiSuccessResponse<Customer>>(`/api/customers/${id}/tags/${tag}`),
 
   /**
    * Get customer for public booking

@@ -44,7 +44,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'import.validateCustomers'
             }, 'Customer validation failed');
@@ -109,7 +109,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'import.customers'
             }, 'Customer import failed');
@@ -156,7 +156,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'import.validateServices'
             }, 'Service validation failed');
@@ -220,7 +220,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'import.services'
             }, 'Service import failed');
@@ -267,7 +267,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'import.validateStaff'
             }, 'Staff validation failed');
@@ -331,7 +331,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'import.staff'
             }, 'Staff import failed');
@@ -376,7 +376,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 tenantId: req.headers['x-tenant-id'],
                 operation: 'import.getHistory'
             }, 'Get import history failed');
@@ -428,7 +428,7 @@ export class ImportController {
             });
         } catch (error) {
             logger.error({
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
                 operation: 'import.getTemplates'
             }, 'Get import templates failed');
             next(error);

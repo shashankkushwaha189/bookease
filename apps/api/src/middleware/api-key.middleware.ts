@@ -17,7 +17,8 @@ export const apiKeyMiddleware = async (req: Request, res: Response, next: NextFu
     }
 
     try {
-        const tenantId = await apiTokenService.validateToken(apiKey);
+        const validation = await apiTokenService.validateToken(apiKey);
+        const tenantId = validation.tenantId || '';
 
         if (!tenantId) {
             return res.status(401).json({

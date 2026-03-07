@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -195,7 +195,7 @@ const server = setupServer(
     }));
   }),
 
-  rest.delete('/api/services/:id', (req, res, ctx) => {
+  rest.delete('/api/services/:id', (req: any, res: any, ctx: any) => {
     return res(ctx.json({
       success: true,
       data: { success: true }
@@ -203,7 +203,7 @@ const server = setupServer(
   }),
 
   // Import endpoints
-  rest.post('/api/import/customers/validate', (req, res, ctx) => {
+  rest.post('/api/import/customers/validate', (req: any, res: any, ctx: any) => {
     return res(ctx.json({
       success: true,
       data: {
@@ -225,7 +225,7 @@ const server = setupServer(
     }));
   }),
 
-  rest.post('/api/import/customers', (req, res, ctx) => {
+  rest.post('/api/import/customers', (req: any, res: any, ctx: any) => {
     return res(ctx.json({
       success: true,
       data: {
@@ -251,7 +251,7 @@ const server = setupServer(
     }));
   }),
 
-  rest.get('/api/import/templates', (req, res, ctx) => {
+  rest.get('/api/import/templates', (req: any, res: any, ctx: any) => {
     return res(ctx.json({
       success: true,
       data: {

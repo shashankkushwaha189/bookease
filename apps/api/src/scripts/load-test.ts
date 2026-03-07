@@ -96,11 +96,11 @@ export class LoadTester extends EventEmitter {
     this.startTime = Date.now();
     this.results = this.initializeResults();
 
-    logger.info('Starting load test', {
+    logger.info({
       concurrentUsers: this.config.concurrentUsers,
       duration: this.config.duration,
       rampUpTime: this.config.rampUpTime,
-    });
+    }, 'Starting load test');
 
     this.emit('start', this.config);
 
@@ -177,7 +177,7 @@ export class LoadTester extends EventEmitter {
     this.activeRequests++;
     
     const url = `${this.config.baseUrl}${endpoint.path}`;
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'User-Agent': `LoadTester-${userId}`,
       ...this.config.headers,
@@ -282,7 +282,7 @@ export class LoadTester extends EventEmitter {
       const data = await response.json();
       return data.data?.token || data.token || null;
     } catch (error) {
-      logger.error('Failed to get auth token', { error });
+      logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to get auth token');
       return null;
     }
   }
@@ -319,7 +319,8 @@ export class LoadTester extends EventEmitter {
   }
 
   private logResults(): void {
-    logger.info('Load test completed', {
+    logger.info(this.results, 'Load test completed');
+    logger.info({
       totalRequests: this.results.totalRequests,
       successfulRequests: this.results.successfulRequests,
       failedRequests: this.results.failedRequests,
@@ -331,7 +332,7 @@ export class LoadTester extends EventEmitter {
     });
 
     if (this.results.errors.length > 0) {
-      logger.warn('Load test errors', { errors: this.results.errors });
+      logger.error({ errors: this.results.errors }, 'Load test errors');
     }
   }
 
@@ -363,10 +364,10 @@ export const LOAD_TEST_CONFIGS = {
     duration: 60, // 1 minute
     rampUpTime: 10, // 10 seconds
     endpoints: [
-      { path: '/health', method: 'GET', weight: 20 },
-      { path: '/api/services', method: 'GET', weight: 30 },
-      { path: '/api/appointments', method: 'GET', weight: 30 },
-      { path: '/api/customers', method: 'GET', weight: 20 },
+      { path: '/health', method: 'GET' as const, weight: 20 },
+      { path: '/api/services', method: 'GET' as const, weight: 30 },
+      { path: '/api/appointments', method: 'GET' as const, weight: 30 },
+      { path: '/api/customers', method: 'GET' as const, weight: 20 },
     ],
     auth: {
       email: 'admin@healthfirst.demo',
@@ -381,11 +382,11 @@ export const LOAD_TEST_CONFIGS = {
     duration: 300, // 5 minutes
     rampUpTime: 30, // 30 seconds
     endpoints: [
-      { path: '/health', method: 'GET', weight: 15 },
-      { path: '/api/services', method: 'GET', weight: 25 },
-      { path: '/api/appointments', method: 'GET', weight: 25 },
-      { path: '/api/customers', method: 'GET', weight: 20 },
-      { path: '/api/staff', method: 'GET', weight: 15 },
+      { path: '/health', method: 'GET' as const, weight: 15 },
+      { path: '/api/services', method: 'GET' as const, weight: 25 },
+      { path: '/api/appointments', method: 'GET' as const, weight: 25 },
+      { path: '/api/customers', method: 'GET' as const, weight: 20 },
+      { path: '/api/staff', method: 'GET' as const, weight: 15 },
     ],
     auth: {
       email: 'admin@healthfirst.demo',
@@ -400,13 +401,13 @@ export const LOAD_TEST_CONFIGS = {
     duration: 600, // 10 minutes
     rampUpTime: 60, // 1 minute
     endpoints: [
-      { path: '/health', method: 'GET', weight: 10 },
-      { path: '/api/services', method: 'GET', weight: 20 },
-      { path: '/api/appointments', method: 'GET', weight: 30 },
-      { path: '/api/customers', method: 'GET', weight: 20 },
-      { path: '/api/staff', method: 'GET', weight: 10 },
-      { path: '/api/reports/summary', method: 'GET', weight: 5 },
-      { path: '/api/ai/configuration', method: 'GET', weight: 5 },
+      { path: '/health', method: 'GET' as const, weight: 10 },
+      { path: '/api/services', method: 'GET' as const, weight: 20 },
+      { path: '/api/appointments', method: 'GET' as const, weight: 30 },
+      { path: '/api/customers', method: 'GET' as const, weight: 25 },
+      { path: '/api/staff', method: 'GET' as const, weight: 10 },
+      { path: '/api/reports/summary', method: 'GET' as const, weight: 5 },
+      { path: '/api/ai/configuration', method: 'GET' as const, weight: 5 },
     ],
     auth: {
       email: 'admin@healthfirst.demo',
@@ -421,13 +422,13 @@ export const LOAD_TEST_CONFIGS = {
     duration: 900, // 15 minutes
     rampUpTime: 120, // 2 minutes
     endpoints: [
-      { path: '/health', method: 'GET', weight: 5 },
-      { path: '/api/services', method: 'GET', weight: 15 },
-      { path: '/api/appointments', method: 'GET', weight: 40 },
-      { path: '/api/customers', method: 'GET', weight: 25 },
-      { path: '/api/staff', method: 'GET', weight: 10 },
-      { path: '/api/reports/summary', method: 'GET', weight: 3 },
-      { path: '/api/ai/configuration', method: 'GET', weight: 2 },
+      { path: '/health', method: 'GET' as const, weight: 5 },
+      { path: '/api/services', method: 'GET' as const, weight: 15 },
+      { path: '/api/appointments', method: 'GET' as const, weight: 40 },
+      { path: '/api/customers', method: 'GET' as const, weight: 25 },
+      { path: '/api/staff', method: 'GET' as const, weight: 10 },
+      { path: '/api/reports/summary', method: 'GET' as const, weight: 3 },
+      { path: '/api/ai/configuration', method: 'GET' as const, weight: 2 },
     ],
     auth: {
       email: 'admin@healthfirst.demo',

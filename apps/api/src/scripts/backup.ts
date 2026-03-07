@@ -74,7 +74,7 @@ export class BackupManager {
     const timestamp = new Date();
     const filename = this.generateFilename(type, timestamp);
     
-    logger.info('Starting backup creation', { type, filename });
+    logger.info({ type, filename }, 'Starting backup creation');
 
     try {
       // Create backup directory if it doesn't exist
@@ -118,7 +118,7 @@ export class BackupManager {
         checksum,
       };
 
-      logger.info('Backup completed successfully', result);
+      logger.info(result, 'Backup completed successfully');
       return result;
 
     } catch (error) {
@@ -134,7 +134,7 @@ export class BackupManager {
         error: error instanceof Error ? error.message : 'Unknown error',
       };
 
-      logger.error('Backup failed', result);
+      logger.error(result, 'Backup failed');
       return result;
     }
   }
@@ -143,7 +143,7 @@ export class BackupManager {
     const startTime = Date.now();
     const timestamp = new Date();
 
-    logger.info('Starting backup restoration', { filename });
+    logger.info({ filename }, 'Starting backup restoration');
 
     try {
       // Download backup from storage
@@ -176,7 +176,7 @@ export class BackupManager {
         tablesRestored: restoreResult.tablesRestored,
       };
 
-      logger.info('Backup restoration completed successfully', result);
+      logger.info(result, 'Backup restoration completed successfully');
       return result;
 
     } catch (error) {
@@ -191,7 +191,7 @@ export class BackupManager {
         error: error instanceof Error ? error.message : 'Unknown error',
       };
 
-      logger.error('Backup restoration failed', result);
+      logger.error(result, 'Backup restoration failed');
       return result;
     }
   }
@@ -213,7 +213,7 @@ export class BackupManager {
       }
       return [];
     } catch (error) {
-      logger.error('Failed to list backups', { error });
+      logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to list backups');
       return [];
     }
   }
@@ -231,11 +231,9 @@ export class BackupManager {
         let shouldDelete = false;
 
         // Check retention policy
-        if (backup.type === 'daily' && ageInDays > this.config.retention.daily) {
+        if (backup.type === 'full' && ageInDays > this.config.retention.daily) {
           shouldDelete = true;
-        } else if (backup.type === 'weekly' && ageInDays > this.config.retention.weekly * 7) {
-          shouldDelete = true;
-        } else if (backup.type === 'monthly' && ageInDays > this.config.retention.monthly * 30) {
+        } else if (backup.type === 'incremental' && ageInDays > this.config.retention.weekly * 7) {
           shouldDelete = true;
         }
 
@@ -245,11 +243,11 @@ export class BackupManager {
         }
       }
 
-      logger.info('Old backups cleanup completed', { deletedCount });
+      logger.info({ deletedCount }, 'Old backups cleanup completed');
       return deletedCount;
 
     } catch (error) {
-      logger.error('Failed to cleanup old backups', { error });
+      logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to cleanup old backups');
       throw error;
     }
   }

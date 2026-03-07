@@ -9,10 +9,18 @@ interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
     isLoading: boolean;
+    rememberMe: boolean;
+    isLocked: boolean;
+    lockoutUntil: Date | null;
+    failedAttempts: number;
 
-    setAuth: (user: User, token: string) => void;
+    setAuth: (user: User, token: string, rememberMe?: boolean) => void;
     logout: () => void;
-    login: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
+    setRememberMe: (rememberMe: boolean) => void;
+    incrementFailedAttempts: () => void;
+    resetFailedAttempts: () => void;
+    checkLockoutStatus: () => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -22,13 +30,21 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             isAuthenticated: false,
             isLoading: false,
+            rememberMe: false,
+            isLocked: false,
+            lockoutUntil: null,
+            failedAttempts: 0,
 
-            setAuth: (user, token) => {
-                console.log('🔑 Setting auth state:', { user, token: token?.substring(0, 50) + '...' });
+            setAuth: (user, token, rememberMe = false) => {
+                console.log('🔑 Setting auth state:', { user, token: token?.substring(0, 50) + '...', rememberMe });
                 set({
                     user,
                     token,
                     isAuthenticated: true,
+                    rememberMe,
+                    isLocked: false,
+                    lockoutUntil: null,
+                    failedAttempts: 0,
                 });
                 console.log('✅ Auth state set successfully');
             },
@@ -38,9 +54,49 @@ export const useAuthStore = create<AuthState>()(
                     user: null,
                     token: null,
                     isAuthenticated: false,
+                    rememberMe: false,
+                    isLocked: false,
+                    lockoutUntil: null,
+                    failedAttempts: 0,
                 }),
 
-            login: async (email: string, password: string) => {
+            setRememberMe: (rememberMe) => set({ rememberMe }),
+
+            incrementFailedAttempts: () => {
+                const state = get();
+                const newFailedAttempts = state.failedAttempts + 1;
+                const maxAttempts = 5;
+                
+                if (newFailedAttempts >= maxAttempts) {
+                    // Lock account for 15 minutes
+                    const lockoutUntil = new Date(Date.now() + 15 * 60 * 1000);
+                    set({
+                        failedAttempts: newFailedAttempts,
+                        isLocked: true,
+                        lockoutUntil,
+                    });
+                } else {
+                    set({ failedAttempts: newFailedAttempts });
+                }
+            },
+
+            resetFailedAttempts: () => set({ failedAttempts: 0, isLocked: false, lockoutUntil: null }),
+
+            checkLockoutStatus: () => {
+                const state = get();
+                if (state.isLocked && state.lockoutUntil) {
+                    const now = new Date();
+                    if (now >= state.lockoutUntil) {
+                        // Lockout period has expired
+                        set({ isLocked: false, lockoutUntil: null, failedAttempts: 0 });
+                        return false;
+                    }
+                    return true; // Still locked
+                }
+                return false; // Not locked
+            },
+
+            login: async (email: string, password: string, rememberMe = false) => {
                 // Ensure demo tenant id is set (from seeded demo tenant)
                 const DEMO_TENANT_ID = 'b18e0808-27d1-4253-aca9-453897585106';
                 const { tenantId, setTenantId } = useTenantStore.getState();
@@ -49,9 +105,13 @@ export const useAuthStore = create<AuthState>()(
                 }
 
                 console.log('🔐 Login attempt:', { email, tenantId: useTenantStore.getState().tenantId });
+                console.log('🌐 API Base URL:', import.meta.env.VITE_API_URL);
                 
                 set({ isLoading: true });
                 try {
+                    console.log('📤 Making API request to:', '/api/auth/login');
+                    console.log('📤 Request payload:', { email, password: '***' });
+                    
                     const response = await api.post<AuthResponse>('/api/auth/login', {
                         email,
                         password,
@@ -81,7 +141,7 @@ export const useAuthStore = create<AuthState>()(
                     console.log('🔑 Extracted auth:', { token: token?.substring(0, 50) + '...', user: user?.email });
                     
                     // Set auth state immediately
-                    get().setAuth(user, token);
+                    get().setAuth(user, token, rememberMe);
                     
                     // Small delay to ensure state is set
                     await new Promise(resolve => setTimeout(resolve, 100));

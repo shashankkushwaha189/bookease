@@ -1,23 +1,52 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerController = void 0;
+exports.customerController = exports.CustomerController = void 0;
 const prisma_1 = require("../../lib/prisma");
 const errors_1 = require("../../lib/errors");
 class CustomerController {
     async list(req, res, next) {
         try {
             const tenantId = req.headers['x-tenant-id'];
+            if (!tenantId) {
+                throw new errors_1.AppError('Tenant ID required', 400, 'MISSING_TENANT_ID');
+            }
+            const { page = 1, limit = 10, search, tags } = req.query;
+            const skip = (page - 1) * limit;
+            const whereClause = {
+                tenantId
+            };
+            if (search) {
+                whereClause.OR = [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { email: { contains: search, mode: 'insensitive' } }
+                ];
+            }
+            if (tags) {
+                const tagArray = Array.isArray(tags) ? tags : [tags];
+                whereClause.tags = {
+                    hasSome: tagArray
+                };
+            }
             const customers = await prisma_1.prisma.customer.findMany({
-                where: {
-                    tenantId: tenantId
-                },
+                where: whereClause,
                 orderBy: {
                     createdAt: 'desc'
-                }
+                },
+                skip,
+                take: limit
+            });
+            const total = await prisma_1.prisma.customer.count({
+                where: whereClause
             });
             res.json({
                 success: true,
-                data: customers
+                data: {
+                    items: customers,
+                    total,
+                    page: Number(page),
+                    limit: Number(limit),
+                    totalPages: Math.ceil(total / limit)
+                }
             });
         }
         catch (error) {
@@ -27,6 +56,9 @@ class CustomerController {
     async getById(req, res, next) {
         try {
             const tenantId = req.headers['x-tenant-id'];
+            if (!tenantId) {
+                throw new errors_1.AppError('Tenant ID required', 400, 'MISSING_TENANT_ID');
+            }
             const customer = await prisma_1.prisma.customer.findFirst({
                 where: {
                     id: req.params.id,
@@ -48,6 +80,9 @@ class CustomerController {
     async create(req, res, next) {
         try {
             const tenantId = req.headers['x-tenant-id'];
+            if (!tenantId) {
+                throw new errors_1.AppError('Tenant ID required', 400, 'MISSING_TENANT_ID');
+            }
             const customer = await prisma_1.prisma.customer.create({
                 data: {
                     ...req.body,
@@ -66,6 +101,9 @@ class CustomerController {
     async update(req, res, next) {
         try {
             const tenantId = req.headers['x-tenant-id'];
+            if (!tenantId) {
+                throw new errors_1.AppError('Tenant ID required', 400, 'MISSING_TENANT_ID');
+            }
             const customer = await prisma_1.prisma.customer.update({
                 where: {
                     id: req.params.id,
@@ -85,6 +123,9 @@ class CustomerController {
     async delete(req, res, next) {
         try {
             const tenantId = req.headers['x-tenant-id'];
+            if (!tenantId) {
+                throw new errors_1.AppError('Tenant ID required', 400, 'MISSING_TENANT_ID');
+            }
             await prisma_1.prisma.customer.delete({
                 where: {
                     id: req.params.id,
@@ -102,3 +143,4 @@ class CustomerController {
     }
 }
 exports.CustomerController = CustomerController;
+exports.customerController = new CustomerController();

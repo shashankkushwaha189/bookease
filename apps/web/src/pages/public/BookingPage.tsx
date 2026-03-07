@@ -24,6 +24,11 @@ import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/ui/EmptyState';
 import PolicyPreview from '../../components/PolicyPreview';
 import { useToastStore } from '../../stores/toast.store';
+import { useAuthStore } from '../../stores/auth.store';
+import { useTenantStore } from '../../stores/tenant.store';
+import { servicesApi } from '../../api/services';
+import { staffApi } from '../../api/staff';
+import { appointmentsApi } from '../../api/appointments';
 import { applyTenantTheme } from '../../utils/theme';
 
 // Types
@@ -82,7 +87,7 @@ const bookingDetailsSchema = z.object({
 
 type BookingDetailsForm = z.infer<typeof bookingDetailsSchema>;
 
-// API Hooks (mock implementations - replace with actual API calls)
+// API Hooks (real implementations)
 const useTenantProfile = (tenantSlug: string) => {
   const [profile, setProfile] = React.useState<TenantProfile | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -90,22 +95,52 @@ const useTenantProfile = (tenantSlug: string) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Get tenant profile from business profile
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/business-profile`, {
+          headers: {
+            'X-Tenant-ID': tenantSlug
+          }
+        });
         
-        const mockProfile: TenantProfile = {
-          businessName: 'BookEase Demo Salon',
+        if (response.ok) {
+          const data = await response.json();
+          const tenantProfile: TenantProfile = {
+            businessName: data.businessName || 'BookEase Demo',
+            brandColor: data.brandColor || '#1A56DB',
+            accentColor: data.accentColor || '#10B981',
+            phone: data.phone,
+            email: data.email,
+            policyText: data.policyText
+          };
+          
+          setProfile(tenantProfile);
+          applyTenantTheme(tenantProfile.brandColor, tenantProfile.accentColor);
+        } else {
+          // Fallback profile
+          const fallbackProfile: TenantProfile = {
+            businessName: 'BookEase Demo',
+            brandColor: '#1A56DB',
+            accentColor: '#10B981',
+            phone: '+1 (555) 123-4567',
+            email: 'contact@bookease.com',
+            policyText: 'Cancellations must be made at least 24 hours in advance.'
+          };
+          setProfile(fallbackProfile);
+          applyTenantTheme(fallbackProfile.brandColor, fallbackProfile.accentColor);
+        }
+      } catch (error) {
+        console.error('Failed to fetch tenant profile:', error);
+        // Fallback profile
+        const fallbackProfile: TenantProfile = {
+          businessName: 'BookEase Demo',
           brandColor: '#1A56DB',
           accentColor: '#10B981',
           phone: '+1 (555) 123-4567',
           email: 'contact@bookease.com',
-          policyText: 'Cancellations must be made at least 24 hours in advance. No-shows will be charged the full service fee.'
+          policyText: 'Cancellations must be made at least 24 hours in advance.'
         };
-        
-        setProfile(mockProfile);
-        applyTenantTheme(mockProfile.brandColor, mockProfile.accentColor);
-      } catch (error) {
-        console.error('Failed to fetch tenant profile:', error);
+        setProfile(fallbackProfile);
+        applyTenantTheme(fallbackProfile.brandColor, fallbackProfile.accentColor);
       } finally {
         setIsLoading(false);
       }
@@ -124,20 +159,24 @@ const useServices = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 600));
+        const response = await servicesApi.getServices();
+        console.log('📅 Services API response:', response);
         
-        const mockServices: Service[] = [
-          { id: '1', name: 'Haircut', duration: 30, price: 45 },
-          { id: '2', name: 'Beard Trim', duration: 15, price: 25 },
-          { id: '3', name: 'Haircut & Beard', duration: 45, price: 65 },
-          { id: '4', name: 'Color & Style', duration: 120, price: 120 },
-          { id: '5', name: 'Full Service', duration: 90, price: 95 },
-        ];
-        
-        setServices(mockServices);
+        if (response.data?.data) {
+          const mappedServices = response.data.data.map((service: any) => ({
+            id: service.id,
+            name: service.name,
+            duration: service.durationMinutes,
+            price: service.price,
+            description: service.description
+          }));
+          setServices(mappedServices);
+        } else {
+          setServices([]);
+        }
       } catch (error) {
         console.error('Failed to fetch services:', error);
+        setServices([]);
       } finally {
         setIsLoading(false);
       }
@@ -159,18 +198,22 @@ const useStaff = (serviceId?: string) => {
     const fetchStaff = async () => {
       setIsLoading(true);
       try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 400));
+        const response = await staffApi.getStaff();
+        console.log('👥 Staff API response:', response);
         
-        const mockStaff: Staff[] = [
-          { id: '1', name: 'Sarah Johnson', bio: 'Senior stylist with 10+ years experience' },
-          { id: '2', name: 'Mike Wilson', bio: 'Specialist in modern cuts and styling' },
-          { id: '3', name: 'Emma Davis', bio: 'Expert in color treatments and highlights' },
-        ];
-        
-        setStaff(mockStaff);
+        if (response.data?.data) {
+          const mappedStaff = response.data.data.map((staffMember: any) => ({
+            id: staffMember.id,
+            name: staffMember.name,
+            bio: staffMember.bio
+          }));
+          setStaff(mappedStaff);
+        } else {
+          setStaff([]);
+        }
       } catch (error) {
         console.error('Failed to fetch staff:', error);
+        setStaff([]);
       } finally {
         setIsLoading(false);
       }
@@ -192,27 +235,29 @@ const useAvailability = (serviceId?: string, staffId?: string, date?: string) =>
     const fetchAvailability = async () => {
       setIsLoading(true);
       try {
-        // Mock API call - replace with actual API
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const response = await appointmentsApi.getAvailability({
+          serviceId: serviceId || '',
+          staffId: staffId || '',
+          date: date || ''
+        });
+        console.log('⏰ Availability API response:', response);
         
-        const mockSlots: TimeSlot[] = [
-          { time: '9:00 AM', available: true },
-          { time: '9:30 AM', available: false },
-          { time: '10:00 AM', available: true },
-          { time: '10:30 AM', available: true },
-          { time: '11:00 AM', available: false },
-          { time: '11:30 AM', available: true },
-          { time: '2:00 PM', available: true },
-          { time: '2:30 PM', available: true },
-          { time: '3:00 PM', available: false },
-          { time: '3:30 PM', available: true },
-          { time: '4:00 PM', available: true },
-          { time: '4:30 PM', available: false },
-        ];
-        
-        setSlots(mockSlots);
+        if (response.data?.data?.availableSlots) {
+          const mappedSlots = response.data.data.availableSlots.map((slot: any) => ({
+            time: new Date(slot.startTimeUtc).toLocaleTimeString('en-US', { 
+              hour: 'numeric', 
+              minute: '2-digit',
+              hour12: true 
+            }),
+            available: slot.isAvailable
+          }));
+          setSlots(mappedSlots);
+        } else {
+          setSlots([]);
+        }
       } catch (error) {
         console.error('Failed to fetch availability:', error);
+        setSlots([]);
       } finally {
         setIsLoading(false);
       }
@@ -257,20 +302,7 @@ const SummaryPanel: React.FC<{
   date?: string;
   time?: string;
   isMobile?: boolean;
-}> = ({ service, staff, date, time, isMobile }) => {
-  if (isMobile) {
-    return (
-      <div className="bg-blue-50 border border-blue-500 rounded-lg p-3 mb-4">
-        <div className="text-sm font-medium text-blue-600 mb-1">Booking Summary</div>
-        <div className="text-xs text-blue-600 space-y-1">
-          {service && <div>{service.name}</div>}
-          {staff && <div>with {staff.name}</div>}
-          {date && time && <div>{date} at {time}</div>}
-        </div>
-      </div>
-    );
-  }
-
+}> = ({ service, staff, date, time }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">Booking Summary</h3>
@@ -299,8 +331,7 @@ const SummaryPanel: React.FC<{
         {date && time && (
           <div>
             <div className="text-sm text-gray-600 mb-1">Date & Time</div>
-            <div className="font-medium text-gray-900">{date}</div>
-            <div className="text-sm text-gray-600">{time}</div>
+            <div className="font-medium text-gray-900">{date} at {time}</div>
           </div>
         )}
       </div>
@@ -318,7 +349,7 @@ const ServiceCard: React.FC<{
       onClick={onClick}
       className={`p-4 border rounded-lg text-left transition-all duration-200 ${
         isSelected
-          ? 'border-blue-500 bg-blue-50'
+          ? 'border-green-500 bg-green-50'
           : 'border-gray-200 hover:border-gray-300 bg-white'
       }`}
     >
@@ -340,12 +371,12 @@ const StaffCard: React.FC<{
       onClick={onClick}
       className={`p-4 border rounded-lg text-left transition-all duration-200 ${
         isSelected
-          ? 'border-blue-500 bg-blue-50'
+          ? 'border-green-500 bg-green-50'
           : 'border-gray-200 hover:border-gray-300 bg-white'
       }`}
     >
       <div className="flex items-center space-x-3">
-        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+        <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
           {staff.photoUrl ? (
             <img 
               src={staff.photoUrl} 
@@ -359,7 +390,7 @@ const StaffCard: React.FC<{
         <div>
           <div className="font-medium text-gray-900">{staff.name}</div>
           {staff.bio && (
-            <div className="text-sm text-gray-600 mt-1">{staff.bio}</div>
+            <div className="text-sm text-gray-600">{staff.bio}</div>
           )}
         </div>
       </div>
@@ -378,7 +409,7 @@ const TimeSlotButton: React.FC<{
       disabled={!slot.available}
       className={`py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
         isSelected
-          ? 'bg-blue-500 text-white'
+          ? 'bg-green-500 text-white'
           : slot.available
           ? 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-900'
           : 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -586,21 +617,40 @@ const BookingPage: React.FC = () => {
   // Handle booking submission
   const handleBookingSubmit = async (data: BookingDetailsForm) => {
     try {
-      // Mock API call to create booking
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Create booking with real API
+      const { user } = useAuthStore.getState();
       
-      const mockConfirmation: BookingConfirmation = {
-        id: 'booking-123',
-        referenceId: `BK-2024-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+      if (!user) {
+        error('You must be logged in to book an appointment');
+        return;
+      }
+
+      const bookingData = {
+        serviceId: selectedService!.id,
+        staffId: selectedStaff?.id || '',
+        customerId: user.id,
+        startTimeUtc: new Date(`${selectedDate} ${selectedTime}`).toISOString(),
+        notes: `Booking from ${data.fullName} (${data.email})`
+      };
+
+      console.log('📅 Creating booking:', bookingData);
+      
+      const response = await appointmentsApi.createAppointment(bookingData);
+      console.log('✅ Booking created:', response);
+      
+      const confirmation: BookingConfirmation = {
+        id: response.data?.data?.id || 'booking-123',
+        referenceId: response.data?.data?.referenceId || `BK-${Date.now()}`,
         service: selectedService!.name,
         dateTime: `${selectedDate} at ${selectedTime}`,
         staffName: selectedStaff?.name || 'Any available'
       };
       
-      setConfirmation(mockConfirmation);
+      setConfirmation(confirmation);
       setCurrentStep(5);
       success('Booking confirmed successfully!');
     } catch (error: any) {
+      console.error('❌ Booking error:', error);
       if (error.response?.status === 409) {
         error('Sorry, this slot was just taken. Please select another time.');
         setCurrentStep(3);
@@ -919,24 +969,12 @@ END:VCALENDAR`;
 
           {/* Summary Panel */}
           <div className="lg:col-span-1">
-            {isMobile && (
-              <SummaryPanel
-                service={selectedService}
-                staff={selectedStaff}
-                date={selectedDate}
-                time={selectedTime}
-                isMobile={true}
-              />
-            )}
-            {!isMobile && (
-              <SummaryPanel
-                service={selectedService}
-                staff={selectedStaff}
-                date={selectedDate}
-                time={selectedTime}
-                isMobile={false}
-              />
-            )}
+            <SummaryPanel
+              service={selectedService}
+              staff={selectedStaff}
+              date={selectedDate}
+              time={selectedTime}
+            />
           </div>
         </div>
 

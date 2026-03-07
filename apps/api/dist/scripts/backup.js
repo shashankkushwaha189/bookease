@@ -24,7 +24,7 @@ class BackupManager {
         const startTime = Date.now();
         const timestamp = new Date();
         const filename = this.generateFilename(type, timestamp);
-        logger_1.logger.info('Starting backup creation', { type, filename });
+        logger_1.logger.info({ type, filename }, 'Starting backup creation');
         try {
             // Create backup directory if it doesn't exist
             if (this.config.storage.type === 'local' && this.config.storage.localPath) {
@@ -58,7 +58,7 @@ class BackupManager {
                 location,
                 checksum,
             };
-            logger_1.logger.info('Backup completed successfully', result);
+            logger_1.logger.info(result, 'Backup completed successfully');
             return result;
         }
         catch (error) {
@@ -73,14 +73,14 @@ class BackupManager {
                 location: '',
                 error: error instanceof Error ? error.message : 'Unknown error',
             };
-            logger_1.logger.error('Backup failed', result);
+            logger_1.logger.error(result, 'Backup failed');
             return result;
         }
     }
     async restoreFromBackup(filename) {
         const startTime = Date.now();
         const timestamp = new Date();
-        logger_1.logger.info('Starting backup restoration', { filename });
+        logger_1.logger.info({ filename }, 'Starting backup restoration');
         try {
             // Download backup from storage
             const backupFile = await this.downloadFromStorage(filename);
@@ -105,7 +105,7 @@ class BackupManager {
                 recordsRestored: restoreResult.recordsRestored,
                 tablesRestored: restoreResult.tablesRestored,
             };
-            logger_1.logger.info('Backup restoration completed successfully', result);
+            logger_1.logger.info(result, 'Backup restoration completed successfully');
             return result;
         }
         catch (error) {
@@ -119,7 +119,7 @@ class BackupManager {
                 tablesRestored: [],
                 error: error instanceof Error ? error.message : 'Unknown error',
             };
-            logger_1.logger.error('Backup restoration failed', result);
+            logger_1.logger.error(result, 'Backup restoration failed');
             return result;
         }
     }
@@ -137,7 +137,7 @@ class BackupManager {
             return [];
         }
         catch (error) {
-            logger_1.logger.error('Failed to list backups', { error });
+            logger_1.logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to list backups');
             return [];
         }
     }
@@ -151,13 +151,10 @@ class BackupManager {
                 const ageInDays = this.getAgeInDays(backup.timestamp, now);
                 let shouldDelete = false;
                 // Check retention policy
-                if (backup.type === 'daily' && ageInDays > this.config.retention.daily) {
+                if (backup.type === 'full' && ageInDays > this.config.retention.daily) {
                     shouldDelete = true;
                 }
-                else if (backup.type === 'weekly' && ageInDays > this.config.retention.weekly * 7) {
-                    shouldDelete = true;
-                }
-                else if (backup.type === 'monthly' && ageInDays > this.config.retention.monthly * 30) {
+                else if (backup.type === 'incremental' && ageInDays > this.config.retention.weekly * 7) {
                     shouldDelete = true;
                 }
                 if (shouldDelete) {
@@ -165,11 +162,11 @@ class BackupManager {
                     deletedCount++;
                 }
             }
-            logger_1.logger.info('Old backups cleanup completed', { deletedCount });
+            logger_1.logger.info({ deletedCount }, 'Old backups cleanup completed');
             return deletedCount;
         }
         catch (error) {
-            logger_1.logger.error('Failed to cleanup old backups', { error });
+            logger_1.logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to cleanup old backups');
             throw error;
         }
     }

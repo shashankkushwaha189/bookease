@@ -30,7 +30,23 @@ const MyAppointmentsPage: React.FC = () => {
         limit: 100
       });
       
-      setAppointments(response.data.data.items);
+      console.log('📅 Staff appointments API response:', response);
+      
+      // Type assertion to handle actual response structure
+      const responseData = response.data as any;
+      console.log('📊 Response structure:', {
+        data: responseData,
+        hasItems: 'items' in responseData,
+        items: responseData?.items
+      });
+      
+      // The API returns data directly with items property
+      if (responseData?.items && Array.isArray(responseData.items)) {
+        setAppointments(responseData.items);
+      } else {
+        console.warn('⚠️ No items found in response, setting empty array');
+        setAppointments([]);
+      }
     } catch (error: any) {
       console.error('Failed to fetch staff appointments:', error);
       toastStore.error('Failed to load appointments');

@@ -6,16 +6,14 @@ import { UserRole } from '@prisma/client';
 
 const router = Router();
 
-// Public & Authenticated list route
-router.get('/', (req, res, next) => {
-    if (req.originalUrl.includes('/public/')) return staffController.list(req, res);
-    authMiddleware(req, res, next);
-}, staffController.list);
-
-// Authenticated routes below this
+// Apply auth middleware to all routes
 router.use(authMiddleware);
 
-// ADMIN only
+// Public staff list for booking
+router.get('/public/', staffController.list);
+
+// All other routes require ADMIN role
+router.get('/', requireRole(UserRole.ADMIN), staffController.list);
 router.get('/:id', requireRole(UserRole.ADMIN), staffController.getById);
 router.post('/', requireRole(UserRole.ADMIN), staffController.create);
 router.patch('/:id', requireRole(UserRole.ADMIN), staffController.update);

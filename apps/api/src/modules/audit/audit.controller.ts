@@ -154,7 +154,9 @@ export class AuditController {
                 });
             }
 
-            const trail = await auditService.getCorrelationTrail(correlationId, tenantId);
+            const correlationIdStr = Array.isArray(correlationId) ? correlationId[0] : correlationId;
+
+            const trail = await auditService.getCorrelationTrail(correlationIdStr, tenantId);
 
             res.json({
                 success: true,
@@ -212,8 +214,7 @@ export class AuditController {
 
             logger.info({
                 tenantId,
-                iterations,
-                ...performance
+                performance
             }, 'Audit logging performance test completed');
 
             res.json({

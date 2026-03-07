@@ -474,7 +474,7 @@ Generate a brief structured summary with: (1) summary of interaction, (2) inferr
             };
 
         } catch (error) {
-            logger.error('Failed to get AI usage stats', { tenantId, days, error });
+            logger.error('Failed to get AI usage stats', { tenantId, days, error: error instanceof Error ? error.message : String(error) });
             throw error;
         }
     }

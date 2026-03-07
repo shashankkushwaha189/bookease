@@ -21,13 +21,14 @@ const availability_routes_1 = __importDefault(require("./modules/availability/av
 const service_routes_1 = __importDefault(require("./modules/service/service.routes"));
 const staff_routes_1 = __importDefault(require("./modules/staff/staff.routes"));
 const appointment_routes_1 = require("./modules/appointment/appointment.routes");
-const ai_routes_1 = require("./modules/ai/ai.routes");
+// import { aiRoutes } from './modules/ai_disabled/ai.routes';
 const audit_routes_1 = __importDefault(require("./modules/audit/audit.routes"));
 const report_routes_1 = __importDefault(require("./modules/report/report.routes"));
 const archive_routes_1 = __importDefault(require("./modules/archival/archive.routes"));
 const api_token_routes_1 = __importDefault(require("./modules/api-token/api-token.routes"));
 const policy_routes_1 = __importDefault(require("./modules/policy/policy.routes"));
-const customer_routes_1 = __importDefault(require("./modules/customer/customer.routes"));
+const customer_routes_1 = __importDefault(require("./modules/customer/customer.routes")); // Re-enabled
+const import_routes_1 = __importDefault(require("./modules/import/import.routes")); // Re-enabled
 const app = (0, express_1.default)();
 exports.app = app;
 // Security & Optimization
@@ -93,8 +94,8 @@ const protectedRoutes = [
     '/api/audit',
     '/api/auth',
     '/api/reports',
-    '/api/customers',
-    // '/api/import', // Temporarily disabled
+    '/api/customers', // Re-enabled
+    '/api/import', // Re-enabled
     '/api/tokens',
 ];
 app.use(protectedRoutes, tenant_middleware_1.tenantMiddleware);
@@ -110,13 +111,13 @@ app.use('/api/public/services', service_routes_1.default);
 app.use('/api/staff', staff_routes_1.default);
 app.use('/api/public/staff', staff_routes_1.default);
 app.use('/api/appointments', appointment_routes_1.appointmentRouter);
-app.use('/api/appointments', ai_routes_1.aiRoutes);
+// app.use('/api/appointments', aiRoutes);
 app.use('/api/public/bookings', appointment_routes_1.appointmentRouter);
 app.use('/api/audit', audit_routes_1.default);
 app.use('/api/reports', report_routes_1.default);
 app.use('/api/archive', archive_routes_1.default);
-app.use('/api/customers', customer_routes_1.default);
-// app.use('/api/import', importRoutes); // Temporarily disabled
+app.use('/api/customers', customer_routes_1.default); // Re-enabled
+app.use('/api/import', import_routes_1.default); // Re-enabled
 app.use('/api/tokens', api_token_routes_1.default);
 app.use('/api/policy', policy_routes_1.default);
 // 404 Handler

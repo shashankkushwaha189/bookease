@@ -32,7 +32,7 @@ export class TimelineService {
         // Validate required fields
         if (!params.appointmentId || !params.tenantId || !params.eventType) {
             logger.error({
-                missing: ['appointmentId', 'tenantId', 'eventType'].filter(field => !params[field]),
+                missing: ['appointmentId', 'tenantId', 'eventType'].filter(field => !(params as any)[field]),
                 params
             }, 'Timeline event missing required fields');
             return;

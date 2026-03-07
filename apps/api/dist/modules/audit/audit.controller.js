@@ -129,7 +129,8 @@ class AuditController {
                     }
                 });
             }
-            const trail = await audit_service_1.auditService.getCorrelationTrail(correlationId, tenantId);
+            const correlationIdStr = Array.isArray(correlationId) ? correlationId[0] : correlationId;
+            const trail = await audit_service_1.auditService.getCorrelationTrail(correlationIdStr, tenantId);
             res.json({
                 success: true,
                 data: trail
@@ -181,8 +182,7 @@ class AuditController {
             const performance = await audit_service_1.auditService.testLoggingPerformance(tenantId, Number(iterations));
             logger_1.logger.info({
                 tenantId,
-                iterations,
-                ...performance
+                performance
             }, 'Audit logging performance test completed');
             res.json({
                 success: true,

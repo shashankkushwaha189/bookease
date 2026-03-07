@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Edit2, Trash2, User, Tag } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, User } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import { useToastStore } from '../../stores/toast.store';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useTenantStore } from '../../stores/tenant.store';
 import { customersApi } from '../../api/customers';
 
 // Types
@@ -25,6 +26,7 @@ interface Customer {
 }
 
 const CustomersPage: React.FC = () => {
+  const { tenantId } = useTenantStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,10 +87,17 @@ const CustomersPage: React.FC = () => {
     }
   };
 
-  // Load customers on mount and when search changes
+  // Load customers on mount and when search changes or tenant ID changes (with delay to ensure store hydration)
   useEffect(() => {
-    fetchCustomers();
-  }, [debouncedSearchQuery]);
+    // Add small delay to ensure tenant store is hydrated from localStorage
+    const timer = setTimeout(() => {
+      if (tenantId) {
+        fetchCustomers();
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [debouncedSearchQuery, tenantId]);
 
   return (
     <div className="p-6">

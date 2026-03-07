@@ -13,5 +13,9 @@
     },
     "include": [
         "src/**/*"
+    ],
+    "exclude": [
+        "src/modules/ai",
+        "src/modules/ai_module_backup"
     ]
 }

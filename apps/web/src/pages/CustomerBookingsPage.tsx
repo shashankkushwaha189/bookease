@@ -30,7 +30,23 @@ const CustomerBookingsPage: React.FC = () => {
         limit: 50
       });
       
-      setBookings(response.data.data.items);
+      console.log('📅 Customer bookings API response:', response);
+      
+      // Type assertion to handle the actual response structure
+      const responseData = response.data as any;
+      console.log('📊 Response structure:', {
+        data: responseData,
+        hasItems: 'items' in responseData,
+        items: responseData?.items
+      });
+      
+      // The API returns data directly with items property
+      if (responseData?.items && Array.isArray(responseData.items)) {
+        setBookings(responseData.items);
+      } else {
+        console.warn('⚠️ No items found in response, setting empty array');
+        setBookings([]);
+      }
     } catch (error: any) {
       console.error('Failed to fetch bookings:', error);
       toastStore.error('Failed to load bookings');
@@ -51,7 +67,8 @@ const CustomerBookingsPage: React.FC = () => {
   };
 
   const handleBookAppointment = () => {
-    navigate('/book');
+    // Navigate to booking page with tenant slug
+    navigate('/demo-clinic/book');
   };
 
   const handleViewProfile = () => {
@@ -59,8 +76,8 @@ const CustomerBookingsPage: React.FC = () => {
   };
 
   const handleReschedule = (bookingId: string) => {
-    // Navigate to booking page with reschedule parameter
-    navigate(`/book?reschedule=${bookingId}`);
+    // Navigate to booking page with reschedule parameter and tenant slug
+    navigate(`/demo-clinic/book?reschedule=${bookingId}`);
   };
 
   const formatDateTime = (dateTime: string) => {
