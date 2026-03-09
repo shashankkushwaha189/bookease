@@ -54,14 +54,15 @@ export class UserService {
 
     // Verify tenant access if tenantSlug provided
     if (tenantSlug) {
-      const tenant = await TenantRepository.findBySlug(tenantSlug);
+      // Find tenant by slug
+      const tenant = await this.tenantRepository.findBySlug(tenantSlug!);
       if (!tenant || tenant.id !== user.tenantId) {
         throw new Error('Tenant access denied');
       }
     }
 
-    // Get tenant info for token
-    const tenant = await TenantRepository.findById(user.tenantId);
+    // Find tenant by ID
+    const tenant = await this.tenantRepository.findById(user.tenantId);
     if (!tenant || !tenant.isActive) {
       throw new Error('Tenant is not active');
     }
@@ -76,19 +77,21 @@ export class UserService {
     };
 
     const signOptions: SignOptions = {
-      expiresIn: (process.env.JWT_EXPIRES_IN || '1h') as string,
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
     };
 
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, signOptions);
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
 
     const refreshOptions: SignOptions = {
-      expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as string,
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
     };
 
     const refreshToken = jwt.sign(
       { userId: user.id, type: 'refresh' },
       process.env.JWT_REFRESH_SECRET!,
-      refreshOptions
+      { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
     );
 
     // Calculate expiration
@@ -98,7 +101,21 @@ export class UserService {
     expiresAt.setHours(expiresAt.getHours() + parseInt(hours[0]));
 
     // Remove password from user object
-    const { passwordHash: _, ...userWithoutPassword } = user;
+    const userWithoutPassword = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      tenantId: user.tenantId,
+      isActive: user.isActive,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      lastLoginAt: user.lastLoginAt,
+      mfaEnabled: user.mfaEnabled,
+      phoneNumber: user.phoneNumber,
+      avatarUrl: user.avatarUrl,
+      preferences: user.preferences,
+      recoveryCodesGeneratedAt: user.recoveryCodesGeneratedAt,
+    };
 
     return {
       user: userWithoutPassword,

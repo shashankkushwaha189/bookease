@@ -30,6 +30,15 @@
         "src/modules/smart-scheduling",
         "src/modules/appointment-timeline",
         "src/modules/consent",
-        "src/scripts"
+        "src/scripts",
+        "src/modules/service",
+        "src/modules/staff",
+        "src/modules/report",
+        "src/modules/archival",
+        "src/modules/api-token",
+        "src/modules/customer",
+        "src/modules/availability",
+        "src/modules/auth",
+        "src/modules/import"
     ]
 }
