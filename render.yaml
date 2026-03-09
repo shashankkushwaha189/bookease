@@ -4,7 +4,7 @@ services:
     env: node
     repo: https://github.com/yourusername/bookease
     rootDir: apps/api
-    buildCommand: pnpm install --no-frozen-lockfile && npm run build
+    buildCommand: npm run build
     startCommand: npm start
     healthCheckPath: /health
     autoDeploy: true

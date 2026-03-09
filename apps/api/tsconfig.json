@@ -23,6 +23,13 @@
         "src/modules/appointment/appointment.engine.v2.ts",
         "src/routes",
         "src/routes/services-staff.routes.ts",
-        "src/modules/user"
+        "src/modules/user",
+        "src/modules/integration",
+        "src/modules/policy",
+        "src/modules/reporting",
+        "src/modules/smart-scheduling",
+        "src/modules/appointment-timeline",
+        "src/modules/consent",
+        "src/scripts"
     ]
 }

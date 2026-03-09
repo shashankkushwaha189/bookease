@@ -48,6 +48,22 @@ try {
   console.log('Prisma generation failed, using existing client...');
 }
 
+// Create a simple index.js that only includes essential modules
+const indexContent = `
+// Minimal production entry point
+require('dotenv').config();
+const app = require('./app.js');
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(\`🚀 BookEase API running on port \${PORT}\`);
+  console.log(\`📊 Health check: http://localhost:\${PORT}/health\`);
+});
+`;
+
+fs.writeFileSync('dist/index.js', indexContent);
+
 console.log('Minimal build completed!');
 console.log('Note: Some TypeScript errors were ignored for deployment readiness.');
 console.log('Core functionality (tenant + business profile) should work correctly.');
