@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: bookease-api
+    env: node
+    repo: https://github.com/yourusername/bookease
+    rootDir: apps/api
+    buildCommand: npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://your-app-name.vercel.app
+      - key: APP_NAME
+        value: BookEase
+      - key: APP_URL
+        value: https://your-app-name.vercel.app
+      - fromDatabase:
+          name: bookease-db
+          property: DATABASE_URL
+
+databases:
+  - name: bookease-db
+    databaseName: bookease
+    user: bookease_user
+    plan: free

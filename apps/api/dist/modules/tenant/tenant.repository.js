@@ -13,6 +13,11 @@ class TenantRepository {
             where: { slug, deletedAt: null },
         });
     }
+    async findByDomain(domain) {
+        return prisma_1.prisma.tenant.findFirst({
+            where: { domain, deletedAt: null },
+        });
+    }
     async create(data) {
         return prisma_1.prisma.tenant.create({
             data,
@@ -30,10 +35,36 @@ class TenantRepository {
             data: { deletedAt: new Date(), isActive: false },
         });
     }
+    async restore(id) {
+        return prisma_1.prisma.tenant.update({
+            where: { id },
+            data: { deletedAt: null, isActive: true },
+        });
+    }
     async list() {
         return prisma_1.prisma.tenant.findMany({
             where: { deletedAt: null },
             orderBy: { createdAt: 'desc' },
+        });
+    }
+    async listActive() {
+        return prisma_1.prisma.tenant.findMany({
+            where: { deletedAt: null, isActive: true },
+            orderBy: { name: 'asc' },
+        });
+    }
+    async search(query, limit = 10) {
+        return prisma_1.prisma.tenant.findMany({
+            where: {
+                deletedAt: null,
+                OR: [
+                    { name: { contains: query, mode: 'insensitive' } },
+                    { slug: { contains: query, mode: 'insensitive' } },
+                    { domain: { contains: query, mode: 'insensitive' } },
+                ],
+            },
+            take: limit,
+            orderBy: { name: 'asc' },
         });
     }
 }

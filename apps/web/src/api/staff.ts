@@ -99,7 +99,7 @@ export const staffApi = {
         name: string;
         durationMinutes: number;
       }>;
-    }>>>('/api/public/staff', params),
+    }>>('/api/public/staff', params),
 
   /**
    * Upload staff photo

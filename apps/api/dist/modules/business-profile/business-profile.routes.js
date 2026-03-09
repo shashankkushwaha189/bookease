@@ -10,10 +10,19 @@ const router = (0, express_1.Router)();
 const repository = new business_profile_repository_1.BusinessProfileRepository();
 const service = new business_profile_service_1.BusinessProfileService(repository);
 const controller = new business_profile_controller_1.BusinessProfileController(service);
-// Private Admin Routes (scoped by tenantId from header)
+// Protected endpoints (auth required)
 router.get('/', controller.getProfile);
 router.post('/', (0, validate_1.validateBody)(business_profile_schema_1.createBusinessProfileSchema), controller.upsertProfile);
-// Public Route (also requires X-Tenant-ID but returns subset)
-// We'll use a separate path for public access in app.ts but we can define it here too
+router.patch('/', controller.updateProfile);
+router.patch('/branding', controller.updateBranding);
+router.patch('/policy', controller.updatePolicy);
+router.patch('/seo', controller.updateSEO);
+router.patch('/contact', controller.updateContact);
+// Public endpoints (no auth required)
 router.get('/public', controller.getPublicProfile);
+router.get('/public/slug/:slug', controller.getPublicProfileBySlug);
+router.get('/public/all', controller.getPublicProfiles);
+router.get('/public/search', controller.searchProfiles);
+// Validation endpoint
+router.get('/validate', controller.validateProfileAccess);
 exports.default = router;

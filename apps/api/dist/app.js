@@ -15,7 +15,9 @@ const error_handler_1 = require("./middleware/error-handler");
 const tenant_middleware_1 = require("./middleware/tenant.middleware");
 const tenant_routes_1 = __importDefault(require("./modules/tenant/tenant.routes"));
 const business_profile_routes_1 = __importDefault(require("./modules/business-profile/business-profile.routes"));
-const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
+const user_routes_1 = __importDefault(require("./modules/user/user.routes"));
+const mfa_routes_1 = __importDefault(require("./modules/auth/mfa.routes"));
+const session_routes_1 = __importDefault(require("./modules/auth/session.routes"));
 const config_routes_1 = __importDefault(require("./modules/config/config.routes"));
 const availability_routes_1 = __importDefault(require("./modules/availability/availability.routes"));
 const service_routes_1 = __importDefault(require("./modules/service/service.routes"));
@@ -29,6 +31,7 @@ const api_token_routes_1 = __importDefault(require("./modules/api-token/api-toke
 const policy_routes_1 = __importDefault(require("./modules/policy/policy.routes"));
 const customer_routes_1 = __importDefault(require("./modules/customer/customer.routes")); // Re-enabled
 const import_routes_1 = __importDefault(require("./modules/import/import.routes")); // Re-enabled
+const public_booking_routes_1 = __importDefault(require("./modules/appointment/public-booking.routes"));
 const app = (0, express_1.default)();
 exports.app = app;
 // Security & Optimization
@@ -81,16 +84,7 @@ app.get('/ready', async (req, res) => {
 });
 // Global Context (Tenant ID required for these)
 const protectedRoutes = [
-    '/api/business-profile',
     '/api/config',
-    '/api/availability',
-    '/api/services',
-    '/api/staff',
-    '/api/appointments',
-    '/api/public/bookings',
-    '/api/public/profile',
-    '/api/public/services',
-    '/api/public/staff',
     '/api/audit',
     '/api/auth',
     '/api/reports',
@@ -98,21 +92,37 @@ const protectedRoutes = [
     '/api/import', // Re-enabled
     '/api/tokens',
 ];
+const publicRoutes = [
+    '/api/tenants',
+    '/api/public/services',
+    '/api/public/staff',
+    '/api/public/availability',
+    '/api/public/bookings',
+    '/api/public/profile',
+    '/api/business-profile/public',
+    '/api/users', // User authentication routes
+    '/api/auth', // User authentication routes
+];
 app.use(protectedRoutes, tenant_middleware_1.tenantMiddleware);
-// API Routes
+// API Routes - Public routes first (no auth required)
 app.use('/api/tenants', tenant_routes_1.default);
-app.use('/api/business-profile', business_profile_routes_1.default);
+app.use('/api/public/services', service_routes_1.default);
+app.use('/api/public/staff', staff_routes_1.default);
+app.use('/api/public/availability', availability_routes_1.default);
+app.use('/api/public/bookings', public_booking_routes_1.default);
 app.use('/api/public/profile', business_profile_routes_1.default);
-app.use('/api/auth', auth_routes_1.default);
+app.use('/api/business-profile/public', business_profile_routes_1.default);
+app.use('/api/users', user_routes_1.default);
+app.use('/api/auth', user_routes_1.default);
+app.use('/api/mfa', mfa_routes_1.default);
+app.use('/api/sessions', session_routes_1.default);
 app.use('/api/config', config_routes_1.default);
+// Apply tenant middleware to protected routes only
+app.use(protectedRoutes, tenant_middleware_1.tenantMiddleware);
 app.use('/api/availability', availability_routes_1.default);
 app.use('/api/services', service_routes_1.default);
-app.use('/api/public/services', service_routes_1.default);
 app.use('/api/staff', staff_routes_1.default);
-app.use('/api/public/staff', staff_routes_1.default);
 app.use('/api/appointments', appointment_routes_1.appointmentRouter);
-// app.use('/api/appointments', aiRoutes);
-app.use('/api/public/bookings', appointment_routes_1.appointmentRouter);
 app.use('/api/audit', audit_routes_1.default);
 app.use('/api/reports', report_routes_1.default);
 app.use('/api/archive', archive_routes_1.default);
@@ -120,6 +130,8 @@ app.use('/api/customers', customer_routes_1.default); // Re-enabled
 app.use('/api/import', import_routes_1.default); // Re-enabled
 app.use('/api/tokens', api_token_routes_1.default);
 app.use('/api/policy', policy_routes_1.default);
+// Protected business profile routes (require tenant middleware)
+app.use('/api/business-profile', business_profile_routes_1.default);
 // 404 Handler
 app.use((req, res) => {
     res.status(404).json({

@@ -50,6 +50,67 @@ class AppointmentController {
             });
         }
     };
+    createPublicBooking = async (req, res) => {
+        try {
+            // For public booking, use default tenant if no tenant ID provided
+            const tenantId = String(req.headers["x-tenant-id"] || "b18e0808-27d1-4253-aca9-453897585106");
+            const appointment = await this.service.createBooking({
+                ...req.body,
+                tenantId,
+                ipAddress: String(req.ip || "0.0.0.0"),
+            });
+            res.status(201).json({
+                success: true,
+                data: appointment
+            });
+        }
+        catch (error) {
+            logger_1.logger.error({ error: error.message, tenantId: req.headers["x-tenant-id"] }, 'Public booking creation failed');
+            if (error.message === "CONSENT_REQUIRED") {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'CONSENT_REQUIRED',
+                        message: 'Consent is required for booking'
+                    }
+                });
+            }
+            if (error.message === "SLOT_NOT_AVAILABLE") {
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: 'SLOT_NOT_AVAILABLE',
+                        message: 'Time slot is no longer available'
+                    }
+                });
+            }
+            if (error.message === "STAFF_NOT_AVAILABLE") {
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: 'STAFF_NOT_AVAILABLE',
+                        message: 'Staff member is not available at this time'
+                    }
+                });
+            }
+            if (error.message === "DUPLICATE_BOOKING") {
+                return res.status(409).json({
+                    success: false,
+                    error: {
+                        code: 'DUPLICATE_BOOKING',
+                        message: 'Duplicate booking detected'
+                    }
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: {
+                    code: 'BOOKING_FAILED',
+                    message: 'Failed to create booking'
+                }
+            });
+        }
+    };
     createManualBooking = async (req, res) => {
         try {
             const tenantId = String(req.headers["x-tenant-id"] || "");

@@ -25,7 +25,12 @@ axiosInstance.interceptors.request.use(
         }
 
         // 2. Inject Multi-Tenant ID
-        const tenantId = useTenantStore.getState().tenantId;
+        const tenantId = useTenantStore.getState().tenantId || 
+          (() => {
+            const path = window.location.pathname;
+            const slug = path.split('/')[1];
+            return slug === 'demo-clinic' ? 'b18e0808-27d1-4253-aca9-453897585106' : slug;
+          })();
         if (tenantId) {
             config.headers.set('X-Tenant-ID', tenantId);
         }

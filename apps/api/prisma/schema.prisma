@@ -11,6 +11,7 @@ model Tenant {
   id        String    @id @default(uuid())
   name      String
   slug      String    @unique
+  domain    String?   @unique
   timezone  String    @default("UTC")
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now())
@@ -26,9 +27,14 @@ model Tenant {
   appointmentArchives AppointmentArchive[]
   apiTokens          ApiToken[]
   customers          Customer[]
-  series          RecurringAppointmentSeries[]
+  series          RecurringSeries[]
   slotLocks       SlotLock[]
   aiSummaries     AiSummary[]
+  policyRules     PolicyRule[]
+  customerTags    CustomerTag[]
+  archivalConfigs ArchivalConfig[]
+  archivalJobs    ArchivalJob[]
+  importJobs      ImportJob[]
 }
 
 model BusinessProfile {
@@ -60,12 +66,44 @@ model User {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  lastLoginAt DateTime?
+  deletedAt    DateTime?
+  
+  // MFA fields
+  mfaEnabled  Boolean  @default(false)
+  mfaSecret   String?
+  phoneNumber String?
+  avatarUrl    String?
+  preferences Json?
+  lastSeenAt  DateTime?
+  deviceId     String?
+  
+  // Verification fields
+  smsVerificationCode String?
+  smsCodeExpiresAt   DateTime?
+  emailVerificationCode String?
+  emailCodeExpiresAt  DateTime?
+  recoveryCodes String?
+  recoveryCodesGeneratedAt DateTime?
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
   staff  Staff?
-
   @@unique([tenantId, email])
   @@index([tenantId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  token        String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  lastAccessAt DateTime?
+  deviceId     String?
+  ipAddress    String?
+  userAgent     String?
+
+  @@index([userId])
 }
 
 enum UserRole {
@@ -85,40 +123,69 @@ model Service {
   bufferAfter     Int      @default(0)
   price           Decimal?
   isActive        Boolean  @default(true)
+  color           String?  // Hex color code
+  requiresDeposit Boolean  @default(false)
+  depositAmount   Decimal? // Deposit amount if required
+  maxAdvanceBookingDays Int? // Maximum days in advance for booking
+  minAdvanceBookingHours Int? // Minimum hours in advance for booking
+  allowOnlineBooking Boolean @default(true) // Allow online booking
+  requiresConfirmation Boolean @default(false) // Require confirmation
+  tags            String[] // Service tags for search and categorization
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   tenant             Tenant               @relation(fields: [tenantId], references: [id])
   appointments       Appointment[]
+  recurringSeries    RecurringSeries[]
   appointmentArchives AppointmentArchive[]
   staffServices      StaffService[]
+  slotLocks          SlotLock[]
+  bookingAttempts    BookingAttempt[]
 
   @@index([tenantId])
+  @@index([tenantId, isActive])
+  @@index([tenantId, category])
 }
 
 model Staff {
-  id        String    @id @default(uuid())
-  tenantId  String
-  userId    String?   @unique
-  name      String
-  email     String?
-  photoUrl  String?
-  bio       String?
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id               String              @id @default(uuid())
+  tenantId         String
+  userId           String?             @unique
+  name             String
+  email            String?             @unique
+  photoUrl         String?             @db.Text
+  bio              String?             @db.Text
+  phone            String?             @db.Text
+  title            String?             @db.Text
+  department       String?             @db.Text
+  hireDate         DateTime?
+  isActive         Boolean             @default(true)
+  maxConcurrentAppointments Int                 @default(1)
+  requiresApproval Boolean             @default(false)
+  commissionRate   Float?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  deletedAt        DateTime?
+  lastLoginAt       DateTime?
 
-  tenant               Tenant               @relation(fields: [tenantId], references: [id])
-  user                 User?                @relation(fields: [userId], references: [id])
-  appointments         Appointment[]
-  appointmentArchives   AppointmentArchive[]
-  staffServices        StaffService[]
-  timeOffs       StaffTimeOff[]
-  weeklySchedule WeeklySchedule[]
-  slotLocks      SlotLock[]
+  // Relations
+  user             User?               @relation(fields: [userId], references: [id])
+  tenant           Tenant              @relation(fields: [tenantId], references: [id])
+  appointments     Appointment[]
+  recurringSeries  RecurringSeries[]
+  staffServices    StaffService[]
+  weeklySchedule   WeeklySchedule[]
+  timeOffs         StaffTimeOff[]
+  dateOverrides    DateOverride[]
+  slotLocks        SlotLock[]
+  bookingAttempts   BookingAttempt[]
+  customerNotes    CustomerNote[]
+  appointmentArchives AppointmentArchive[]
 
-  @@index([tenantId])
+  @@index([tenantId, email])
+  @@index([tenantId, isActive])
+  @@index([tenantId, deletedAt])
+  @@unique([userId, tenantId])
 }
 
 model StaffService {
@@ -138,6 +205,7 @@ model WeeklySchedule {
   startTime String // "09:00"
   endTime   String // "17:00"
   isWorking Boolean      @default(true)
+  maxAppointments Int? // Maximum appointments for this day
   breaks    StaffBreak[]
 
   staff Staff @relation(fields: [staffId], references: [id])
@@ -150,6 +218,7 @@ model StaffBreak {
   weeklyScheduleId String
   startTime        String
   endTime          String
+  title            String? // Optional title for the break
   weeklySchedule   WeeklySchedule @relation(fields: [weeklyScheduleId], references: [id])
 }
 
@@ -159,11 +228,40 @@ model StaffTimeOff {
   date      DateTime
   endDate   DateTime?
   reason    String?
+  type      TimeOffType @default(PERSONAL)
+  isPaid    Boolean   @default(true)
   createdAt DateTime  @default(now())
 
   staff Staff @relation(fields: [staffId], references: [id])
 
   @@index([staffId, date])
+  @@index([staffId, type])
+}
+
+enum TimeOffType {
+  VACATION
+  SICK
+  PERSONAL
+  HOLIDAY
+  TRAINING
+}
+
+model DateOverride {
+  id        String    @id @default(uuid())
+  staffId   String
+  date      DateTime
+  isWorking Boolean   @default(true)
+  startTime String?   // HH:mm format
+  endTime   String?   // HH:mm format
+  reason    String?
+  createdBy  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  staff Staff @relation(fields: [staffId], references: [id])
+
+  @@index([staffId, date])
+  @@index([date])
 }
 
 model Appointment {
@@ -172,25 +270,30 @@ model Appointment {
   serviceId    String
   staffId      String
   customerId   String
-  referenceId  String
+  referenceId  String            @unique
   startTimeUtc DateTime
   endTimeUtc   DateTime
   status       AppointmentStatus @default(BOOKED)
-  notes        String?
+  notes        String?           @db.Text
+  requiresConfirmation Boolean           @default(false)
   createdBy    String?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
+  confirmedAt  DateTime?
+  cancelledAt  DateTime?
+  completedAt  DateTime?
+  seriesId     String?
 
-  seriesId    String?
-  seriesIndex Int?
-
-  tenant   Tenant                      @relation(fields: [tenantId], references: [id])
-  service  Service                     @relation(fields: [serviceId], references: [id])
-  staff    Staff                       @relation(fields: [staffId], references: [id])
-  customer Customer                    @relation(fields: [customerId], references: [id])
-  series   RecurringAppointmentSeries? @relation(fields: [seriesId], references: [id])
+  // Relations
+  tenant   Tenant               @relation(fields: [tenantId], references: [id])
+  service  Service              @relation(fields: [serviceId], references: [id])
+  staff    Staff                @relation(fields: [staffId], references: [id])
+  customer Customer             @relation(fields: [customerId], references: [id])
+  series   RecurringSeries?     @relation(fields: [seriesId], references: [id])
   timeline AppointmentTimeline[]
   aiSummary AiSummary?
+  slotLocks SlotLock[]
+  timelineEvents AppointmentTimelineEvent[]
 
   @@index([tenantId, staffId, startTimeUtc])
   @@index([tenantId, startTimeUtc])
@@ -198,6 +301,26 @@ model Appointment {
   @@index([status, createdAt])
   @@index([tenantId, status])
   @@index([tenantId, customerId])
+}
+
+model BookingAttempt {
+  id            String    @id @default(uuid())
+  staffId       String
+  serviceId      String
+  customerId     String
+  startTimeUtc   DateTime
+  endTimeUtc     DateTime
+  attemptAt     DateTime  @default(now())
+  success        Boolean
+  failureReason  String?
+  lockId         String?
+
+  staff    Staff    @relation(fields: [staffId], references: [id])
+  service  Service  @relation(fields: [serviceId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([staffId, attemptAt])
+  @@index([success])
 }
 
 enum AppointmentStatus {
@@ -256,20 +379,6 @@ model AuditLog {
   @@index([correlationId])
 }
 
-model RecurringAppointmentSeries {
-  id          String             @id @default(uuid())
-  tenantId    String
-  frequency   RecurringFrequency
-  occurrences Int
-  createdAt   DateTime           @default(now())
-
-  tenant              Tenant               @relation(fields: [tenantId], references: [id])
-  appointments        Appointment[]
-  appointmentArchives AppointmentArchive[]
-
-  @@index([tenantId])
-}
-
 enum RecurringFrequency {
   WEEKLY
   BIWEEKLY
@@ -282,47 +391,162 @@ model Customer {
   name         String
   email        String
   phone        String?
-  notes        String?
-  tags         String[]
+  dateOfBirth  DateTime?
+  gender       String?       // MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY
+  address      Json?         // Address object
+  emergencyContact Json?     // Emergency contact object
+  preferences  Json?         // Preferences object
+  medicalInfo  Json?         // Medical information object
+  status       String        @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED, DELETED
+  tags         String[]      @default([])
+  notes        String?       @db.Text
   consentGiven Boolean       @default(false)
-  deletedAt    DateTime?
+  consentDate  DateTime?
+  source       String?       // WEBSITE, PHONE, WALK_IN, REFERRAL, SOCIAL_MEDIA, OTHER
+  sourceDetails String?
+  lastVisitDate DateTime?
+  totalVisits  Int           @default(0)
+  totalSpent   Float         @default(0)
+  averageRating Float?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
 
+  // Relations
   tenant              Tenant               @relation(fields: [tenantId], references: [id])
   appointments        Appointment[]
+  recurringSeries     RecurringSeries[]
   appointmentArchives AppointmentArchive[]
+  slotLocks          SlotLock[]
+  bookingAttempts   BookingAttempt[]
+  customerNotes      CustomerNote[]
+  consentRecords     ConsentRecord[]
 
-  @@unique([tenantId, email])
   @@index([tenantId])
+  @@index([tenantId, email])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+model CustomerNote {
+  id          String   @id @default(uuid())
+  customerId  String
+  staffId     String
+  type        String   // GENERAL, APPOINTMENT, PAYMENT, etc.
+  title       String
+  content     String
+  isPrivate   Boolean  @default(false)
+  isImportant Boolean  @default(false)
+  tags        String[]
+  attachments Json?    // Array of attachment objects
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id])
+  staff    Staff    @relation(fields: [staffId], references: [id])
+
+  @@index([customerId, createdAt])
+  @@index([staffId])
+  @@index([type])
+  @@index([isImportant])
+}
+
+model CustomerTag {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  color       String?  // Hex color code
+  description String?
+  isActive    Boolean  @default(true)
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, name])
+  @@index([tenantId, isActive])
+}
+
+model ConsentRecord {
+  id            String   @id @default(uuid())
+  customerId   String
+  type          String   // PRIVACY_POLICY, TERMS_OF_SERVICE, etc.
+  version       String
+  given         Boolean
+  givenAt       DateTime
+  expiresAt     DateTime?
+  ipAddress     String?
+  userAgent     String?
+  documentUrl   String?
+  withdrawnAt   DateTime?
+  withdrawnBy   String?
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([customerId, type])
+  @@index([givenAt])
+  @@index([expiresAt])
 }
 
 model SlotLock {
   id           String   @id @default(uuid())
   tenantId     String
   staffId      String
+  serviceId    String?
+  customerId   String?
   startTimeUtc DateTime
   endTimeUtc   DateTime
   sessionToken String
   expiresAt    DateTime
+  lockType     String   @default("BOOKING") // BOOKING, RESCHEDULE, MANUAL
+  appointmentId String?
   createdAt    DateTime @default(now())
 
-  tenant Tenant @relation(fields: [tenantId], references: [id])
-  staff  Staff  @relation(fields: [staffId], references: [id])
+  // Relations
+  tenant      Tenant @relation(fields: [tenantId], references: [id])
+  staff       Staff  @relation(fields: [staffId], references: [id])
+  service     Service? @relation(fields: [serviceId], references: [id])
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
 
   @@unique([tenantId, staffId, startTimeUtc])
   @@index([expiresAt])
 }
 
-model ConsentRecord {
-  id            String   @id @default(uuid())
-  tenantId      String
-  customerEmail String
-  ipAddress     String
-  consentText   String
-  givenAt       DateTime @default(now())
+model RecurringSeries {
+  id                    String   @id @default(uuid())
+  tenantId              String
+  title                 String
+  staffId               String
+  serviceId             String
+  customerId            String
+  startTimeUtc          DateTime
+  endTimeUtc            DateTime
+  notes                 String?
+  recurrenceRule        Json     // Complex recurrence pattern
+  status                String   @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED, COMPLETED
+  totalOccurrences      Int      @default(0)
+  completedOccurrences  Int      @default(0)
+  cancelledOccurrences  Int      @default(0)
+  nextOccurrence        DateTime?
+  createdBy             String
+  updatedBy             String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
-  @@index([tenantId, customerEmail])
+  tenant       Tenant       @relation(fields: [tenantId], references: [id])
+  staff        Staff        @relation(fields: [staffId], references: [id])
+  service      Service      @relation(fields: [serviceId], references: [id])
+  customer     Customer     @relation(fields: [customerId], references: [id])
+  appointments Appointment[]
+
+  @@index([tenantId, staffId])
+  @@index([tenantId, status])
+  @@index([nextOccurrence])
 }
 
 model TenantConfig {
@@ -344,33 +568,74 @@ model TenantConfig {
 model AppointmentArchive {
   id           String            @id @default(uuid())
   tenantId     String
-  serviceId    String
-  staffId      String
+  originalId   String            @unique
   customerId   String
-  referenceId  String
+  customerName String
+  customerEmail String
+  staffId      String
+  staffName    String
+  serviceId    String
+  serviceName  String
   startTimeUtc DateTime
   endTimeUtc   DateTime
   status       AppointmentStatus
-  notes        String?
-  createdBy    String?
-  createdAt    DateTime
-  updatedAt    DateTime
+  referenceId  String
+  notes        String?           @db.Text
+  totalAmount  Float?
   archivedAt   DateTime          @default(now())
+  archivedBy   String?
 
-  seriesId    String?
-  seriesIndex Int?
+  // Relations
+  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  customer Customer  @relation(fields: [customerId], references: [id])
+  staff    Staff     @relation(fields: [staffId], references: [id])
+  service  Service   @relation(fields: [serviceId], references: [id])
 
-  tenant   Tenant                      @relation(fields: [tenantId], references: [id])
-  service  Service                     @relation(fields: [serviceId], references: [id])
-  staff    Staff                       @relation(fields: [staffId], references: [id])
-  customer Customer                    @relation(fields: [customerId], references: [id])
-  series   RecurringAppointmentSeries? @relation(fields: [seriesId], references: [id])
+  @@index([tenantId, archivedAt])
+  @@index([customerId])
+  @@index([staffId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([originalId])
+}
 
-  @@index([tenantId, staffId, startTimeUtc])
-  @@index([tenantId, startTimeUtc])
-  @@index([referenceId])
-  @@index([status, createdAt])
+model ArchivalConfig {
+  id                 String   @id @default(uuid())
+  tenantId           String
+  archiveAfterMonths Int
+  archiveStatuses    String[]
+  excludeRecentDays  Int
+  batchSize          Int
+  scheduleCron       String
+  enabled            Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  archivalJobs ArchivalJob[]
+
+  @@unique([tenantId])
+}
+
+model ArchivalJob {
+  id                  String   @id @default(uuid())
+  tenantId            String
+  status              String   // PENDING, RUNNING, COMPLETED, FAILED
+  startedAt           DateTime?
+  completedAt         DateTime?
+  totalAppointments   Int
+  archivedAppointments Int
+  failedAppointments  Int
+  errorMessage        String?
+  metadata            Json?
+  createdAt           DateTime @default(now())
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], map: "archival_job_tenant_fkey")
+  config ArchivalConfig @relation(fields: [tenantId], references: [id], map: "archival_job_config_fkey")
+
   @@index([tenantId, status])
+  @@index([createdAt])
 }
 
 model ApiToken {
@@ -383,9 +648,32 @@ model ApiToken {
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now())
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId])
+}
+
+model ImportJob {
+  id          String   @id @default(uuid())
+  tenantId    String
+  importType  String   // CUSTOMERS, SERVICES, STAFF
+  fileName    String
+  fileSize    Int
+  totalRows   Int
+  status      String   // PENDING, PROCESSING, COMPLETED, FAILED, PARTIAL_SUCCESS
+  options     Json     // Import options
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  processedRows Int    @default(0)
+  successfulRows Int    @default(0)
+  failedRows    Int    @default(0)
+  skippedRows   Int    @default(0)
+  duplicateRows Int    @default(0)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@index([startedAt])
 }
 
 model AiSummary {
@@ -410,4 +698,118 @@ enum AiConfidence {
   LOW
   MEDIUM
   HIGH
+}
+
+model PolicyRule {
+  id          String   @id @default(uuid())
+  tenantId    String
+  type        String   // CANCELLATION_WINDOW, RESCHEDULE_LIMIT, etc.
+  name        String
+  description String
+  isActive    Boolean  @default(true)
+  priority    Int      @default(50)
+  config      Json     // Policy-specific configuration
+  conditions  Json?    // Policy conditions
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+
+  tenant               Tenant               @relation(fields: [tenantId], references: [id])
+  policyOverrides      PolicyOverride[]
+
+  @@index([tenantId, type])
+  @@index([tenantId, isActive])
+  @@index([priority])
+}
+
+model PolicyOverride {
+  id                 String   @id @default(uuid())
+  policyEvaluationId String   @unique
+  policyId           String
+  reason             String   // CUSTOMER_REQUEST, STAFF_ERROR, etc.
+  reasonText         String
+  userId             String
+  userRole           String   // CUSTOMER, STAFF, ADMIN
+  createdAt          DateTime @default(now())
+
+  policyRule PolicyRule @relation(fields: [policyId], references: [id])
+
+  @@index([policyEvaluationId])
+  @@index([policyId])
+  @@index([userId])
+}
+
+model PolicyRuleArchive {
+  id          String   @id @default(uuid())
+  policyId    String
+  tenantId    String
+  type        String
+  name        String
+  description String
+  isActive    Boolean
+  priority    Int
+  config      Json
+  conditions  Json?
+  version     Int
+  createdAt   DateTime
+  updatedAt   DateTime
+  createdBy   String?
+  updatedBy   String?
+  archivedAt  DateTime @default(now())
+  archivedBy  String?
+
+  @@index([policyId])
+  @@index([archivedAt])
+}
+
+model AppointmentTimelineEvent {
+  id            String   @id @default(uuid())
+  appointmentId String
+  eventType     String   // CREATED, RESCHEDULED, CANCELLED, etc.
+  timestamp     DateTime @default(now())
+  userId        String
+  userRole      String   // CUSTOMER, STAFF, ADMIN, SYSTEM
+  data          Json?    // Event-specific data
+  correlationId String
+  ipAddress     String?
+  userAgent     String?
+  sessionId     String?
+  previousState Json?    // Previous appointment state
+  newState      Json?    // New appointment state
+  reason        String?
+  isSystemGenerated Boolean @default(false)
+  createdAt     DateTime @default(now())
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+
+  @@index([appointmentId, timestamp])
+  @@index([eventType])
+  @@index([userId])
+  @@index([correlationId])
+  @@index([timestamp])
+}
+
+model AIUsageTracking {
+  id            String   @id @default(uuid())
+  correlationId String
+  model         String
+  prompt        String
+  response      String
+  tokensPrompt  Int
+  tokensCompletion Int
+  tokensTotal   Int
+  processingTime Int     // in milliseconds
+  confidence    Float?
+  cost          Float?   // in USD
+  success       Boolean  @default(true)
+  errorMessage  String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([correlationId])
+  @@index([model])
+  @@index([createdAt])
+  @@index([success])
 }

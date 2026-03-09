@@ -11,7 +11,9 @@ class CustomerController {
                 throw new errors_1.AppError('Tenant ID required', 400, 'MISSING_TENANT_ID');
             }
             const { page = 1, limit = 10, search, tags } = req.query;
-            const skip = (page - 1) * limit;
+            const pageNum = parseInt(page);
+            const limitNum = parseInt(limit);
+            const skip = (pageNum - 1) * limitNum;
             const whereClause = {
                 tenantId
             };
@@ -33,7 +35,7 @@ class CustomerController {
                     createdAt: 'desc'
                 },
                 skip,
-                take: limit
+                take: limitNum
             });
             const total = await prisma_1.prisma.customer.count({
                 where: whereClause
@@ -43,9 +45,9 @@ class CustomerController {
                 data: {
                     items: customers,
                     total,
-                    page: Number(page),
-                    limit: Number(limit),
-                    totalPages: Math.ceil(total / limit)
+                    page: pageNum,
+                    limit: limitNum,
+                    totalPages: Math.ceil(total / limitNum)
                 }
             });
         }

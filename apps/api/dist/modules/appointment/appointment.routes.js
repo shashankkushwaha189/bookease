@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appointmentRouter = void 0;
 const express_1 = require("express");
@@ -9,19 +12,22 @@ const tenant_middleware_1 = require("../../middleware/tenant.middleware");
 const role_middleware_1 = require("../../middleware/role.middleware");
 const booking_concurrency_middleware_1 = require("../../middleware/booking-concurrency.middleware");
 const client_1 = require("@prisma/client");
+const availability_routes_1 = __importDefault(require("../availability/availability.routes"));
 exports.appointmentRouter = (0, express_1.Router)();
 const controller = new appointment_controller_1.AppointmentController();
 // Apply concurrency and rate limiting to all booking-related routes
 exports.appointmentRouter.use(booking_concurrency_middleware_1.bookingConcurrencyMiddleware);
 exports.appointmentRouter.use(booking_concurrency_middleware_1.bookingRateLimiter);
-// Apply tenant middleware to all routes
-exports.appointmentRouter.use(tenant_middleware_1.tenantMiddleware);
-// Public booking (no auth required, but tenant middleware applied)
-exports.appointmentRouter.post("/book", controller.createBooking);
+// Public booking routes (no auth/tenant required)
+exports.appointmentRouter.post("/book", controller.createPublicBooking);
 exports.appointmentRouter.post("/recurring", controller.createRecurringBooking);
 // Slot locking
 exports.appointmentRouter.post("/locks", controller.createLock);
 exports.appointmentRouter.delete("/locks/:id", controller.releaseLock);
+// Apply tenant and auth middleware to protected routes only
+exports.appointmentRouter.use(tenant_middleware_1.tenantMiddleware);
+// Availability routes (for booking page)
+exports.appointmentRouter.use("/availability", availability_routes_1.default);
 // Manual booking by staff/admin (auth required)
 exports.appointmentRouter.post("/manual", auth_middleware_1.authMiddleware, (0, role_middleware_1.requireRole)(client_1.UserRole.STAFF), // Staff and above can create manual bookings
 controller.createManualBooking);

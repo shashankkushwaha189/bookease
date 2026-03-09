@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "noImplicitAny": false
+    },
+    "include": [
+        "src/app.ts",
+        "src/lib/**/*",
+        "src/middleware/**/*",
+        "src/modules/tenant/**/*",
+        "src/modules/business-profile/**/*",
+        "src/modules/config/**/*",
+        "src/modules/availability/**/*",
+        "src/modules/service/**/*",
+        "src/modules/staff/**/*",
+        "src/modules/appointment/**/*",
+        "src/modules/customer/**/*",
+        "src/modules/report/**/*",
+        "src/modules/audit/**/*",
+        "src/modules/archival/**/*",
+        "src/modules/api-token/**/*",
+        "src/modules/policy/**/*",
+        "src/modules/import/**/*"
+    ],
+    "exclude": [
+        "src/modules/ai",
+        "src/modules/ai_module_backup",
+        "src/modules/user",
+        "src/routes",
+        "src/modules/appointment/appointment.engine.v2.ts"
+    ]
+}

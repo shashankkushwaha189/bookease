@@ -6,6 +6,7 @@ import { tenantMiddleware } from "../../middleware/tenant.middleware";
 import { requireRole } from "../../middleware/role.middleware";
 import { bookingConcurrencyMiddleware, bookingRateLimiter } from "../../middleware/booking-concurrency.middleware";
 import { UserRole } from "@prisma/client";
+import availabilityRoutes from "../availability/availability.routes";
 
 export const appointmentRouter = Router();
 const controller = new AppointmentController();
@@ -14,16 +15,19 @@ const controller = new AppointmentController();
 appointmentRouter.use(bookingConcurrencyMiddleware);
 appointmentRouter.use(bookingRateLimiter);
 
-// Apply tenant middleware to all routes
-appointmentRouter.use(tenantMiddleware);
-
-// Public booking (no auth required, but tenant middleware applied)
-appointmentRouter.post("/book", controller.createBooking);
+// Public booking routes (no auth/tenant required)
+appointmentRouter.post("/book", controller.createPublicBooking);
 appointmentRouter.post("/recurring", controller.createRecurringBooking);
 
 // Slot locking
 appointmentRouter.post("/locks", controller.createLock);
 appointmentRouter.delete("/locks/:id", controller.releaseLock);
+
+// Apply tenant and auth middleware to protected routes only
+appointmentRouter.use(tenantMiddleware);
+
+// Availability routes (for booking page)
+appointmentRouter.use("/availability", availabilityRoutes);
 
 // Manual booking by staff/admin (auth required)
 appointmentRouter.post("/manual", 

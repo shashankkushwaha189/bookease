@@ -39,10 +39,29 @@ export const appointmentsApi = {
     api.get<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}`),
 
   /**
-   * Create new appointment
+   * Create new appointment (public booking)
    */
   createAppointment: (data: CreateAppointmentRequest) => 
-    api.post<ApiSuccessResponse<Appointment>>('/api/appointments', data),
+    api.post<ApiSuccessResponse<Appointment>>('/api/appointments/book', data),
+
+  /**
+   * Create new public booking (for booking page)
+   */
+  createPublicBooking: (data: {
+    serviceId: string;
+    staffId: string;
+    customer: {
+      name: string;
+      email: string;
+      phone?: string;
+    };
+    startTimeUtc: string;
+    endTimeUtc: string;
+    sessionToken: string;
+    notes?: string;
+    consentGiven: boolean;
+  }) => 
+    api.post<ApiSuccessResponse<Appointment>>('/api/appointments/book', data),
 
   /**
    * Update appointment

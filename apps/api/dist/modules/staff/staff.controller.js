@@ -103,19 +103,22 @@ class StaffController {
             });
         }
     }
-    async delete(req, res) {
+    getPublicStaff = async (req, res, next) => {
         try {
-            await staff_service_1.staffService.deleteStaff(req.params.id, req.tenantId);
-            res.json({ success: true, message: 'Staff member deleted' });
-        }
-        catch (error) {
-            logger_1.logger.error({ err: error, tenantId: req.tenantId }, 'Error deleting staff');
-            res.status(500).json({
-                success: false,
-                error: { code: 'INTERNAL_SERVER_ERROR', message: 'Failed to delete staff member' },
+            const staff = await staff_service_1.staffService.getPublicStaff(req.tenantId);
+            res.json({
+                success: true,
+                data: staff,
             });
         }
-    }
+        catch (error) {
+            logger_1.logger.error({ err: error, tenantId: req.tenantId }, 'Error fetching public staff');
+            res.status(500).json({
+                success: false,
+                error: { code: 'INTERNAL_SERVER_ERROR', message: 'Failed to fetch staff members' },
+            });
+        }
+    };
     async assignServices(req, res) {
         try {
             const validated = staff_schema_1.assignServicesSchema.safeParse(req.body);
@@ -182,6 +185,25 @@ class StaffController {
             res.status(400).json({
                 success: false,
                 error: { code: 'BAD_REQUEST', message: error.message },
+            });
+        }
+    }
+    async delete(req, res) {
+        try {
+            const success = await staff_service_1.staffService.deleteStaff(req.params.id, req.tenantId);
+            if (!success) {
+                return res.status(404).json({
+                    success: false,
+                    error: { code: 'NOT_FOUND', message: 'Staff member not found' },
+                });
+            }
+            res.json({ success: true, message: 'Staff member deleted successfully' });
+        }
+        catch (error) {
+            logger_1.logger.error({ err: error, tenantId: req.tenantId }, 'Error deleting staff');
+            res.status(500).json({
+                success: false,
+                error: { code: 'INTERNAL_SERVER_ERROR', message: 'Failed to delete staff member' },
             });
         }
     }

@@ -28,8 +28,11 @@ const availabilityRateLimiter = rateLimit({
     skip: (req) => process.env.NODE_ENV === 'test', // Skip rate limiting in tests
 });
 
-// Public endpoint with rate limiting
-router.get('/', availabilityRateLimiter, tenantMiddleware, availabilityController.getAvailability);
+// Public endpoint with rate limiting (no tenant middleware for public access)
+router.get('/', availabilityRateLimiter, availabilityController.getAvailability);
+
+// Protected endpoint with rate limiting and tenant middleware
+router.get('/protected', availabilityRateLimiter, tenantMiddleware, availabilityController.getAvailability);
 
 // Admin monitoring endpoint for cache statistics
 router.get('/stats', 

@@ -1,0 +1,412 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserController = void 0;
+const client_1 = require("@prisma/client");
+class UserController {
+    userService;
+    constructor(userService) {
+        this.userService = userService;
+    }
+    /**
+     * Authenticate user (login)
+     */
+    login = async (req, res, next) => {
+        try {
+            const { email, password, tenantSlug } = req.body;
+            if (!email || !password) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_CREDENTIALS',
+                        message: 'Email and password are required',
+                    },
+                });
+            }
+            const authResponse = await this.userService.authenticateUser({ email, password, tenantSlug });
+            // Update last login
+            await this.userService.updateLastLogin(authResponse.user.id);
+            res.json({
+                success: true,
+                data: {
+                    user: authResponse.user,
+                    token: authResponse.token,
+                    refreshToken: authResponse.refreshToken,
+                    expiresAt: authResponse.expiresAt,
+                },
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Refresh access token
+     */
+    refreshToken = async (req, res, next) => {
+        try {
+            const { refreshToken } = req.body;
+            if (!refreshToken) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_REFRESH_TOKEN',
+                        message: 'Refresh token is required',
+                    },
+                });
+            }
+            const authResponse = await this.userService.refreshToken(refreshToken);
+            res.json({
+                success: true,
+                data: {
+                    user: authResponse.user,
+                    token: authResponse.token,
+                    refreshToken: authResponse.refreshToken,
+                    expiresAt: authResponse.expiresAt,
+                },
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Get current user profile
+     */
+    getProfile = async (req, res, next) => {
+        try {
+            const userId = req.user?.id;
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    error: {
+                        code: 'UNAUTHORIZED',
+                        message: 'Authentication required',
+                    },
+                });
+            }
+            const user = await this.userService.getUserById(userId);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    error: {
+                        code: 'USER_NOT_FOUND',
+                        message: 'User not found',
+                    },
+                });
+            }
+            res.json({
+                success: true,
+                data: user,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Update user profile
+     */
+    updateProfile = async (req, res, next) => {
+        try {
+            const userId = req.user?.id;
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    error: {
+                        code: 'UNAUTHORIZED',
+                        message: 'Authentication required',
+                    },
+                });
+            }
+            const { name, email } = req.body;
+            const updateData = {};
+            if (name)
+                updateData.name = name;
+            if (email)
+                updateData.email = email;
+            if (Object.keys(updateData).length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'NO_UPDATE_DATA',
+                        message: 'At least one field (name, email) must be provided',
+                    },
+                });
+            }
+            const updatedUser = await this.userService.updateUser(userId, updateData);
+            res.json({
+                success: true,
+                data: updatedUser,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Update password
+     */
+    updatePassword = async (req, res, next) => {
+        try {
+            const userId = req.user?.id;
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    error: {
+                        code: 'UNAUTHORIZED',
+                        message: 'Authentication required',
+                    },
+                });
+            }
+            const { currentPassword, newPassword } = req.body;
+            if (!currentPassword || !newPassword) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_PASSWORDS',
+                        message: 'Current password and new password are required',
+                    },
+                });
+            }
+            if (newPassword.length < 8) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'WEAK_PASSWORD',
+                        message: 'New password must be at least 8 characters long',
+                    },
+                });
+            }
+            await this.userService.updatePassword(userId, currentPassword, newPassword);
+            res.json({
+                success: true,
+                message: 'Password updated successfully',
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Get users by tenant (admin only)
+     */
+    getUsers = async (req, res, next) => {
+        try {
+            const currentUserId = req.user?.id;
+            const currentUserRole = req.user?.role;
+            const tenantId = req.tenantId;
+            if (!currentUserId || currentUserRole !== client_1.UserRole.ADMIN) {
+                return res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INSUFFICIENT_PERMISSIONS',
+                        message: 'Admin access required',
+                    },
+                });
+            }
+            const { role, limit } = req.query;
+            const users = await this.userService.getUsersByTenant(tenantId, role, limit ? parseInt(limit) : undefined);
+            res.json({
+                success: true,
+                data: users,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Create user (admin only)
+     */
+    createUser = async (req, res, next) => {
+        try {
+            const currentUserId = req.user?.id;
+            const currentUserRole = req.user?.role;
+            const tenantId = req.tenantId;
+            if (!currentUserId || currentUserRole !== client_1.UserRole.ADMIN) {
+                return res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INSUFFICIENT_PERMISSIONS',
+                        message: 'Admin access required',
+                    },
+                });
+            }
+            const { email, password, name, role } = req.body;
+            if (!email || !password || !name || !role) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_FIELDS',
+                        message: 'Email, password, name, and role are required',
+                    },
+                });
+            }
+            if (!Object.values(client_1.UserRole).includes(role)) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'INVALID_ROLE',
+                        message: 'Invalid role specified',
+                    },
+                });
+            }
+            const newUser = await this.userService.createUser({
+                email,
+                password,
+                name,
+                role: role,
+                tenantId,
+            });
+            res.status(201).json({
+                success: true,
+                data: newUser,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Update user role (admin only)
+     */
+    updateUserRole = async (req, res, next) => {
+        try {
+            const currentUserId = req.user?.id;
+            const currentUserRole = req.user?.role;
+            const tenantId = req.tenantId;
+            if (!currentUserId || currentUserRole !== client_1.UserRole.ADMIN) {
+                return res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INSUFFICIENT_PERMISSIONS',
+                        message: 'Admin access required',
+                    },
+                });
+            }
+            const { userId, role } = req.body;
+            if (!userId || !role) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_FIELDS',
+                        message: 'User ID and role are required',
+                    },
+                });
+            }
+            if (!Object.values(client_1.UserRole).includes(role)) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'INVALID_ROLE',
+                        message: 'Invalid role specified',
+                    },
+                });
+            }
+            const updatedUser = await this.userService.updateUser(userId, { role: role });
+            res.json({
+                success: true,
+                data: updatedUser,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Delete user (admin only)
+     */
+    deleteUser = async (req, res, next) => {
+        try {
+            const currentUserId = req.user?.id;
+            const currentUserRole = req.user?.role;
+            const tenantId = req.tenantId;
+            if (!currentUserId || currentUserRole !== client_1.UserRole.ADMIN) {
+                return res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INSUFFICIENT_PERMISSIONS',
+                        message: 'Admin access required',
+                    },
+                });
+            }
+            const { userId } = req.params;
+            if (!userId) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_USER_ID',
+                        message: 'User ID is required',
+                    },
+                });
+            }
+            await this.userService.deleteUser(userId);
+            res.json({
+                success: true,
+                message: 'User deleted successfully',
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Search users (admin only)
+     */
+    searchUsers = async (req, res, next) => {
+        try {
+            const currentUserId = req.user?.id;
+            const currentUserRole = req.user?.role;
+            const tenantId = req.tenantId;
+            if (!currentUserId || currentUserRole !== client_1.UserRole.ADMIN) {
+                return res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INSUFFICIENT_PERMISSIONS',
+                        message: 'Admin access required',
+                    },
+                });
+            }
+            const { q, limit } = req.query;
+            if (!q) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_QUERY',
+                        message: 'Search query is required',
+                    },
+                });
+            }
+            const users = await this.userService.getUsersByTenant(tenantId);
+            const filteredUsers = users.filter(user => user.name.toLowerCase().includes(q) ||
+                user.email.toLowerCase().includes(q));
+            const limitedUsers = filteredUsers.slice(0, limit ? parseInt(limit) : 10);
+            res.json({
+                success: true,
+                data: limitedUsers,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    /**
+     * Logout user
+     */
+    logout = async (req, res, next) => {
+        try {
+            // In a real implementation, you might want to:
+            // 1. Invalidate the token on the server side
+            // 2. Add the token to a blacklist
+            // 3. Clear any session data
+            res.json({
+                success: true,
+                message: 'Logged out successfully',
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+}
+exports.UserController = UserController;

@@ -29,8 +29,10 @@ const availabilityRateLimiter = (0, express_rate_limit_1.default)({
     legacyHeaders: false,
     skip: (req) => process.env.NODE_ENV === 'test', // Skip rate limiting in tests
 });
-// Public endpoint with rate limiting
-router.get('/', availabilityRateLimiter, tenant_middleware_1.tenantMiddleware, availability_controller_1.availabilityController.getAvailability);
+// Public endpoint with rate limiting (no tenant middleware for public access)
+router.get('/', availabilityRateLimiter, availability_controller_1.availabilityController.getAvailability);
+// Protected endpoint with rate limiting and tenant middleware
+router.get('/protected', availabilityRateLimiter, tenant_middleware_1.tenantMiddleware, availability_controller_1.availabilityController.getAvailability);
 // Admin monitoring endpoint for cache statistics
 router.get('/stats', tenant_middleware_1.tenantMiddleware, auth_middleware_1.authMiddleware, (0, role_middleware_1.requireRole)(client_1.UserRole.ADMIN), (req, res) => {
     const stats = availability_controller_1.availabilityController.getCacheStats();

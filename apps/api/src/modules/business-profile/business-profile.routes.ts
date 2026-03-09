@@ -10,12 +10,22 @@ const repository = new BusinessProfileRepository();
 const service = new BusinessProfileService(repository);
 const controller = new BusinessProfileController(service);
 
-// Private Admin Routes (scoped by tenantId from header)
+// Protected endpoints (auth required)
 router.get('/', controller.getProfile);
 router.post('/', validateBody(createBusinessProfileSchema), controller.upsertProfile);
+router.patch('/', controller.updateProfile);
+router.patch('/branding', controller.updateBranding);
+router.patch('/policy', controller.updatePolicy);
+router.patch('/seo', controller.updateSEO);
+router.patch('/contact', controller.updateContact);
 
-// Public Route (also requires X-Tenant-ID but returns subset)
-// We'll use a separate path for public access in app.ts but we can define it here too
+// Public endpoints (no auth required)
 router.get('/public', controller.getPublicProfile);
+router.get('/public/slug/:slug', controller.getPublicProfileBySlug);
+router.get('/public/all', controller.getPublicProfiles);
+router.get('/public/search', controller.searchProfiles);
+
+// Validation endpoint
+router.get('/validate', controller.validateProfileAccess);
 
 export default router;

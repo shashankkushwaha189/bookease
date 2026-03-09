@@ -95,10 +95,10 @@ const useTenantProfile = (tenantSlug: string) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Get tenant profile from business profile
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/business-profile`, {
+        // Get tenant profile from public business profile endpoint
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/public/profile`, {
           headers: {
-            'X-Tenant-ID': tenantSlug
+            'X-Tenant-ID': tenantSlug === 'demo-clinic' ? 'b18e0808-27d1-4253-aca9-453897585106' : tenantSlug
           }
         });
         
@@ -159,8 +159,9 @@ const useServices = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await servicesApi.getServices();
-        console.log('📅 Services API response:', response);
+        // Use public services endpoint for booking (no auth required)
+        const response = await servicesApi.getPublicServices();
+        console.log('📅 Public Services API response:', response);
         
         if (response.data?.data) {
           const mappedServices = response.data.data.map((service: any) => ({
@@ -174,8 +175,13 @@ const useServices = () => {
         } else {
           setServices([]);
         }
-      } catch (error) {
-        console.error('Failed to fetch services:', error);
+      } catch (error: any) {
+        console.error('Failed to fetch public services:', error);
+        console.error('📅 Services API error details:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
         setServices([]);
       } finally {
         setIsLoading(false);
@@ -198,21 +204,27 @@ const useStaff = (serviceId?: string) => {
     const fetchStaff = async () => {
       setIsLoading(true);
       try {
-        const response = await staffApi.getStaff();
-        console.log('👥 Staff API response:', response);
+        // Use public staff endpoint for booking (no auth required)
+        const response = await staffApi.getPublicStaff({ serviceId });
+        console.log('👥 Public Staff API response:', response);
         
         if (response.data?.data) {
           const mappedStaff = response.data.data.map((staffMember: any) => ({
             id: staffMember.id,
             name: staffMember.name,
-            bio: staffMember.bio
+            bio: staffMember.bio || `Specialist in ${staffMember.services?.map((s: any) => s.name).join(', ') || 'various services'}`
           }));
           setStaff(mappedStaff);
         } else {
           setStaff([]);
         }
-      } catch (error) {
-        console.error('Failed to fetch staff:', error);
+      } catch (error: any) {
+        console.error('Failed to fetch public staff:', error);
+        console.error('👥 Staff API error details:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
         setStaff([]);
       } finally {
         setIsLoading(false);
@@ -235,28 +247,50 @@ const useAvailability = (serviceId?: string, staffId?: string, date?: string) =>
     const fetchAvailability = async () => {
       setIsLoading(true);
       try {
-        const response = await appointmentsApi.getAvailability({
-          serviceId: serviceId || '',
-          staffId: staffId || '',
-          date: date || ''
-        });
-        console.log('⏰ Availability API response:', response);
+        console.log('⏰ Fetching availability with params:', { serviceId, staffId, date });
         
-        if (response.data?.data?.availableSlots) {
-          const mappedSlots = response.data.data.availableSlots.map((slot: any) => ({
+        // Don't send staffId if it's 'no-preference'
+        const params: any = {
+          serviceId: serviceId || '',
+          date: date || ''
+        };
+        
+        if (staffId && staffId !== 'no-preference') {
+          params.staffId = staffId;
+        }
+        
+        const response = await appointmentsApi.getAvailability(params);
+        
+        console.log('⏰ Availability API response:', response);
+        console.log('⏰ Response structure:', {
+          success: response.data?.success,
+          hasData: !!response.data?.data,
+          hasSlots: !!response.data?.data?.slots,
+          slots: response.data?.data?.slots
+        });
+        
+        if (response.data?.data?.slots) {
+          const mappedSlots = response.data.data.slots.map((slot: any) => ({
             time: new Date(slot.startTimeUtc).toLocaleTimeString('en-US', { 
               hour: 'numeric', 
               minute: '2-digit',
               hour12: true 
             }),
-            available: slot.isAvailable
+            available: slot.isAvailable !== false // Default to true if not specified
           }));
+          console.log('⏰ Mapped slots:', mappedSlots);
           setSlots(mappedSlots);
         } else {
+          console.warn('⏰ No slots found in response, setting empty array');
           setSlots([]);
         }
-      } catch (error) {
-        console.error('Failed to fetch availability:', error);
+      } catch (error: any) {
+        console.error('⏰ Failed to fetch availability:', error);
+        console.error('⏰ Error details:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
         setSlots([]);
       } finally {
         setIsLoading(false);
@@ -617,43 +651,93 @@ const BookingPage: React.FC = () => {
   // Handle booking submission
   const handleBookingSubmit = async (data: BookingDetailsForm) => {
     try {
-      // Create booking with real API
-      const { user } = useAuthStore.getState();
+      // Create booking with real API (public booking - no auth required)
+      // const { user } = useAuthStore.getState();
       
-      if (!user) {
-        error('You must be logged in to book an appointment');
+      // if (!user) {
+      //   error('You must be logged in to book an appointment');
+      //   return;
+      // }
+
+      // Validate staff selection
+      if (!selectedStaff?.id) {
+        error('Please select a staff member for your appointment.');
+        setCurrentStep(2);
         return;
       }
 
+      console.log('👥 Selected staff details:', {
+        id: selectedStaff.id,
+        name: selectedStaff.name,
+        idType: typeof selectedStaff.id,
+        idLength: selectedStaff.id?.length
+      });
+
       const bookingData = {
         serviceId: selectedService!.id,
-        staffId: selectedStaff?.id || '',
-        customerId: user.id,
+        staffId: selectedStaff.id,
+        customer: {
+          name: data.fullName,
+          email: data.email,
+          phone: data.phone || undefined
+        },
         startTimeUtc: new Date(`${selectedDate} ${selectedTime}`).toISOString(),
-        notes: `Booking from ${data.fullName} (${data.email})`
+        endTimeUtc: new Date(new Date(`${selectedDate} ${selectedTime}`).getTime() + (selectedService?.duration || 60) * 60000).toISOString(),
+        sessionToken: 'booking-session-' + Date.now(),
+        notes: `Booking from ${data.fullName} (${data.email})`,
+        consentGiven: data.consent
       };
 
-      console.log('📅 Creating booking:', bookingData);
+      console.log('📅 Booking data being sent:', {
+        serviceId: bookingData.serviceId,
+        serviceIdType: typeof bookingData.serviceId,
+        serviceIdLength: bookingData.serviceId?.length,
+        staffId: bookingData.staffId,
+        staffIdType: typeof bookingData.staffId,
+        staffIdLength: bookingData.staffId?.length
+      });
+
+      console.log('📅 Creating booking with data:', bookingData);
+      console.log('📅 Selected service:', selectedService);
+      console.log('📅 Selected staff:', selectedStaff);
+      console.log('📅 Selected date/time:', selectedDate, selectedTime);
+      console.log('📅 Form data:', data);
       
-      const response = await appointmentsApi.createAppointment(bookingData);
+      const response = await appointmentsApi.createPublicBooking(bookingData);
       console.log('✅ Booking created:', response);
+      console.log('✅ Response data:', response.data);
+      console.log('✅ Response success:', response.data?.success);
+      console.log('✅ Response appointment data:', response.data?.data);
       
-      const confirmation: BookingConfirmation = {
-        id: response.data?.data?.id || 'booking-123',
-        referenceId: response.data?.data?.referenceId || `BK-${Date.now()}`,
-        service: selectedService!.name,
-        dateTime: `${selectedDate} at ${selectedTime}`,
-        staffName: selectedStaff?.name || 'Any available'
-      };
+      if (response.data?.success && response.data?.data) {
+        const confirmation: BookingConfirmation = {
+          id: response.data.data.id || 'booking-123',
+          referenceId: response.data.data.referenceId || `BK-${Date.now()}`,
+          service: selectedService!.name,
+          dateTime: `${selectedDate} at ${selectedTime}`,
+          staffName: selectedStaff?.name || 'Any available'
+        };
+        
+        console.log('🎉 Setting confirmation:', confirmation);
+        setConfirmation(confirmation);
+        setCurrentStep(5);
+        success('Booking confirmed successfully!');
+      } else {
+        console.error('❌ Booking response unexpected:', response);
+        error('Booking created but confirmation failed. Please contact support.');
+      }
+    } catch (bookingError: any) {
+      console.error('❌ Booking error:', bookingError);
+      console.error('❌ Error response:', JSON.stringify(bookingError.response?.data, null, 2));
+      console.error('❌ Error status:', bookingError.response?.status);
+      console.error('❌ Error message:', bookingError.message);
       
-      setConfirmation(confirmation);
-      setCurrentStep(5);
-      success('Booking confirmed successfully!');
-    } catch (error: any) {
-      console.error('❌ Booking error:', error);
-      if (error.response?.status === 409) {
+      if (bookingError.response?.status === 409) {
         error('Sorry, this slot was just taken. Please select another time.');
         setCurrentStep(3);
+      } else if (bookingError.response?.status === 500) {
+        console.error('❌ Server error details:', JSON.stringify(bookingError.response?.data, null, 2));
+        error('Server error occurred. Please try again.');
       } else {
         error('Failed to create booking. Please try again.');
       }
