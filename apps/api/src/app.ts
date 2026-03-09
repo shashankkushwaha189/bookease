@@ -35,7 +35,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'https://localhost:5173',
-    'https://your-app-name.vercel.app',
+    'https://bookease-ashen.vercel.app',
     'https://yourdomain.com' // Replace with your actual domain
   ],
   credentials: true,
