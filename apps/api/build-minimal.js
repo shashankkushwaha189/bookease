@@ -48,11 +48,11 @@ try {
   console.log('Prisma generation failed, using existing client...');
 }
 
-// Create a simple index.js that only includes essential modules
+// Create a simple index.js that uses the minimal app
 const indexContent = `
 // Minimal production entry point
 require('dotenv').config();
-const app = require('./app.js');
+const app = require('./app-minimal.js');
 
 const PORT = process.env.PORT || 3000;
 
