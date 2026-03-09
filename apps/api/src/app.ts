@@ -26,6 +26,7 @@ import policyRoutes from './modules/policy/policy.routes';
 import customerRoutes from './modules/customer/customer.routes'; // Re-enabled
 import importRoutes from './modules/import/import.routes'; // Re-enabled
 import publicBookingRoutes from './modules/appointment/public-booking.routes';
+import migrateRoutes from './routes/migrate';
 
 const app = express();
 
@@ -130,6 +131,7 @@ app.use('/api/auth', userRoutes);
 app.use('/api/mfa', mfaRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/migrate', migrateRoutes);
 // Apply tenant middleware to protected routes only
 app.use(protectedRoutes, tenantMiddleware);
 app.use('/api/availability', availabilityRoutes);
