@@ -28,6 +28,7 @@ import importRoutes from './modules/import/import.routes'; // Re-enabled
 import publicBookingRoutes from './modules/appointment/public-booking.routes';
 import migrateRoutes from './routes/migrate';
 import seedRoutes from './routes/seed';
+import setupRoutes from './routes/setup';
 
 const app = express();
 
@@ -134,6 +135,7 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/migrate', migrateRoutes);
 app.use('/api/seed', seedRoutes);
+app.use('/api/setup', setupRoutes);
 // Apply tenant middleware to protected routes only
 app.use(protectedRoutes, tenantMiddleware);
 app.use('/api/availability', availabilityRoutes);
