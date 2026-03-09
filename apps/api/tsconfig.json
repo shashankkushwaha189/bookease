@@ -39,6 +39,11 @@
         "src/modules/customer",
         "src/modules/availability",
         "src/modules/auth",
-        "src/modules/import"
+        "src/modules/import",
+        "src/jobs",
+        "src/middleware/auth-middleware.ts",
+        "src/middleware/auth.middleware.ts",
+        "src/middleware/booking-concurrency.middleware.ts",
+        "src/middleware/performance.middleware.ts"
     ]
 }
