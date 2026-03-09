@@ -1,6 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { logger } from '@bookease/logger';
-import { ApiResponse } from '@bookease/types';
 
 export const errorHandler = (
     err: any,
@@ -12,27 +10,18 @@ export const errorHandler = (
     const code = err.code || 'INTERNAL_SERVER_ERROR';
     const message = err.message || 'An unexpected error occurred';
 
-    // Log error with correlation ID (handled by pino mixin)
-    logger.error({
-        err: {
+    // Simple console logging for now
+    console.error({
+        error: {
             message,
             stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
             code,
-        },
-        status,
-        path: req.path,
-        method: req.method,
+            status,
+            correlationId: (req as any).correlationId
+        }
     });
 
-    const response: ApiResponse = {
-        success: false,
-        error: {
-            code,
-            message,
-            details: process.env.NODE_ENV === 'development' ? err.details : undefined,
-        },
-    };
-
+    // Handle file upload errors
     if (err.name === 'MulterError' && err.message === 'File too large') {
         return res.status(413).json({
             success: false,
@@ -42,6 +31,15 @@ export const errorHandler = (
             }
         });
     }
+
+    const response = {
+        success: false,
+        error: {
+            code,
+            message,
+            ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+        }
+    };
 
     res.status(status).json(response);
 };
