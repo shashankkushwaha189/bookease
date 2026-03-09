@@ -16,7 +16,9 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "@api_url",
-    "VITE_DEMO_MODE": "false"
+    "VITE_API_URL": "https://your-app-name.onrender.com",
+    "VITE_DEMO_MODE": "false",
+    "VITE_APP_NAME": "BookEase",
+    "VITE_APP_URL": "@site_url"
   }
 }
