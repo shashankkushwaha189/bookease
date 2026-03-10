@@ -2,10 +2,10 @@ import { prisma } from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
 
 export class ServiceRepository {
-    async findAll(tenantId: string, activeOnly: boolean = false) {
+    async findAll(tenantId: string | undefined, activeOnly: boolean = false) {
         return prisma.service.findMany({
             where: {
-                tenantId,
+                ...(tenantId ? { tenantId } : {}),
                 ...(activeOnly ? { isActive: true } : {}),
             },
             include: {

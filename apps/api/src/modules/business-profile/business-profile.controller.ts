@@ -1,11 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { BusinessProfileService } from './business-profile.service';
 
+// Extended Request interface for routes with tenant middleware
+interface AuthenticatedRequest extends Request {
+    tenantId?: string;
+}
+
 export class BusinessProfileController {
     constructor(private service: BusinessProfileService) { }
 
     // Protected endpoints (auth required)
-    getProfile = async (req: Request, res: Response, next: NextFunction) => {
+    getProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const profile = await this.service.getProfile(req.tenantId!);
             res.json({
@@ -17,7 +22,7 @@ export class BusinessProfileController {
         }
     };
 
-    upsertProfile = async (req: Request, res: Response, next: NextFunction) => {
+    upsertProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const profile = await this.service.upsertProfile(req.tenantId!, req.body);
             res.json({
@@ -29,7 +34,7 @@ export class BusinessProfileController {
         }
     };
 
-    updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+    updateProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const profile = await this.service.updateProfile(req.tenantId!, req.body);
             res.json({
@@ -41,7 +46,7 @@ export class BusinessProfileController {
         }
     };
 
-    updateBranding = async (req: Request, res: Response, next: NextFunction) => {
+    updateBranding = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const profile = await this.service.updateBranding(req.tenantId!, req.body);
             res.json({
@@ -53,7 +58,7 @@ export class BusinessProfileController {
         }
     };
 
-    updatePolicy = async (req: Request, res: Response, next: NextFunction) => {
+    updatePolicy = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const profile = await this.service.updatePolicy(req.tenantId!, req.body);
             res.json({
@@ -65,7 +70,7 @@ export class BusinessProfileController {
         }
     };
 
-    updateSEO = async (req: Request, res: Response, next: NextFunction) => {
+    updateSEO = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const profile = await this.service.updateSEO(req.tenantId!, req.body);
             res.json({
@@ -77,7 +82,7 @@ export class BusinessProfileController {
         }
     };
 
-    updateContact = async (req: Request, res: Response, next: NextFunction) => {
+    updateContact = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const profile = await this.service.updateContact(req.tenantId!, req.body);
             res.json({
@@ -92,7 +97,24 @@ export class BusinessProfileController {
     // Public endpoints (no auth required)
     getPublicProfile = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const profile = await this.service.getPublicProfile(req.tenantId!);
+            // For public routes, extract tenant ID from headers (Express converts headers to lowercase)
+            // If no tenant ID provided, return a default profile or error
+            const tenantId = req.headers['x-tenant-id'] as string;
+            
+            console.log('🔍 Public Profile - tenantId from headers:', tenantId);
+            
+            if (!tenantId) {
+                return res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'TENANT_ID_REQUIRED',
+                        message: 'Tenant ID is required for public profile'
+                    }
+                });
+            }
+            
+            console.log('🔍 Calling service.getPublicProfile with tenantId:', tenantId);
+            const profile = await this.service.getPublicProfile(tenantId);
             res.json({
                 success: true,
                 data: profile,
@@ -104,13 +126,16 @@ export class BusinessProfileController {
 
     getPublicProfileBySlug = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            console.log('🔍 getPublicProfileBySlug called with slug:', req.params.slug);
             const { slug } = req.params;
             const profile = await this.service.getPublicProfileBySlug(slug as string);
+            console.log('🔍 Profile found:', profile?.businessName);
             res.json({
                 success: true,
                 data: profile,
             });
         } catch (error) {
+            console.error('🔍 Error in getPublicProfileBySlug:', error);
             next(error);
         }
     };

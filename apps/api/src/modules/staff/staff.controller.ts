@@ -12,8 +12,11 @@ import { logger } from '@bookease/logger';
 export class StaffController {
     async list(req: Request, res: Response) {
         try {
-            const activeOnly = req.originalUrl.includes('/public/');
-            const staffList = await staffService.listStaff(req.tenantId!, activeOnly);
+            const isPublic = req.originalUrl.includes('/public/');
+            const activeOnly = isPublic;
+            // For public routes, don't require tenant ID
+            const tenantId = isPublic ? undefined : req.tenantId;
+            const staffList = await staffService.listStaff(tenantId, activeOnly);
 
             const responseData = activeOnly
                 ? staffList.map((s: any) => ({

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://bookease_qr29_user:WCcGifEPU4UM0ejeFH2341YTyToCAav5@dpg-d6iqtec50q8c73933oeg-a.oregon-postgres.render.com/bookease_qr29"
 }
 
 model Tenant {

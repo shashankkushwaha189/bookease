@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load .env file if it exists, but don't fail if it doesn't
-dotenv.config({ path: path.resolve(__dirname, '../../../../.env'), override: true });
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true });
 
 const envSchema = z.object({
     PORT: z.coerce.number().default(() => {

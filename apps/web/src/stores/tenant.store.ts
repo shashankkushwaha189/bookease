@@ -42,7 +42,7 @@ export const useTenantStore = create<TenantState>()(
                 if (!tenantId) return;
 
                 try {
-                    const response = await api.get<ApiSuccessResponse<BusinessProfile>>('/api/public/profile');
+                    const response = await api.get<ApiSuccessResponse<BusinessProfile>>('/api/business-profile/public-info');
                     const profile = response.data.data;
 
                     applyTenantTheme(profile.brandColor, profile.accentColor);

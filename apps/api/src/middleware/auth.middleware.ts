@@ -26,7 +26,7 @@ export const authMiddleware = async (
 
     try {
         const decoded = jwt.verify(token, env.JWT_SECRET) as {
-            sub: string;
+            userId: string;
             tenantId: string;
             role: string;
         };
@@ -43,7 +43,7 @@ export const authMiddleware = async (
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: decoded.sub },
+            where: { id: decoded.userId },
         });
 
         if (!user || !user.isActive) {

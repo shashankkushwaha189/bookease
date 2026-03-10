@@ -111,6 +111,27 @@ export class CustomerController {
     }
   }
 
+  async createPublic(req: Request, res: Response, next: NextFunction) {
+    try {
+      // For public customer creation, use default tenant if no tenant ID provided
+      const tenantId = req.headers['x-tenant-id'] as string || 'b18e0808-27d1-4253-aca9-453897585106';
+      
+      const customer = await prisma.customer.create({
+        data: {
+          ...req.body,
+          tenantId: tenantId
+        }
+      });
+
+      res.status(201).json({
+        success: true,
+        data: customer
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const tenantId = req.headers['x-tenant-id'] as string;

@@ -6,8 +6,9 @@ import { UserRole } from '@prisma/client';
 
 const router = Router();
 
-// Public customer list route (no auth required, but tenant middleware applied via app.ts)
+// Public customer routes (no auth required)
 router.get('/', customerController.list);
+router.post('/public', customerController.createPublic);
 
 // Authenticated routes below this
 router.use(authMiddleware);

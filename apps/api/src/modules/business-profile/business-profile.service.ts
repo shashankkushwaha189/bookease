@@ -40,7 +40,29 @@ export class BusinessProfileService {
     }
 
     async getPublicProfile(tenantId: string) {
-        const profile = await this.getProfile(tenantId);
+        console.log('🔍 Service getPublicProfile called with tenantId:', tenantId);
+        
+        // If no tenant ID provided, return a default profile
+        if (!tenantId) {
+            console.log('🔍 No tenant ID provided, returning default profile');
+            return {
+                businessName: 'BookEase Demo',
+                logoUrl: null,
+                description: 'Default booking system demo',
+                phone: '+1 (555) 123-4567',
+                email: 'contact@bookease.com',
+                address: null,
+                brandColor: '#1A56DB',
+                accentColor: '#10B981',
+                policyText: 'Cancellations must be made at least 24 hours in advance.',
+                seoTitle: 'BookEase - Professional Booking System',
+                seoDescription: 'Book your appointments online with our easy-to-use booking system.',
+            };
+        }
+
+        console.log('🔍 Calling repository.findByTenantId with tenantId:', tenantId);
+        // Use repository directly to avoid tenant validation for public profiles
+        const profile = await this.repository.findByTenantId(tenantId);
 
         // Return safe subset with SEO metadata
         return {

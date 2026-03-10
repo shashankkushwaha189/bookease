@@ -2,8 +2,7 @@ import api from './client';
 import type {
   ApiSuccessResponse,
   Staff,
-  CreateStaffRequest,
-  PaginationParams
+  CreateStaffRequest
 } from '../types/api';
 
 export const staffApi = {
@@ -59,7 +58,7 @@ export const staffApi = {
    * Remove services from staff member
    */
   removeServices: (id: string, serviceIds: string[]) => 
-    api.delete<ApiSuccessResponse<Staff>>(`/api/staff/${id}/services`, { data: { serviceIds } }),
+    api.delete<ApiSuccessResponse<Staff>>(`/api/staff/${id}/services`, { data: serviceIds }),
 
   /**
    * Get staff availability
@@ -89,7 +88,7 @@ export const staffApi = {
    * Get staff for public booking
    */
   getPublicStaff: (params?: { serviceId?: string }) => 
-    api.get<ApiSuccessResponse<Array<{
+    api.get<Array<{
       id: string;
       name: string;
       email?: string;

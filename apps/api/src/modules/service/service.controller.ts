@@ -6,8 +6,11 @@ import { logger } from '@bookease/logger';
 export class ServiceController {
     async list(req: Request, res: Response) {
         try {
-            const activeOnly = req.originalUrl.includes('/public/');
-            const services = await serviceService.listServices(req.tenantId!, activeOnly);
+            const isPublic = req.originalUrl.includes('/public/');
+            const activeOnly = isPublic;
+            // For public routes, use a default tenant ID to avoid tenant validation
+            const tenantId = isPublic ? 'b18e0808-27d1-4253-aca9-453897585106' : (req.tenantId || undefined);
+            const services = await serviceService.listServices(tenantId, activeOnly);
             res.json({
                 success: true,
                 data: services,

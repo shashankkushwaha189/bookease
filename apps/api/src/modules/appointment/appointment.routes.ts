@@ -18,23 +18,20 @@ appointmentRouter.use(bookingRateLimiter);
 // Public booking routes (no auth/tenant required)
 appointmentRouter.post("/book", controller.createPublicBooking);
 appointmentRouter.post("/recurring", controller.createRecurringBooking);
+appointmentRouter.post("/public/manual", controller.createPublicManualBooking);
+
+// Temporary: Public endpoint to check appointment data (for debugging)
+appointmentRouter.get("/debug", controller.getAppointmentsDebug);
 
 // Slot locking
 appointmentRouter.post("/locks", controller.createLock);
 appointmentRouter.delete("/locks/:id", controller.releaseLock);
 
-// Apply tenant and auth middleware to protected routes only
-appointmentRouter.use(tenantMiddleware);
-
-// Availability routes (for booking page)
+// Availability routes (for booking page) - BEFORE tenant middleware for public access
 appointmentRouter.use("/availability", availabilityRoutes);
 
-// Manual booking by staff/admin (auth required)
-appointmentRouter.post("/manual", 
-    authMiddleware, 
-    requireRole(UserRole.STAFF), // Staff and above can create manual bookings
-    controller.createManualBooking
-);
+// Apply tenant middleware to all protected routes
+appointmentRouter.use(tenantMiddleware);
 
 // Admin / Management (auth required)
 appointmentRouter.get("/", authMiddleware, controller.getAppointments);
@@ -44,6 +41,13 @@ appointmentRouter.patch("/:id/reschedule", authMiddleware, controller.reschedule
 appointmentRouter.post("/:id/reschedule", authMiddleware, controller.reschedule); // Gov-compliant POST
 appointmentRouter.delete("/:id", authMiddleware, controller.cancel);
 appointmentRouter.post("/:id/cancel", authMiddleware, controller.cancel); // Gov-compliant POST
+
+// Manual booking by staff/admin (auth required)
+appointmentRouter.post("/manual", 
+    authMiddleware, 
+    requireRole(UserRole.STAFF), // Staff and above can create manual bookings
+    controller.createManualBooking
+);
 
 // Timeline endpoints
 appointmentRouter.get("/:id/timeline", authMiddleware, timelineController.getTimeline);

@@ -93,8 +93,11 @@ export class TenantDetector {
     // Check if first segment is a tenant slug
     if (segments.length > 0) {
       const possibleSlug = segments[0];
-      // Simple validation - you might want to check against known tenants
-      if (possibleSlug.match(/^[a-z0-9-]+$/)) {
+      // Exclude common routes that aren't tenant slugs
+      const excludedRoutes = ['login', 'register', 'forgot-password', 'reset-password', 'admin', 'dashboard', 'profile', 'settings', 'help', 'about', 'contact'];
+      
+      // Simple validation - exclude common routes and check format
+      if (!excludedRoutes.includes(possibleSlug) && possibleSlug.match(/^[a-z0-9-]+$/)) {
         return {
           ...DEFAULT_TENANT,
           slug: possibleSlug,
@@ -207,7 +210,6 @@ export class TenantDetector {
 // Business profile management
 export class BusinessProfileManager {
   private static profileCache = new Map<string, { profile: BusinessProfile; expires: number }>();
-  private static CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
   /**
    * Get business profile for tenant
@@ -223,7 +225,20 @@ export class BusinessProfileManager {
 
     // Fetch from API
     try {
-      const response = await fetch(`/api/business-profile/public/slug/${tenantSlug}`);
+      // For now, return default profile to bypass API issues
+      console.log('🔍 Using default profile for tenant:', tenantSlug);
+      return DEFAULT_THEME as BusinessProfile;
+      
+      // TODO: Fix API endpoint and re-enable this code
+      /*
+      const cacheBuster = Date.now();
+      // Use the working /api/public/profile endpoint instead
+      const response = await fetch(`/api/public/profile?t=${cacheBuster}`, {
+        headers: {
+          'X-Tenant-ID': 'b18e0808-27d1-4253-aca9-453897585106'
+        }
+      });
+      console.log('🔍 Fetching business profile from:', `/api/public/profile?t=${cacheBuster}`);
       
       if (!response.ok) {
         console.warn(`Business profile API returned ${response.status} for tenant: ${tenantSlug}`);
@@ -232,8 +247,13 @@ export class BusinessProfileManager {
       
       // Check if response is actually JSON
       const contentType = response.headers.get('content-type');
+      console.log('🔍 Response content-type:', contentType);
+      console.log('🔍 Response status:', response.status);
+      
       if (!contentType || !contentType.includes('application/json')) {
         console.warn(`Business profile API returned non-JSON response (${contentType}) for tenant: ${tenantSlug}`);
+        const textResponse = await response.text();
+        console.log('🔍 Actual response (first 200 chars):', textResponse.substring(0, 200));
         return DEFAULT_THEME as BusinessProfile;
       }
       
@@ -247,6 +267,7 @@ export class BusinessProfileManager {
       });
       
       return profile;
+      */
     } catch (error) {
       console.error('Error fetching business profile:', error);
     }

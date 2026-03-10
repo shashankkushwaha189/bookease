@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { ApiErrorResponse } from '../types/auth';
+import { ApiErrorResponse } from '../types/api';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -20,6 +20,10 @@ axiosInstance.interceptors.request.use(
 
         // 1. Inject Authentication
         const token = useAuthStore.getState().token;
+        console.log('🔍 API Request:', config.method?.toUpperCase(), config.url);
+        console.log('🔍 Token exists:', !!token);
+        console.log('🔍 Token:', token?.substring(0, 20) + '...');
+        
         if (token) {
             config.headers.set('Authorization', `Bearer ${token}`);
         }
@@ -29,8 +33,14 @@ axiosInstance.interceptors.request.use(
           (() => {
             const path = window.location.pathname;
             const slug = path.split('/')[1];
+            // Skip common routes that aren't tenant slugs
+            if (['login', 'register', 'forgot-password', 'reset-password', ''].includes(slug)) {
+              return 'b18e0808-27d1-4253-aca9-453897585106'; // Default demo tenant
+            }
             return slug === 'demo-clinic' ? 'b18e0808-27d1-4253-aca9-453897585106' : slug;
           })();
+        console.log('🔍 Tenant ID:', tenantId);
+        
         if (tenantId) {
             config.headers.set('X-Tenant-ID', tenantId);
         }
@@ -45,8 +55,13 @@ axiosInstance.interceptors.request.use(
 
 // --- RESPONSE INTERCEPTOR ---
 axiosInstance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        console.log('🔍 API Response:', response.config.method?.toUpperCase(), response.config.url, response.status);
+        return response;
+    },
     async (error: AxiosError<ApiErrorResponse>) => {
+        console.log('🔍 API Error:', error.config?.method?.toUpperCase(), error.config?.url, error.response?.status);
+        console.log('🔍 Error response:', error.response?.data);
         const { useAuthStore } = await import('../stores/auth.store');
         const { useToastStore } = await import('../stores/toast.store');
 

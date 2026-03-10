@@ -3,6 +3,7 @@ import { Search, Calendar, Edit2, Trash2, User, Clock } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import BookingButton from '../../components/booking/BookingButton';
 import { useToastStore } from '../../stores/toast.store';
 import { appointmentsApi } from '../../api/appointments';
 
@@ -21,6 +22,8 @@ interface Appointment {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  createdBy?: string;
+  bookingSource: 'Customer' | 'Staff/Admin';
 }
 
 const AppointmentsPage: React.FC = () => {
@@ -59,7 +62,9 @@ const AppointmentsPage: React.FC = () => {
         status: apt.status.toLowerCase(),
         notes: apt.notes,
         createdAt: apt.createdAt,
-        updatedAt: apt.updatedAt
+        updatedAt: apt.updatedAt,
+        createdBy: apt.createdBy,
+        bookingSource: apt.createdBy ? 'Staff/Admin' : 'Customer'
       }));
       
       setAppointments(transformedAppointments);
@@ -84,6 +89,12 @@ const AppointmentsPage: React.FC = () => {
       console.error('Failed to delete appointment:', err);
       toastStore.error('Failed to delete appointment');
     }
+  };
+
+  // Handle booking success
+  const handleBookingSuccess = (appointment: any) => {
+    // Refresh the appointments list
+    fetchAppointments();
   };
 
   // Filter appointments based on search
@@ -144,10 +155,10 @@ const AppointmentsPage: React.FC = () => {
             className="w-auto"
           />
         </div>
-        <Button onClick={() => {/* TODO: Open create modal */}}>
-          <Clock className="w-4 h-4 mr-2" />
-          New Appointment
-        </Button>
+        <BookingButton 
+          onBookingCreated={handleBookingSuccess}
+          variant="primary"
+        />
       </div>
 
       {/* Error State */}
@@ -182,6 +193,9 @@ const AppointmentsPage: React.FC = () => {
                     Staff
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Booked By
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Date & Time
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -195,7 +209,7 @@ const AppointmentsPage: React.FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredAppointments.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                       No appointments found
                     </td>
                   </tr>
@@ -227,6 +241,15 @@ const AppointmentsPage: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {appointment.staffName}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          appointment.bookingSource === 'Customer' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {appointment.bookingSource}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDateTime(appointment.dateTime)}

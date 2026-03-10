@@ -46,8 +46,8 @@ export class AvailabilityController {
             }
 
             const { serviceId, date, staffId } = validated.data;
-            // For public requests, use default tenant if no tenant ID provided
-            const tenantId = req.tenantId || "b18e0808-27d1-4253-aca9-453897585106";
+            // For public requests, extract tenant ID from headers if not set by middleware
+            const tenantId = req.tenantId || req.headers['x-tenant-id'] as string || "b18e0808-27d1-4253-aca9-453897585106";
 
             // Fetch tenant to get the correct business timezone
             const tenant = await prisma.tenant.findUnique({

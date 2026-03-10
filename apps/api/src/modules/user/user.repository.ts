@@ -10,13 +10,15 @@ export class UserRepository {
   async create(userData: {
     email: string;
     password: string;
-    name: string;
     role: UserRole;
     tenantId: string;
   }): Promise<User> {
     return this.prisma.user.create({
       data: {
-        ...userData,
+        email: userData.email,
+        passwordHash: userData.password,
+        role: userData.role,
+        tenantId: userData.tenantId,
         isActive: true,
       },
     });
@@ -85,7 +87,7 @@ export class UserRepository {
    */
   async update(
     id: string,
-    updateData: Partial<Pick<User, 'name' | 'email' | 'role'>>
+    updateData: Partial<Pick<User, 'email' | 'role'>>
   ): Promise<User> {
     return this.prisma.user.update({
       where: { id },
@@ -102,7 +104,7 @@ export class UserRepository {
   async updatePassword(userId: string, hashedPassword: string): Promise<User> {
     return this.prisma.user.update({
       where: { id: userId },
-      data: { password: hashedPassword },
+      data: { passwordHash: hashedPassword },
     });
   }
 
@@ -153,12 +155,6 @@ export class UserRepository {
         isActive: true,
         OR: [
           {
-            name: {
-              contains: query,
-              mode: 'insensitive',
-            },
-          },
-          {
             email: {
               contains: query,
               mode: 'insensitive',
@@ -171,7 +167,7 @@ export class UserRepository {
       },
       take: limit,
       orderBy: {
-        name: 'asc',
+        email: 'asc',
       },
     });
   }
@@ -236,6 +232,19 @@ export class UserRepository {
    */
   async getTenantAdmins(tenantId: string): Promise<User[]> {
     return this.findByRole(tenantId, UserRole.ADMIN);
+  }
+
+  /**
+   * Update last login timestamp
+   */
+  async updateLastLogin(userId: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { lastLoginAt: new Date() },
+      include: {
+        tenant: true,
+      },
+    });
   }
 
   /**

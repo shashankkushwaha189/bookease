@@ -4,9 +4,7 @@ import type {
   Appointment,
   CreateAppointmentRequest,
   AvailabilityRequest,
-  AvailabilityResponse,
-  PaginationParams,
-  SearchParams
+  AvailabilityResponse
 } from '../types/api';
 
 export const appointmentsApi = {
@@ -62,6 +60,26 @@ export const appointmentsApi = {
     consentGiven: boolean;
   }) => 
     api.post<ApiSuccessResponse<Appointment>>('/api/appointments/book', data),
+
+  /**
+   * Create manual booking (staff/admin only)
+   */
+  createManualBooking: (data: {
+    serviceId: string;
+    staffId: string;
+    customer: {
+      name: string;
+      email: string;
+      phone?: string;
+    };
+    startTimeUtc: string;
+    endTimeUtc: string;
+    notes?: string;
+    consentGiven?: boolean;
+    sessionToken?: string;
+    ipAddress?: string;
+  }, isPublic: boolean = false) => 
+    api.post<ApiSuccessResponse<Appointment>>(isPublic ? '/api/appointments/public/manual' : '/api/appointments/manual', data),
 
   /**
    * Update appointment

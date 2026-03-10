@@ -25,11 +25,7 @@ export const tenantMiddleware = async (
 
     // Skip for public routes (no tenant ID required)
     const publicRoutes = [
-        '/api/public/services',
-        '/api/public/staff',
-        '/api/public/availability',
-        '/api/public/bookings',
-        '/api/public/profile',
+        '/api/public',
         '/api/tenants/public',
         '/api/business-profile/public'
     ];

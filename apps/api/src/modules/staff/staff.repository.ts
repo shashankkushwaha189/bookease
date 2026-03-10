@@ -2,9 +2,9 @@ import { prisma } from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
 
 export class StaffRepository {
-    async findAll(tenantId: string, activeOnly: boolean = false) {
+    async findAll(tenantId: string | undefined, activeOnly: boolean = false) {
         const whereCondition: any = {
-            tenantId,
+            ...(tenantId ? { tenantId } : {}),
             ...(activeOnly && { isActive: true, deletedAt: null })
         };
         

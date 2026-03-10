@@ -3,7 +3,6 @@ import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import { prisma } from './lib/prisma';
 
 const app = express();
 
@@ -54,6 +53,9 @@ app.get('/health', (req, res) => {
 app.post('/api/init-database', async (req, res) => {
   try {
     console.log('🌱 Initializing database...');
+    
+    // Import prisma dynamically to avoid connection issues on startup
+    const { prisma } = await import('./lib/prisma');
     
     // Test database connection
     await prisma.$connect();
@@ -114,7 +116,12 @@ app.post('/api/init-database', async (req, res) => {
       error: error.message 
     });
   } finally {
-    await prisma.$disconnect();
+    try {
+      const { prisma } = await import('./lib/prisma');
+      await prisma.$disconnect();
+    } catch (e) {
+      // Ignore disconnect errors
+    }
   }
 });
 
@@ -122,6 +129,9 @@ app.post('/api/init-database', async (req, res) => {
 app.get('/api/business-profile/public/slug/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
+    
+    // Import prisma dynamically
+    const { prisma } = await import('./lib/prisma');
     
     await prisma.$connect();
     
@@ -162,7 +172,12 @@ app.get('/api/business-profile/public/slug/:slug', async (req, res) => {
       }
     });
   } finally {
-    await prisma.$disconnect();
+    try {
+      const { prisma } = await import('./lib/prisma');
+      await prisma.$disconnect();
+    } catch (e) {
+      // Ignore disconnect errors
+    }
   }
 });
 
@@ -189,4 +204,4 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     });
 });
 
-export default app;
+module.exports = app;

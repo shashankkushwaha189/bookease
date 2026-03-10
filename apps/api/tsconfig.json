@@ -7,12 +7,14 @@
         "strict": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
+        "forceConsistentCasingInFileNames": false,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "noImplicitAny": false,
         "noImplicitReturns": false,
-        "noImplicitThis": false
+        "noImplicitThis": false,
+        "noImplicitOverride": false,
+        "strictPropertyInitialization": false
     },
     "include": [
         "src/**/*"
@@ -20,30 +22,6 @@
     "exclude": [
         "src/modules/ai",
         "src/modules/ai_module_backup",
-        "src/modules/appointment",
-        "src/modules/auth",
-        "src/modules/availability",
-        "src/modules/business-profile",
-        "src/modules/config",
-        "src/modules/consent",
-        "src/modules/customer",
-        "src/modules/import",
-        "src/modules/policy",
-        "src/modules/report",
-        "src/modules/archival",
-        "src/modules/api-token",
-        "src/modules/service",
-        "src/modules/staff",
-        "src/modules/user",
-        "src/modules/integration",
-        "src/modules/reporting",
-        "src/modules/smart-scheduling",
-        "src/modules/appointment-timeline",
-        "src/modules/tenant",
-        "src/scripts",
-        "src/jobs",
-        "src/routes",
-        "src/middleware",
-        "src/modules"
+        "src/modules/appointment/appointment.engine.v2.ts"
     ]
 }

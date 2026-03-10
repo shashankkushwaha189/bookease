@@ -48,6 +48,7 @@ interface Appointment {
   service: string;
   staff: string;
   status: 'booked' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+  bookingSource?: 'Customer' | 'Staff/Admin';
 }
 
 interface Insight {
@@ -328,6 +329,13 @@ const AppointmentRow: React.FC<{ appointment: Appointment; onClick: () => void }
         </div>
         <div className="flex items-center space-x-3">
           <div className="text-sm text-neutral-600">{appointment.staff}</div>
+          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+            appointment.bookingSource === 'Customer' 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-blue-100 text-blue-800'
+          }`}>
+            {appointment.bookingSource}
+          </span>
           <Badge status={getStatusColor(appointment.status)} />
           <ChevronRight className="w-4 h-4 text-neutral-400" />
         </div>

@@ -33,8 +33,8 @@ export const customersApi = {
   /**
    * Create new customer
    */
-  createCustomer: (data: CreateCustomerRequest) => 
-    api.post<ApiSuccessResponse<Customer>>('/api/customers', data),
+  createCustomer: (data: CreateCustomerRequest, isPublic: boolean = false) => 
+    api.post<ApiSuccessResponse<Customer>>(isPublic ? '/api/customers/public' : '/api/customers', data),
 
   /**
    * Update customer

@@ -23,9 +23,9 @@ export class StaffService {
     private metrics = new Map<string, StaffMetrics>();
     private CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
-    async listStaff(tenantId: string, activeOnly: boolean = false, includeStats: boolean = false) {
+    async listStaff(tenantId: string | undefined, activeOnly: boolean = false, includeStats: boolean = false) {
         const startTime = Date.now();
-        const cacheKey = `${tenantId}_${activeOnly}_${includeStats}`;
+        const cacheKey = `${tenantId || 'public'}_${activeOnly}_${includeStats}`;
         
         // Check cache first
         const cached = this.cache.get(cacheKey);

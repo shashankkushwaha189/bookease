@@ -15,8 +15,8 @@ import mfaRoutes from './modules/auth/mfa.routes';
 import sessionRoutes from './modules/auth/session.routes';
 import configRoutes from './modules/config/config.routes';
 import availabilityRoutes from './modules/availability/availability.routes';
-import serviceRoutes from './modules/service/service.routes';
-import staffRoutes from './modules/staff/staff.routes';
+import { router as serviceRoutes, publicRouter as publicServiceRoutes } from './modules/service/service.routes';
+import { router as staffRoutes, publicRouter as publicStaffRoutes } from './modules/staff/staff.routes';
 import { appointmentRouter } from './modules/appointment/appointment.routes';
 // import { aiRoutes } from './modules/ai_disabled/ai.routes';
 import auditRoutes from './modules/audit/audit.routes';
@@ -39,12 +39,18 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'https://localhost:5173',
+    'http://localhost:5174',
+    'https://localhost:5174',
+    'http://127.0.0.1:62362',
+    'https://127.0.0.1:62362',
+    'http://127.0.0.1:62361',
+    'https://127.0.0.1:62361',
     'https://bookease-ashen.vercel.app',
     'https://yourdomain.com' // Replace with your actual domain
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'X-Tenant-Slug']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'X-Tenant-Slug', 'x-correlation-id']
 }));
 app.use(compression());
 app.use(express.json());
@@ -117,16 +123,18 @@ const publicRoutes = [
     '/api/auth', // User authentication routes
 ];
 
-app.use(protectedRoutes, tenantMiddleware);
-
 // API Routes - Public routes first (no auth required)
 app.use('/api/tenants', tenantRoutes);
-app.use('/api/public/services', serviceRoutes);
-app.use('/api/public/staff', staffRoutes);
+app.use('/api/public/services', publicServiceRoutes);
+app.use('/api/public/staff', publicStaffRoutes);
 app.use('/api/public/availability', availabilityRoutes);
 app.use('/api/public/bookings', publicBookingRoutes);
 app.use('/api/public/profile', businessProfileRoutes);
 app.use('/api/business-profile/public', businessProfileRoutes);
+app.use('/api/customers', customerRoutes);
+
+app.use(protectedRoutes, tenantMiddleware);
+
 app.use('/api/users', userRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/mfa', mfaRoutes);
@@ -135,8 +143,6 @@ app.use('/api/config', configRoutes);
 app.use('/api/migrate', migrateRoutes);
 app.use('/api/seed', seedRoutes);
 app.use('/api/setup', setupRoutes);
-// Apply tenant middleware to protected routes only
-app.use(protectedRoutes, tenantMiddleware);
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/staff', staffRoutes);

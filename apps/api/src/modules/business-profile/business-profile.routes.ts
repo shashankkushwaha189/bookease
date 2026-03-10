@@ -21,9 +21,33 @@ router.patch('/contact', controller.updateContact);
 
 // Public endpoints (no auth required)
 router.get('/public', controller.getPublicProfile);
+router.get('/public-info', controller.getPublicProfile); // Working alternative
 router.get('/public/slug/:slug', controller.getPublicProfileBySlug);
 router.get('/public/all', controller.getPublicProfiles);
 router.get('/public/search', controller.searchProfiles);
+
+// Simple test endpoint
+router.get('/public/test', (req, res) => {
+    console.log('🧪 Test route hit!');
+    res.json({
+        success: true,
+        message: 'Public profile routes are working',
+        headers: req.headers
+    });
+});
+
+// Simple test endpoint
+router.get('/test', (req, res) => {
+    console.log('🧪 Test endpoint called!');
+    console.log('🧪 Headers:', req.headers);
+    console.log('🧪 X-Tenant-ID:', req.headers['x-tenant-id']);
+    res.json({
+        success: true,
+        message: 'Test endpoint working',
+        headers: req.headers,
+        tenantId: req.headers['x-tenant-id']
+    });
+});
 
 // Validation endpoint
 router.get('/validate', controller.validateProfileAccess);
