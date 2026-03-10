@@ -2,10 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserService, TokenPayload } from '../modules/user/user.service';
 
-export interface AuthenticatedRequest extends Request {
+export type AuthenticatedRequest = Omit<Request, 'user'> & {
   user?: TokenPayload;
   tenantId?: string;
-}
+  consentTimestamp?: string;
+};
 
 export class AuthMiddleware {
   constructor(private userService: UserService) {}
@@ -149,7 +150,7 @@ export class AuthMiddleware {
     }
 
     // Allow users to access their own data or admins
-    const canAccess = user.role === 'ADMIN' || user.id === req.params.userId;
+    const canAccess = user.role === 'ADMIN' || user.userId === req.params.userId;
     
     if (!canAccess) {
       return res.status(403).json({
@@ -171,7 +172,9 @@ export class AuthMiddleware {
     const requests = new Map<string, { count: number; resetTime: number }>();
 
     return (req: Request, res: Response, next: NextFunction) => {
-      const clientId = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      const forwardedFor = req.headers['x-forwarded-for'];
+      const clientIp = typeof forwardedFor === 'string' ? forwardedFor.split(',')[0] : (Array.isArray(forwardedFor) ? forwardedFor[0] : req.ip || req.connection.remoteAddress || 'unknown');
+      const clientId = clientIp as string;
       const now = Date.now();
       
       if (!requests.has(clientId)) {
@@ -255,7 +258,7 @@ export class AuthMiddleware {
     }
 
     // Store consent timestamp
-    req.consentTimestamp = new Date().toISOString();
+    (req as any).consentTimestamp = new Date().toISOString();
     
     next();
   };

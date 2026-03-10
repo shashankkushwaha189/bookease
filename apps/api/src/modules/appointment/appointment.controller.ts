@@ -1,8 +1,14 @@
 import { Request, Response } from "express";
 import { AppointmentService } from "./appointment.service";
 import { AppointmentStatus, UserRole } from "@prisma/client";
-import { logger } from "@bookease/logger";
 import { prisma } from "../../lib/prisma";
+
+// Simple logger replacement since @bookease/logger is not available
+const logger = {
+  info: (message: any, context?: string) => console.log(`[INFO] ${context}:`, message),
+  error: (error: any, context?: string) => console.error(`[ERROR] ${context}:`, error),
+  warn: (message: any, context?: string) => console.warn(`[WARN] ${context}:`, message)
+};
 
 export class AppointmentController {
     private service: AppointmentService;

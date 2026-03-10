@@ -27,6 +27,8 @@ import policyRoutes from './modules/policy/policy.routes';
 import customerRoutes from './modules/customer/customer.routes'; // Re-enabled
 import importRoutes from './modules/import/import.routes'; // Re-enabled
 import publicBookingRoutes from './modules/appointment/public-booking.routes';
+import bookingRoutes from './modules/booking/booking.routes';
+import notificationRoutes from './modules/notifications/notification.routes';
 import migrateRoutes from './routes/migrate';
 import seedRoutes from './routes/seed';
 import setupRoutes from './routes/setup';
@@ -109,6 +111,7 @@ const protectedRoutes = [
     '/api/customers', // Re-enabled
     '/api/import', // Re-enabled
     '/api/tokens',
+    '/api/notifications',
 ];
 
 const publicRoutes = [
@@ -117,6 +120,7 @@ const publicRoutes = [
     '/api/public/staff',
     '/api/public/availability',
     '/api/public/bookings',
+    '/api/bookings', // New booking endpoint
     '/api/public/profile',
     '/api/business-profile/public',
     '/api/users', // User authentication routes
@@ -129,6 +133,7 @@ app.use('/api/public/services', publicServiceRoutes);
 app.use('/api/public/staff', publicStaffRoutes);
 app.use('/api/public/availability', availabilityRoutes);
 app.use('/api/public/bookings', publicBookingRoutes);
+app.use('/api/bookings', bookingRoutes);
 app.use('/api/public/profile', businessProfileRoutes);
 app.use('/api/business-profile/public', businessProfileRoutes);
 app.use('/api/customers', customerRoutes);
@@ -147,6 +152,8 @@ app.use('/api/availability', availabilityRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/appointments', appointmentRouter);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/archive', archiveRoutes);

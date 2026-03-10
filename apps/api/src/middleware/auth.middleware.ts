@@ -2,8 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
 import { prisma } from '../lib/prisma';
-import { logger } from '@bookease/logger';
 import { User } from '@prisma/client';
+
+// Simple logger replacement since @bookease/logger is not available
+const logger = {
+  info: (message: any, context?: string) => console.log(`[INFO] ${context}:`, message),
+  error: (error: any, context?: string) => console.error(`[ERROR] ${context}:`, error),
+  warn: (message: any, context?: string) => console.warn(`[WARN] ${context}:`, message)
+};
 
 export const authMiddleware = async (
     req: Request,

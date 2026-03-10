@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import { env } from '../../config/env';
-import { LoginInput } from './auth.schema';
+import { LoginInput, RegisterInput } from './auth.schema';
 import { User, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -44,6 +44,59 @@ export class AuthService {
                 email: user.email,
                 role: user.role,
                 tenantId: user.tenantId
+            }
+        };
+    }
+
+    async register(tenantId: string, input: RegisterInput) {
+        // Check if user already exists in this tenant
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                tenantId,
+                email: input.email,
+            }
+        });
+
+        if (existingUser) {
+            throw new AppError('User with this email already exists', 409, 'USER_EXISTS');
+        }
+
+        // Hash password
+        const passwordHash = await bcrypt.hash(input.password, this.saltRounds);
+
+        // Create new user
+        const newUser = await prisma.user.create({
+            data: {
+                tenantId,
+                email: input.email,
+                passwordHash,
+                role: UserRole.USER, // Default role for new registrations
+                isActive: true,
+                firstName: input.firstName,
+                lastName: input.lastName
+            }
+        });
+
+        // Generate JWT token
+        const token = jwt.sign(
+            {
+                sub: newUser.id,
+                role: newUser.role,
+                tenantId: newUser.tenantId
+            },
+            env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        return {
+            token,
+            user: {
+                id: newUser.id,
+                email: newUser.email,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                role: newUser.role,
+                tenantId: newUser.tenantId
             }
         };
     }

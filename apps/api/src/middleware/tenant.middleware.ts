@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { TenantRepository } from '../modules/tenant/tenant.repository';
-import { logger } from '@bookease/logger';
+
+// Simple logger replacement since @bookease/logger is not available
+const logger = {
+  info: (message: any, context?: string) => console.log(`[INFO] ${context}:`, message),
+  error: (error: any, context?: string) => console.error(`[ERROR] ${context}:`, error),
+  warn: (message: any, context?: string) => console.warn(`[WARN] ${context}:`, message)
+};
 
 const tenantRepository = new TenantRepository();
 

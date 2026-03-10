@@ -51,15 +51,15 @@ export const timelineEventSchema = z.object({
   timestamp: z.string().datetime(),
   userId: z.string().uuid(),
   userRole: z.nativeEnum(AuditUserRole),
-  data: z.record(z.any()).optional(), // Event-specific data
+  data: z.record(z.string(), z.any()).optional(), // Event-specific data
   metadata: z.object({
     correlationId: z.string().uuid(),
-    ipAddress: z.string().ip().optional(),
+    ipAddress: z.string().optional(),
     userAgent: z.string().optional(),
     sessionId: z.string().optional(),
   }).optional(),
-  previousState: z.record(z.any()).optional(), // Previous appointment state
-  newState: z.record(z.any()).optional(), // New appointment state
+  previousState: z.record(z.string(), z.any()).optional(), // Previous appointment state
+  newState: z.record(z.string(), z.any()).optional(), // New appointment state
   reason: z.string().max(500).optional(),
   isSystemGenerated: z.boolean().default(false),
   createdAt: z.string().datetime().optional(),
@@ -74,10 +74,10 @@ export const auditLogSchema = z.object({
   userId: z.string().uuid(),
   userRole: z.nativeEnum(AuditUserRole),
   timestamp: z.string().datetime(),
-  details: z.record(z.any()),
+  details: z.record(z.string(), z.any()),
   metadata: z.object({
     correlationId: z.string().uuid(),
-    ipAddress: z.string().ip().optional(),
+    ipAddress: z.string().optional(),
     userAgent: z.string().optional(),
     sessionId: z.string().optional(),
     requestId: z.string().optional(),
@@ -174,7 +174,7 @@ export const correlationContextSchema = z.object({
   userId: z.string().uuid(),
   userRole: z.nativeEnum(AuditUserRole),
   sessionId: z.string().optional(),
-  ipAddress: z.string().ip().optional(),
+  ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
   requestId: z.string().optional(),
   startTime: z.string().datetime(),
@@ -197,7 +197,7 @@ export const aiUsageTrackingSchema = z.object({
   cost: z.number().optional(), // in USD
   success: z.boolean(),
   errorMessage: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   createdAt: z.string().datetime().optional(),
 });
 

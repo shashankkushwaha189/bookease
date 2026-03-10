@@ -63,7 +63,9 @@ export class ArchivalJob {
                         createdAt: true,
                         updatedAt: true,
                         seriesId: true,
-                        seriesIndex: true
+                        customer: { select: { name: true, email: true } },
+                        staff: { select: { name: true } },
+                        service: { select: { name: true } }
                     }
                 });
 
@@ -83,23 +85,24 @@ export class ArchivalJob {
 
                     // 2. Insert into Archive
                     prisma.appointmentArchive.createMany({
-                        data: candidates.map(c => ({
-                            id: c.id,
+                        data: candidates.map((c: any) => ({
+                            originalId: c.id,
                             tenantId: c.tenantId,
                             serviceId: c.serviceId,
+                            serviceName: c.service.name,
                             staffId: c.staffId,
+                            staffName: c.staff.name,
                             customerId: c.customerId,
+                            customerName: c.customer.name,
+                            customerEmail: c.customer.email,
                             referenceId: c.referenceId,
                             startTimeUtc: c.startTimeUtc,
                             endTimeUtc: c.endTimeUtc,
                             status: c.status as any,
                             notes: c.notes,
-                            createdBy: c.createdBy,
-                            createdAt: c.createdAt,
-                            updatedAt: c.updatedAt,
-                            seriesId: c.seriesId,
-                            seriesIndex: c.seriesIndex,
-                            archivedAt: new Date()
+                            totalAmount: null,
+                            archivedAt: new Date(),
+                            archivedBy: c.createdBy
                         }))
                     }),
 

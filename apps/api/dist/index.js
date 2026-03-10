@@ -1,7 +1,7 @@
 
-// Full production entry point
+// Minimal production entry point
 require('dotenv').config();
-const app = require('./app.js');
+const app = require('./app-minimal.js');
 
 const PORT = process.env.PORT || 3000;
 

@@ -78,7 +78,14 @@ export class AppointmentEngine {
         // Create appointment
         const newAppointment = await tx.appointment.create({
           data: {
-            ...validated,
+            staffId: validated.staffId,
+            serviceId: validated.serviceId,
+            customerId: validated.customerId,
+            notes: validated.notes,
+            requiresConfirmation: validated.requiresConfirmation,
+            createdBy: validated.createdBy,
+            startTimeUtc: new Date(validated.startTimeUtc),
+            endTimeUtc: new Date(validated.endTimeUtc),
             referenceId,
             tenantId: await this.getTenantId(validated.staffId),
           },
@@ -150,6 +157,9 @@ export class AppointmentEngine {
           where: { id: appointmentId },
           data: {
             ...validated,
+            ...(validated.startTimeUtc && { startTimeUtc: new Date(validated.startTimeUtc) }),
+            ...(validated.endTimeUtc && { endTimeUtc: new Date(validated.endTimeUtc) }),
+            ...(validated.status && { status: validated.status as any }),
             updatedAt: new Date(),
             // Add timestamps for status changes
             ...(validated.status === AppointmentStatus.CONFIRMED && { confirmedAt: new Date() }),
@@ -225,7 +235,10 @@ export class AppointmentEngine {
         await tx.appointment.update({
           where: { id: validated.appointmentId },
           data: {
-            status: AppointmentStatus.RESCHEDULED,
+            status: 'CANCELLED' as any, // Rescheduled is treated as Cancelled in the db schema
+            completedAt: new Date(),
+            cancelledAt: new Date(),
+            confirmedAt: new Date(),
             updatedAt: new Date(),
           },
         });
@@ -236,8 +249,8 @@ export class AppointmentEngine {
             staffId: currentAppointment.staffId,
             serviceId: currentAppointment.serviceId,
             customerId: currentAppointment.customerId,
-            startTimeUtc: validated.newStartTimeUtc,
-            endTimeUtc: validated.newEndTimeUtc,
+            startTimeUtc: new Date(validated.newStartTimeUtc),
+            endTimeUtc: new Date(validated.newEndTimeUtc),
             status: AppointmentStatus.BOOKED,
             notes: validated.reason 
               ? `${currentAppointment.notes || ''}\n\nRescheduled: ${validated.reason}`
@@ -319,7 +332,13 @@ export class AppointmentEngine {
       const appointment = await prisma.$transaction(async (tx) => {
         const newAppointment = await tx.appointment.create({
           data: {
-            ...validated,
+            staffId: validated.staffId,
+            serviceId: validated.serviceId,
+            customerId: validated.customerId,
+            notes: validated.notes,
+            createdBy: validated.createdBy,
+            startTimeUtc: new Date(validated.startTimeUtc),
+            endTimeUtc: new Date(validated.endTimeUtc),
             status: AppointmentStatus.CONFIRMED, // Manual bookings are auto-confirmed
             referenceId: this.generateReferenceId(),
             tenantId: await this.getTenantId(validated.staffId),
@@ -360,6 +379,8 @@ export class AppointmentEngine {
     const lock = await prisma.slotLock.create({
       data: {
         ...data,
+        startTimeUtc: new Date(data.startTimeUtc),
+        endTimeUtc: new Date(data.endTimeUtc),
         tenantId: await this.getTenantId(data.staffId),
         sessionToken: this.generateSessionToken(),
         createdAt: new Date(),

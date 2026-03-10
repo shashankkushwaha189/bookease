@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Calendar, Edit2, Trash2, User, Clock } from 'lucide-react';
+import { Search, Calendar, Edit2, Trash2, User, Clock, RotateCcw, Check, X } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -34,6 +34,13 @@ const AppointmentsPage: React.FC = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [appointmentIdToDelete, setAppointmentIdToDelete] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [isRescheduleDialogOpen, setIsRescheduleDialogOpen] = useState(false);
+  const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null);
+  const [newDateTime, setNewDateTime] = useState('');
+  const [rescheduleReason, setRescheduleReason] = useState('');
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null);
+  const [editNotes, setEditNotes] = useState('');
 
   const toastStore = useToastStore();
 
@@ -80,14 +87,103 @@ const AppointmentsPage: React.FC = () => {
   // Delete appointment
   const handleDeleteAppointment = async (appointmentId: string) => {
     try {
-      await appointmentsApi.deleteAppointment(appointmentId);
+      await appointmentsApi.cancelBooking(appointmentId, { reason: 'Cancelled by admin' });
       setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
-      toastStore.success('Appointment deleted successfully');
+      toastStore.success('Appointment cancelled successfully');
       setIsDeleteDialogOpen(false);
       setAppointmentIdToDelete(null);
     } catch (err: any) {
-      console.error('Failed to delete appointment:', err);
-      toastStore.error('Failed to delete appointment');
+      console.error('Failed to cancel appointment:', err);
+      toastStore.error('Failed to cancel appointment');
+    }
+  };
+
+  // Reschedule appointment
+  const handleRescheduleAppointment = async () => {
+    if (!appointmentToReschedule || !newDateTime) return;
+
+    try {
+      const originalDate = new Date(appointmentToReschedule.dateTime);
+      const newDate = new Date(newDateTime);
+      const duration = appointmentToReschedule.duration || 60; // Default 60 minutes
+      
+      const newEndTime = new Date(newDate.getTime() + duration * 60000);
+
+      await appointmentsApi.rescheduleBooking(appointmentToReschedule.id, {
+        newStartTimeUtc: newDate.toISOString(),
+        newEndTimeUtc: newEndTime.toISOString(),
+        reason: rescheduleReason
+      });
+
+      // Refresh appointments
+      await fetchAppointments();
+      
+      toastStore.success('Appointment rescheduled successfully');
+      setIsRescheduleDialogOpen(false);
+      setAppointmentToReschedule(null);
+      setNewDateTime('');
+      setRescheduleReason('');
+    } catch (err: any) {
+      console.error('Failed to reschedule appointment:', err);
+      toastStore.error('Failed to reschedule appointment');
+    }
+  };
+
+  const openRescheduleDialog = (appointment: Appointment) => {
+    setAppointmentToReschedule(appointment);
+    setNewDateTime(appointment.dateTime);
+    setIsRescheduleDialogOpen(true);
+  };
+
+  // Edit appointment
+  const handleEditAppointment = async () => {
+    if (!appointmentToEdit) return;
+
+    try {
+      await appointmentsApi.addNote(appointmentToEdit.id, {
+        note: editNotes
+      });
+
+      // Refresh appointments
+      await fetchAppointments();
+      
+      toastStore.success('Appointment notes updated successfully');
+      setIsEditDialogOpen(false);
+      setAppointmentToEdit(null);
+      setEditNotes('');
+    } catch (err: any) {
+      console.error('Failed to update appointment:', err);
+      toastStore.error('Failed to update appointment');
+    }
+  };
+
+  const openEditDialog = (appointment: Appointment) => {
+    setAppointmentToEdit(appointment);
+    setEditNotes(appointment.notes || '');
+    setIsEditDialogOpen(true);
+  };
+
+  // Mark appointment as no-show
+  const handleMarkNoShow = async (appointmentId: string) => {
+    try {
+      await appointmentsApi.markNoShow(appointmentId, { reason: 'Marked as no-show by admin' });
+      await fetchAppointments();
+      toastStore.success('Appointment marked as no-show');
+    } catch (err: any) {
+      console.error('Failed to mark appointment as no-show:', err);
+      toastStore.error('Failed to mark appointment as no-show');
+    }
+  };
+
+  // Complete appointment
+  const handleCompleteAppointment = async (appointmentId: string) => {
+    try {
+      await appointmentsApi.completeAppointment(appointmentId, { notes: 'Completed by admin' });
+      await fetchAppointments();
+      toastStore.success('Appointment completed successfully');
+    } catch (err: any) {
+      console.error('Failed to complete appointment:', err);
+      toastStore.error('Failed to complete appointment');
     }
   };
 
@@ -261,17 +357,44 @@ const AppointmentsPage: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
-                          onClick={() => {/* TODO: Open edit modal */}}
-                          className="text-blue-600 hover:text-blue-900 mr-3"
+                          onClick={() => openEditDialog(appointment)}
+                          className="text-blue-600 hover:text-blue-900 mr-2"
+                          title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
+                        <button
+                          onClick={() => openRescheduleDialog(appointment)}
+                          className="text-yellow-600 hover:text-yellow-900 mr-2"
+                          title="Reschedule"
+                        >
+                          <RotateCcw className="w-4 h-4" />
+                        </button>
+                        {appointment.status !== 'COMPLETED' && (
+                          <button
+                            onClick={() => handleCompleteAppointment(appointment.id)}
+                            className="text-green-600 hover:text-green-900 mr-2"
+                            title="Mark as Completed"
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                        )}
+                        {appointment.status !== 'NO_SHOW' && appointment.status !== 'COMPLETED' && (
+                          <button
+                            onClick={() => handleMarkNoShow(appointment.id)}
+                            className="text-orange-600 hover:text-orange-900 mr-2"
+                            title="Mark as No-Show"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
                           onClick={() => {
                             setAppointmentIdToDelete(appointment.id);
                             setIsDeleteDialogOpen(true);
                           }}
                           className="text-red-600 hover:text-red-900"
+                          title="Cancel"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -288,14 +411,133 @@ const AppointmentsPage: React.FC = () => {
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
-        title="Delete Appointment"
-        message="Are you sure you want to delete this appointment? This action cannot be undone."
+        title="Cancel Appointment"
+        message="Are you sure you want to cancel this appointment? This action cannot be undone."
         onConfirm={() => appointmentIdToDelete && handleDeleteAppointment(appointmentIdToDelete)}
         onCancel={() => {
           setIsDeleteDialogOpen(false);
           setAppointmentIdToDelete(null);
         }}
       />
+
+      {/* Reschedule Modal */}
+      {isRescheduleDialogOpen && appointmentToReschedule && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Reschedule Appointment</h3>
+            
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>Customer:</strong> {appointmentToReschedule.customerName}
+              </p>
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>Service:</strong> {appointmentToReschedule.service}
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                <strong>Current Time:</strong> {formatDateTime(appointmentToReschedule.dateTime)}
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                New Date & Time
+              </label>
+              <input
+                type="datetime-local"
+                value={newDateTime}
+                onChange={(e) => setNewDateTime(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Reason (optional)
+              </label>
+              <textarea
+                value={rescheduleReason}
+                onChange={(e) => setRescheduleReason(e.target.value)}
+                placeholder="Reason for rescheduling..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setIsRescheduleDialogOpen(false);
+                  setAppointmentToReschedule(null);
+                  setNewDateTime('');
+                  setRescheduleReason('');
+                }}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRescheduleAppointment}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Reschedule
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {isEditDialogOpen && appointmentToEdit && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Edit Appointment</h3>
+            
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>Customer:</strong> {appointmentToEdit.customerName}
+              </p>
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>Service:</strong> {appointmentToEdit.service}
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                <strong>Date & Time:</strong> {formatDateTime(appointmentToEdit.dateTime)}
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Notes
+              </label>
+              <textarea
+                value={editNotes}
+                onChange={(e) => setEditNotes(e.target.value)}
+                placeholder="Add appointment notes..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={4}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setIsEditDialogOpen(false);
+                  setAppointmentToEdit(null);
+                  setEditNotes('');
+                }}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditAppointment}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

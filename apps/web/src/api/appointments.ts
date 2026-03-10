@@ -106,6 +106,18 @@ export const appointmentsApi = {
     api.post<ApiSuccessResponse<Appointment>>(`/api/appointments/${id}/reschedule`, data),
 
   /**
+   * Cancel booking (new endpoint)
+   */
+  cancelBooking: (id: string, data?: { reason?: string }) => 
+    api.delete<ApiSuccessResponse<Appointment>>(`/api/bookings/${id}`, { data }),
+
+  /**
+   * Reschedule booking (new endpoint)
+   */
+  rescheduleBooking: (id: string, data: { newStartTimeUtc: string; newEndTimeUtc: string; reason?: string }) => 
+    api.put<ApiSuccessResponse<Appointment>>(`/api/bookings/${id}/reschedule`, data),
+
+  /**
    * Mark appointment as no-show
    */
   markNoShow: (id: string, data?: { reason?: string }) => 

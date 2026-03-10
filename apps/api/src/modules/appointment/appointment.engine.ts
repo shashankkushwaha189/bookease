@@ -80,10 +80,16 @@ export class AppointmentEngine {
         }
 
         // Create appointment
-        // @ts-ignore
         const newAppointment = await tx.appointment.create({
           data: {
-            ...validated,
+            staffId: validated.staffId,
+            serviceId: validated.serviceId,
+            customerId: validated.customerId,
+            notes: validated.notes,
+            requiresConfirmation: validated.requiresConfirmation,
+            createdBy: validated.createdBy,
+            startTimeUtc: new Date(validated.startTimeUtc),
+            endTimeUtc: new Date(validated.endTimeUtc),
             referenceId,
             tenantId: await this.getTenantId(validated.staffId),
           },
@@ -166,6 +172,9 @@ export class AppointmentEngine {
           where: { id: appointmentId },
           data: {
             ...validated,
+            ...(validated.startTimeUtc && { startTimeUtc: new Date(validated.startTimeUtc) }),
+            ...(validated.endTimeUtc && { endTimeUtc: new Date(validated.endTimeUtc) }),
+            ...(validated.status && { status: validated.status as any }),
             updatedAt: new Date(),
             // Add timestamps for status changes
             ...(validated.status === AppointmentStatus.CONFIRMED && { confirmedAt: new Date() }),
@@ -243,12 +252,11 @@ export class AppointmentEngine {
         await tx.appointment.update({
           where: { id: validated.appointmentId },
           data: {
-            status: AppointmentStatus.RESCHEDULED,
+            status: 'CANCELLED' as any, // Rescheduled is treated as Cancelled in the db schema
             completedAt: new Date(),
             cancelledAt: new Date(),
             confirmedAt: new Date(),
-            updatedAt: new Date(),
-            updatedBy: validated.rescheduledBy,
+            updatedAt: new Date()
           },
         });
 
@@ -258,8 +266,8 @@ export class AppointmentEngine {
             staffId: currentAppointment.staffId,
             serviceId: currentAppointment.serviceId,
             customerId: currentAppointment.customerId,
-            startTimeUtc: validated.newStartTimeUtc,
-            endTimeUtc: validated.newEndTimeUtc,
+            startTimeUtc: new Date(validated.newStartTimeUtc),
+            endTimeUtc: new Date(validated.newEndTimeUtc),
             status: AppointmentStatus.BOOKED,
             notes: validated.reason 
               ? `${currentAppointment.notes || ''}\n\nRescheduled: ${validated.reason}`
@@ -343,7 +351,13 @@ export class AppointmentEngine {
       const appointment = await prisma.$transaction(async (tx) => {
         const newAppointment = await tx.appointment.create({
           data: {
-            ...validated,
+            staffId: validated.staffId,
+            serviceId: validated.serviceId,
+            customerId: validated.customerId,
+            notes: validated.notes,
+            createdBy: validated.createdBy,
+            startTimeUtc: new Date(validated.startTimeUtc),
+            endTimeUtc: new Date(validated.endTimeUtc),
             status: AppointmentStatus.CONFIRMED, // Manual bookings are auto-confirmed
             referenceId: this.generateReferenceId(),
             tenantId: await this.getTenantId(validated.staffId),
@@ -388,22 +402,24 @@ export class AppointmentEngine {
       this.metrics.failedBookings++;
       throw error;
     }
-  }
-
-  // Create slot lock
-  async createSlotLock(data: Omit<SlotLock, 'id' | 'createdAt' | 'expiresAt'>): Promise<SlotLock> {
+  }  // Create slot lock
+  async createSlotLock(data: Omit<SlotLock, 'id' | 'createdAt' | 'expiresAt'>): Promise<any> {
     const lockData = slotLockSchema.parse(data);
     
     // @ts-ignore
     const lock = await prisma.slotLock.create({
       data: {
         ...lockData,
+        tenantId: await this.getTenantId(lockData.staffId),
+        sessionToken: Date.now().toString(36),
+        startTimeUtc: new Date(lockData.startTimeUtc),
+        endTimeUtc: new Date(lockData.endTimeUtc),
         createdAt: new Date(),
-        expiresAt: new Date(Date.now() + lockData.ttlMinutes * 60 * 1000),
+        expiresAt: new Date(Date.now() + (lockData as any).ttlMinutes * 60 * 1000),
       },
     });
 
-    return lock;
+    return lock as any;
   }
 
   // Check appointment conflicts
