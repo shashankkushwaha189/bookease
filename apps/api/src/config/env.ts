@@ -2,9 +2,14 @@ import { z } from 'zod';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load .env file if it exists, but don't fail if it doesn't
-dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
-dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true });
+// Load root .env early for runtime (dev/prod)
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env'), override: true });
+
+// Force Prisma to use a local engine in dev.
+// Some environments can set this to "data-proxy", which triggers P6001 for normal postgresql:// URLs.
+if (process.env.NODE_ENV !== 'production') {
+    process.env.PRISMA_CLIENT_ENGINE_TYPE = 'library';
+}
 
 const envSchema = z.object({
     PORT: z.coerce.number().default(() => {
@@ -26,3 +31,4 @@ if (!envParseResult.success) {
 }
 
 export const env = envParseResult.data;
+
