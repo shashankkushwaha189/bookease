@@ -5,7 +5,8 @@ import { BookEaseConfig } from "../config/config.schema";
 const logger = {
   info: (message: any, context?: string) => console.log(`[INFO] ${context}:`, message),
   error: (error: any, context?: string) => console.error(`[ERROR] ${context}:`, error),
-  warn: (message: any, context?: string) => console.warn(`[WARN] ${context}:`, message)
+  warn: (message: any, context?: string) => console.warn(`[WARN] ${context}:`, message),
+  debug: (message: any, context?: string) => console.debug(`[DEBUG] ${context}:`, message)
 };
 
 export interface PolicyCheckResult {
@@ -84,14 +85,14 @@ export class PolicyService {
                         tenantId: appointment.tenantId
                     });
 
-                    logger.info({
+                    logger.info(JSON.stringify({
                         tenantId: appointment.tenantId,
                         appointmentId: appointment.id,
                         adminId: requestedBy.id,
                         overrideReason,
                         diffHours,
                         allowedUntilHoursBefore
-                    }, 'Admin override for cancellation policy');
+                    }), 'Admin override for cancellation policy');
 
                     return { 
                         allowed: true, 
@@ -114,13 +115,13 @@ export class PolicyService {
             };
         }
 
-        logger.debug({
+        logger.debug(JSON.stringify({
             tenantId: appointment.tenantId,
             appointmentId: appointment.id,
             userId: requestedBy.id,
             policyTime,
             diffHours
-        }, 'Cancellation policy check completed');
+        }), 'Cancellation policy check completed');
 
         return { allowed: true };
     }
@@ -156,14 +157,14 @@ export class PolicyService {
                         tenantId: tenantId
                     });
 
-                    logger.info({
+                    logger.info(JSON.stringify({
                         tenantId: tenantId,
                         appointmentId: appointmentId,
                         adminId: requestedBy.id,
                         overrideReason,
                         rescheduleCount,
                         maxReschedules
-                    }, 'Admin override for reschedule policy');
+                    }), 'Admin override for reschedule policy');
 
                     return { 
                         allowed: true, 
@@ -188,14 +189,14 @@ export class PolicyService {
 
         const policyTime = Date.now() - startTime;
         
-        logger.debug({
+        logger.debug(JSON.stringify({
             tenantId: tenantId,
             appointmentId: appointmentId,
             userId: requestedBy.id,
             policyTime,
             rescheduleCount,
             maxReschedules
-        }, 'Reschedule policy check completed');
+        }), 'Reschedule policy check completed');
 
         return { allowed: true };
     }
@@ -230,14 +231,14 @@ export class PolicyService {
         const shouldMark = now.getTime() > graceTimeMs;
         const policyTime = Date.now() - startTime;
 
-        logger.debug({
+        logger.debug(JSON.stringify({
             tenantId: appointment.tenantId,
             appointmentId: appointment.id,
             policyTime,
             gracePeriodMinutes,
             gracePeriodEnds,
             shouldMark
-        }, 'No-show policy check completed');
+        }), 'No-show policy check completed');
 
         return { 
             shouldMark, 
@@ -308,7 +309,7 @@ export class PolicyService {
             warnings.push('No-show grace period changed - historical no-show markings may be inconsistent');
         }
 
-        logger.info({
+        logger.info(JSON.stringify({
             tenantId,
             warnings: warnings.length,
             configChanges: {
@@ -325,7 +326,7 @@ export class PolicyService {
                     new: newConfig.cancellation.noShowGracePeriodMinutes
                 }
             }
-        }, 'Policy update validation completed');
+        }), 'Policy update validation completed');
 
         return { valid: true, warnings };
     }

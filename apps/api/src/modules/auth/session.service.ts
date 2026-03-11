@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { PrismaClient, Session } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
@@ -186,12 +187,12 @@ export class SessionService {
         if (existing) {
           existing.count++;
           if (new Date(session.lastAccessAt) > new Date(existing.lastAccess)) {
-            existing.lastAccess = session.lastAccess;
+            existing.lastAccess = session.lastAccessAt;
           }
         } else {
           deviceMap.set(session.deviceId, {
             count: 1,
-            lastAccess: session.lastAccess,
+            lastAccess: session.lastAccessAt,
           });
         }
       }
@@ -200,7 +201,10 @@ export class SessionService {
     return {
       totalSessions: sessions.length,
       activeSessions: activeSessions.length,
-      devices: Array.from(deviceMap.values()),
+      devices: Array.from(deviceMap.entries()).map(([deviceId, data]) => ({
+        deviceId,
+        ...data
+      })),
     };
   }
 }

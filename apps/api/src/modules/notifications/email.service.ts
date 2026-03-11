@@ -59,7 +59,7 @@ export class EmailService {
       this.transporter = createTransport(config);
 
       // Verify connection
-      this.transporter.verify((error, success) => {
+      this.transporter.verify((error: any, success: any) => {
         if (error) {
           logger.warn('Email service connection failed - emails will be logged only', error);
           this.transporter = null;
@@ -79,11 +79,11 @@ export class EmailService {
       const html = this.generateBookingConfirmationHTML(data);
 
       if (!this.transporter) {
-        logger.info('Email service not configured - logging booking confirmation', {
+        logger.info(JSON.stringify({
           customerEmail: data.customerEmail,
           referenceId: data.referenceId,
           type: 'booking_confirmation'
-        });
+        }), 'Email service not configured - logging booking confirmation');
         return;
       }
 
@@ -94,16 +94,16 @@ export class EmailService {
         html
       });
 
-      logger.info({ 
+      logger.info(JSON.stringify({ 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Booking confirmation email sent');
+      }), 'Booking confirmation email sent');
     } catch (error) {
-      logger.error({ 
-        error, 
+      logger.error(JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error', 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Failed to send booking confirmation email');
+      }), 'Failed to send booking confirmation email');
       // Don't throw error - don't fail booking due to email issues
     }
   }
@@ -114,11 +114,11 @@ export class EmailService {
       const html = this.generateCancellationHTML(data);
 
       if (!this.transporter) {
-        logger.info('Email service not configured - logging cancellation', {
+        logger.info(JSON.stringify({
           customerEmail: data.customerEmail,
           referenceId: data.referenceId,
           type: 'cancellation'
-        });
+        }), 'Email service not configured - logging cancellation');
         return;
       }
 
@@ -129,16 +129,16 @@ export class EmailService {
         html
       });
 
-      logger.info({ 
+      logger.info(JSON.stringify({ 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Cancellation email sent');
+      }), 'Cancellation email sent');
     } catch (error) {
-      logger.error({ 
-        error, 
+      logger.error(JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error', 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Failed to send cancellation email');
+      }), 'Failed to send cancellation email');
     }
   }
 
@@ -148,11 +148,11 @@ export class EmailService {
       const html = this.generateRescheduleHTML(data);
 
       if (!this.transporter) {
-        logger.info('Email service not configured - logging reschedule', {
+        logger.info(JSON.stringify({
           customerEmail: data.customerEmail,
           referenceId: data.referenceId,
           type: 'reschedule'
-        });
+        }), 'Email service not configured - logging reschedule');
         return;
       }
 
@@ -163,16 +163,16 @@ export class EmailService {
         html
       });
 
-      logger.info({ 
+      logger.info(JSON.stringify({ 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Reschedule email sent');
+      }), 'Reschedule email sent');
     } catch (error) {
-      logger.error({ 
-        error, 
+      logger.error(JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error', 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Failed to send reschedule email');
+      }), 'Failed to send reschedule email');
     }
   }
 
@@ -182,11 +182,11 @@ export class EmailService {
       const html = this.generateReminderHTML(data);
 
       if (!this.transporter) {
-        logger.info('Email service not configured - logging reminder', {
+        logger.info(JSON.stringify({
           customerEmail: data.customerEmail,
           referenceId: data.referenceId,
           type: 'reminder'
-        });
+        }), 'Email service not configured - logging reminder');
         return;
       }
 
@@ -197,16 +197,16 @@ export class EmailService {
         html
       });
 
-      logger.info({ 
+      logger.info(JSON.stringify({ 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Reminder email sent');
+      }), 'Reminder email sent');
     } catch (error) {
-      logger.error({ 
-        error, 
+      logger.error(JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error', 
         customerEmail: data.customerEmail, 
         referenceId: data.referenceId 
-      }, 'Failed to send reminder email');
+      }), 'Failed to send reminder email');
     }
   }
 

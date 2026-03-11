@@ -222,11 +222,15 @@ export class UserController {
         });
       }
 
-      const { role, limit } = req.query;
+      const roleStr = typeof req.query.role === 'string' ? req.query.role : req.query.role?.[0];
+      const limitStr = typeof req.query.limit === 'string' ? req.query.limit : req.query.limit?.[0];
+
       const users = await this.userService.getUsersByTenant(
         tenantId,
-        role as UserRole,
-        limit ? parseInt(limit as string) : undefined
+        {
+          role: roleStr ? roleStr as UserRole : undefined,
+          limit: limitStr ? parseInt(limitStr) : undefined
+        }
       );
 
       res.json({
@@ -367,9 +371,9 @@ export class UserController {
         });
       }
 
-      const { userId } = req.params;
+      const userIdStr = typeof req.params.userId === 'string' ? req.params.userId : req.params.userId?.[0];
 
-      if (!userId) {
+      if (!userIdStr) {
         return res.status(400).json({
           success: false,
           error: {
@@ -379,7 +383,7 @@ export class UserController {
         });
       }
 
-      await this.userService.deleteUser(userId);
+      await this.userService.deleteUser(userIdStr);
 
       res.json({
         success: true,
@@ -409,9 +413,8 @@ export class UserController {
         });
       }
 
-      const { q, limit } = req.query;
-
-      if (!q) {
+      const qStr = typeof req.query.q === 'string' ? req.query.q : req.query.q?.[0];
+      if (!qStr) {
         return res.status(400).json({
           success: false,
           error: {
@@ -421,13 +424,15 @@ export class UserController {
         });
       }
 
+      const limitStr = typeof req.query.limit === 'string' ? req.query.limit : req.query.limit?.[0];
       const users = await this.userService.getUsersByTenant(tenantId);
       const filteredUsers = users.filter(user => 
-        user.name.toLowerCase().includes(q as string) ||
-        user.email.toLowerCase().includes(q as string)
+        (user.firstName && user.firstName.toLowerCase().includes(qStr.toLowerCase())) ||
+        (user.lastName && user.lastName.toLowerCase().includes(qStr.toLowerCase())) ||
+        user.email.toLowerCase().includes(qStr.toLowerCase())
       );
 
-      const limitedUsers = filteredUsers.slice(0, limit ? parseInt(limit as string) : 10);
+      const limitedUsers = filteredUsers.slice(0, limitStr ? parseInt(limitStr) : 10);
 
       res.json({
         success: true,

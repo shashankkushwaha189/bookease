@@ -40,7 +40,8 @@ export class NotificationController {
   // Send manual reminder
   sendManualReminder = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { appointmentId } = req.params;
+      const { appointmentId: rawAppointmentId } = req.params;
+      const appointmentId = typeof rawAppointmentId === 'string' ? rawAppointmentId : rawAppointmentId?.[0];
       const tenantId = req.tenantId!;
 
       // Note: In a real implementation, you'd check if the user has permission to send reminders for this appointment

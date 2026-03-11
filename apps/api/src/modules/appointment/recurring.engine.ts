@@ -122,10 +122,16 @@ export class RecurringAppointmentEngine {
 
       return {
         ...result.series,
+        startTimeUtc: result.series.startTimeUtc.toISOString(),
+        endTimeUtc: result.series.endTimeUtc.toISOString(),
+        createdAt: result.series.createdAt.toISOString(),
+        updatedAt: result.series.updatedAt.toISOString(),
+        status: result.series.status as SeriesStatus,
         totalOccurrences: occurrences.length,
         completedOccurrences: 0,
         cancelledOccurrences: 0,
         nextOccurrence: occurrences[0].startTime,
+        recurrenceRule: result.series.recurrenceRule as any,
       };
 
     } catch (error) {
@@ -337,7 +343,16 @@ export class RecurringAppointmentEngine {
           return updated;
         });
 
-        return updatedSeries;
+        return {
+          ...updatedSeries,
+          startTimeUtc: updatedSeries.startTimeUtc.toISOString(),
+          endTimeUtc: updatedSeries.endTimeUtc.toISOString(),
+          createdAt: updatedSeries.createdAt.toISOString(),
+          updatedAt: updatedSeries.updatedAt.toISOString(),
+          status: updatedSeries.status as SeriesStatus,
+          nextOccurrence: updatedSeries.nextOccurrence?.toISOString(),
+          recurrenceRule: updatedSeries.recurrenceRule as any,
+        };
 
       } else {
         // Edit this and future occurrences
@@ -364,8 +379,8 @@ export class RecurringAppointmentEngine {
             staffId: series.staffId,
             serviceId: series.serviceId,
             customerId: series.customerId,
-            startTimeUtc: validated.startTimeUtc || series.startTimeUtc,
-            endTimeUtc: validated.endTimeUtc || series.endTimeUtc,
+            startTimeUtc: validated.startTimeUtc ? new Date(validated.startTimeUtc) : series.startTimeUtc,
+            endTimeUtc: validated.endTimeUtc ? new Date(validated.endTimeUtc) : series.endTimeUtc,
             notes: validated.notes !== undefined ? validated.notes : series.notes,
             recurrenceRule: validated.recurrenceRule || (series.recurrenceRule as RecurrenceRule),
             status: SeriesStatus.ACTIVE,
@@ -389,8 +404,8 @@ export class RecurringAppointmentEngine {
 
           const occurrences = await this.generateRecurrenceDates({
             recurrenceRule: newRecurrenceRule,
-            baseStartTime: newSeriesData.startTimeUtc,
-            baseEndTime: newSeriesData.endTimeUtc,
+            baseStartTime: newSeriesData.startTimeUtc.toISOString(),
+            baseEndTime: newSeriesData.endTimeUtc.toISOString(),
           });
 
           // Create new occurrences
@@ -402,8 +417,8 @@ export class RecurringAppointmentEngine {
                   staffId: newSeriesData.staffId,
                   serviceId: newSeriesData.serviceId,
                   customerId: newSeriesData.customerId,
-                  startTimeUtc: occurrence.startTime,
-                  endTimeUtc: occurrence.endTime,
+                  startTimeUtc: new Date(occurrence.startTime),
+                  endTimeUtc: new Date(occurrence.endTime),
                   status: 'BOOKED',
                   referenceId: this.generateReferenceId(),
                   notes: newSeriesData.notes,
@@ -417,7 +432,16 @@ export class RecurringAppointmentEngine {
           return newSeries;
         });
 
-        return newSeries;
+        return {
+          ...newSeries,
+          startTimeUtc: newSeries.startTimeUtc.toISOString(),
+          endTimeUtc: newSeries.endTimeUtc.toISOString(),
+          createdAt: newSeries.createdAt.toISOString(),
+          updatedAt: newSeries.updatedAt.toISOString(),
+          status: newSeries.status as SeriesStatus,
+          nextOccurrence: newSeries.nextOccurrence?.toISOString(),
+          recurrenceRule: newSeries.recurrenceRule as any,
+        };
       }
 
     } catch (error) {
@@ -544,9 +568,9 @@ export class RecurringAppointmentEngine {
     const occurrences = series.appointments.map(apt => ({
       id: apt.id,
       seriesId: apt.seriesId || '',
-      occurrenceDate: apt.startTimeUtc,
-      startTimeUtc: apt.startTimeUtc,
-      endTimeUtc: apt.endTimeUtc,
+      occurrenceDate: apt.startTimeUtc.toISOString(),
+      startTimeUtc: apt.startTimeUtc.toISOString(),
+      endTimeUtc: apt.endTimeUtc.toISOString(),
       status: apt.status,
       isException: false, // TODO: Implement exception tracking
       referenceId: apt.referenceId,
@@ -555,6 +579,13 @@ export class RecurringAppointmentEngine {
 
     return {
       ...series,
+      startTimeUtc: series.startTimeUtc.toISOString(),
+      endTimeUtc: series.endTimeUtc.toISOString(),
+      createdAt: series.createdAt.toISOString(),
+      updatedAt: series.updatedAt.toISOString(),
+      status: series.status as SeriesStatus,
+      nextOccurrence: series.nextOccurrence?.toISOString(),
+      recurrenceRule: series.recurrenceRule as any,
       occurrences,
     } as RecurringSeriesResponse & { occurrences: OccurrenceResponse[] };
   }
@@ -612,8 +643,8 @@ export class RecurringAppointmentEngine {
     // Generate new occurrences with updated rule
     const occurrences = await this.generateRecurrenceDates({
       recurrenceRule: series.recurrenceRule as RecurrenceRule,
-      baseStartTime: series.startTimeUtc,
-      baseEndTime: series.endTimeUtc,
+      baseStartTime: series.startTimeUtc.toISOString(),
+      baseEndTime: series.endTimeUtc.toISOString(),
     });
 
     // Create new future occurrences

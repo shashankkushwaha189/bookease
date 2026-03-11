@@ -55,12 +55,8 @@ export class AvailabilityService {
       // Use engine to calculate availability
       const response = await this.engine.calculateAvailability({
         ...validated,
-        staff,
-        service,
-        schedule,
-        timeOffs,
-        dateOverrides,
-        appointments,
+        staffId: staff.id,
+        serviceId: service.id,
       });
 
       // Cache the result

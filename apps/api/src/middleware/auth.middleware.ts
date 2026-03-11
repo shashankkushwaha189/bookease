@@ -31,14 +31,12 @@ export const authMiddleware = async (
     const token = authHeader.split(' ')[1];
 
     try {
-        const decoded = jwt.verify(token, env.JWT_SECRET) as {
-            userId: string;
-            tenantId: string;
-            role: string;
-        };
+        const decoded = jwt.verify(token, env.JWT_SECRET) as any;
+        const userId: string | undefined = decoded.userId ?? decoded.sub;
+        const tenantId: string | undefined = decoded.tenantId;
 
         // Ensure token tenantId matches req.tenantId (from tenantMiddleware)
-        if (decoded.tenantId !== req.tenantId) {
+        if (!userId || !tenantId || tenantId !== req.tenantId) {
             return res.status(401).json({
                 success: false,
                 error: {
@@ -49,7 +47,7 @@ export const authMiddleware = async (
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: decoded.userId },
+            where: { id: userId },
         });
 
         if (!user || !user.isActive) {
@@ -63,7 +61,7 @@ export const authMiddleware = async (
         }
 
         // Double check tenant isolation at DB level
-        if (user.tenantId !== decoded.tenantId) {
+        if (user.tenantId !== tenantId) {
             return res.status(401).json({
                 success: false,
                 error: {

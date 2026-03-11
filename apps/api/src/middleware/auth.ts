@@ -16,6 +16,8 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     req.user = {
         id: 'user-123',
         email: 'user@example.com',
+        firstName: 'Test',
+        lastName: 'Admin',
         tenantId: 'tenant-123',
         role: 'admin',
         isActive: true,
@@ -31,6 +33,8 @@ declare global {
             user?: {
                 id: string;
                 email: string;
+                firstName?: string;
+                lastName?: string;
                 tenantId: string;
                 role: string;
                 isActive: boolean;

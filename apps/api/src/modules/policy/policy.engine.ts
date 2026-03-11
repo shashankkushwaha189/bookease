@@ -95,6 +95,7 @@ export class PolicyEngine {
     await prisma.policyOverride.create({
       data: {
         policyEvaluationId: validatedOverride.policyEvaluationId,
+        policyId: validatedOverride.policyId,
         reason: validatedOverride.reason,
         reasonText: validatedOverride.reasonText,
         userId: validatedOverride.userId,
@@ -130,12 +131,14 @@ export class PolicyEngine {
     const createdPolicy = await prisma.policyRule.create({
       data: {
         ...validatedPolicy,
+        config: validatedPolicy.config as any,
+        conditions: validatedPolicy.conditions as any,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     });
 
-    return createdPolicy as PolicyRule;
+    return createdPolicy as unknown as PolicyRule;
   }
 
   // Update existing policy
@@ -155,6 +158,9 @@ export class PolicyEngine {
     await prisma.policyRuleArchive.create({
       data: {
         ...existingPolicy,
+        policyId: existingPolicy.id,
+        config: existingPolicy.config as any,
+        conditions: existingPolicy.conditions as any,
         archivedAt: new Date(),
         archivedBy: updates.updatedBy || existingPolicy.updatedBy,
       },
@@ -165,12 +171,14 @@ export class PolicyEngine {
       where: { id },
       data: {
         ...validatedUpdates,
+        config: validatedUpdates.config as any,
+        conditions: validatedUpdates.conditions as any,
         updatedAt: new Date(),
         version: { increment: 1 },
       },
     });
 
-    return updatedPolicy as PolicyRule;
+    return updatedPolicy as unknown as PolicyRule;
   }
 
   // Get policy metrics
@@ -244,7 +252,7 @@ export class PolicyEngine {
       }
 
       return true;
-    }) as PolicyRule[];
+    }) as unknown as PolicyRule[];
   }
 
   private async evaluateSinglePolicy(policy: PolicyRule, request: PolicyEvaluationRequest): Promise<any> {
@@ -345,11 +353,11 @@ export class PolicyEngine {
     // Count reschedules in the time window
     const timeWindowStart = new Date(Date.now() - config.timeWindowHours * 60 * 60 * 1000);
     
-    const rescheduleCount = await prisma.appointment.count({
+    const rescheduleCount = await prisma.appointmentTimeline.count({
       where: {
-        customerId: request.customerId,
-        status: 'RESCHEDULED',
-        updatedAt: { gte: timeWindowStart },
+        appointment: { customerId: request.customerId },
+        eventType: 'RESCHEDULED',
+        createdAt: { gte: timeWindowStart },
       },
     });
 

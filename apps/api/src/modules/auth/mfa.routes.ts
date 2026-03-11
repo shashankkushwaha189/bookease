@@ -2,9 +2,12 @@ import { Router } from 'express';
 import { MFAController } from './mfa.controller';
 import { validateBody } from '../../middleware/validate';
 import { z } from 'zod';
+import { MFAService } from './mfa.service';
+import { prisma } from '../../lib/prisma';
 
 const router = Router();
-const controller = new MFAController();
+const mfaService = new MFAService(prisma);
+const controller = new MFAController(mfaService);
 
 // Validation schemas
 const enableMFASchema = z.object({

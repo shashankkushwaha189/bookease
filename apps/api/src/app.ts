@@ -10,7 +10,7 @@ import { tenantMiddleware } from './middleware/tenant.middleware';
 import { prisma } from './lib/prisma';
 import tenantRoutes from './modules/tenant/tenant.routes';
 import businessProfileRoutes from './modules/business-profile/business-profile.routes';
-import userRoutes from './modules/user/user.routes';
+import authRoutes from './modules/auth/auth.routes';
 import mfaRoutes from './modules/auth/mfa.routes';
 import sessionRoutes from './modules/auth/session.routes';
 import configRoutes from './modules/config/config.routes';
@@ -32,6 +32,7 @@ import notificationRoutes from './modules/notifications/notification.routes';
 import migrateRoutes from './routes/migrate';
 import seedRoutes from './routes/seed';
 import setupRoutes from './routes/setup';
+import { superAdminRoutes } from './modules/superadmin/superadmin.routes';
 
 const app = express();
 
@@ -104,6 +105,7 @@ app.get('/ready', async (req, res) => {
 
 // Global Context (Tenant ID required for these)
 const protectedRoutes = [
+    '/api/business-profile',
     '/api/config',
     '/api/audit',
     '/api/auth',
@@ -112,6 +114,8 @@ const protectedRoutes = [
     '/api/import', // Re-enabled
     '/api/tokens',
     '/api/notifications',
+    // Public endpoints that still require tenant context
+    '/api/public/profile',
 ];
 
 const publicRoutes = [
@@ -123,8 +127,7 @@ const publicRoutes = [
     '/api/bookings', // New booking endpoint
     '/api/public/profile',
     '/api/business-profile/public',
-    '/api/users', // User authentication routes
-    '/api/auth', // User authentication routes
+    '/api/auth', // Auth routes (login/register) handled with tenantMiddleware exceptions
 ];
 
 // API Routes - Public routes first (no auth required)
@@ -134,14 +137,14 @@ app.use('/api/public/staff', publicStaffRoutes);
 app.use('/api/public/availability', availabilityRoutes);
 app.use('/api/public/bookings', publicBookingRoutes);
 app.use('/api/bookings', bookingRoutes);
-app.use('/api/public/profile', businessProfileRoutes);
-app.use('/api/business-profile/public', businessProfileRoutes);
+// Public profile still requires tenant context (X-Tenant-ID)
+app.use('/api/public/profile', tenantMiddleware, businessProfileRoutes);
+app.use('/api/business-profile/public', tenantMiddleware, businessProfileRoutes);
 app.use('/api/customers', customerRoutes);
 
 app.use(protectedRoutes, tenantMiddleware);
 
-app.use('/api/users', userRoutes);
-app.use('/api/auth', userRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/mfa', mfaRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/config', configRoutes);
@@ -162,7 +165,7 @@ app.use('/api/import', importRoutes); // Re-enabled
 app.use('/api/tokens', apiTokenRoutes);
 app.use('/api/policy', policyRoutes);
 // Protected business profile routes (require tenant middleware)
-app.use('/api/business-profile', businessProfileRoutes);
+app.use('/api/superadmin', superAdminRoutes);
 
 // Simple database initialization endpoint
 app.post('/api/init-database', async (req, res) => {

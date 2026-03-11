@@ -107,7 +107,7 @@ export class ReminderService {
     }
   }
 
-  private async sendReminderEmail(appointment: any, type: '24-hour' | '2-hour') {
+  private async sendReminderEmail(appointment: any, type: '24-hour' | '2-hour' | 'manual') {
     try {
       await this.emailService.sendReminderEmail({
         customerName: appointment.customer.name,

@@ -217,7 +217,7 @@ export class IntegrationEngine {
         parser.write(csvData);
         parser.end();
       } else {
-        csvData.pipe(parser);
+        (csvData as Readable).pipe(parser);
       }
     });
   }
@@ -327,8 +327,8 @@ export class IntegrationEngine {
     };
   }
 
-  private async importData(job: any, validationResults: { validationResults: RowValidationResult[]; validRows: any[]; errors: string[] }) {
-    const { validationResults, validRows, errors } = validationResults;
+  private async importData(job: any, parsedData: { validationResults: RowValidationResult[]; validRows: any[]; errors: string[] }) {
+    const { validationResults, validRows, errors } = parsedData;
     let successfulRows = 0;
     let failedRows = 0;
     let skippedRows = 0;
@@ -391,7 +391,6 @@ export class IntegrationEngine {
           where: {
             tenantId,
             name: data.name,
-            deletedAt: null,
           },
         });
         return !!existingService;
@@ -438,7 +437,7 @@ export class IntegrationEngine {
             tenantId,
             name: data.name,
             description: data.description || null,
-            duration: parseInt(data.duration),
+            durationMinutes: parseInt(data.duration),
             price: parseFloat(data.price),
             category: data.category || 'GENERAL',
             color: data.color || '#007bff',
@@ -461,7 +460,6 @@ export class IntegrationEngine {
             department: data.department || null,
             bio: data.bio || null,
             isActive: true,
-            roles: ['STAFF'],
           },
         });
         break;
@@ -520,17 +518,15 @@ export class IntegrationEngine {
         },
       });
 
-      return {
-        id: created.id,
-        name: created.name,
-        token, // Only returned on creation
-        tokenType: created.tokenType as ApiTokenType,
-        rateLimitTier: created.rateLimitTier as RateLimitTier,
-        permissions: created.permissions,
-        expiresAt: created.expiresAt?.toISOString(),
-        createdAt: created.createdAt.toISOString(),
-        lastUsed: created.lastUsed?.toISOString(),
-      };
+        return {
+          ...created,
+          tokenType: created.tokenType as ApiTokenType,
+          rateLimitTier: created.rateLimitTier as RateLimitTier,
+          permissions: created.permissions,
+          expiresAt: created.expiresAt?.toISOString(),
+          createdAt: created.createdAt.toISOString(),
+          lastUsed: created.lastUsed?.toISOString(),
+        } as unknown as ApiTokenResponse;
     } catch (error) {
       throw error;
     }
@@ -557,9 +553,14 @@ export class IntegrationEngine {
         where: { id: apiToken.id },
         data: { lastUsed: new Date() },
       });
+      
+      return {
+        ...apiToken,
+        expiresAt: apiToken.expiresAt?.toISOString(),
+      } as unknown as ApiToken;
     }
 
-    return apiToken as ApiToken | null;
+    return null;
   }
 
   async revokeApiToken(tokenId: string, tenantId: string): Promise<void> {
@@ -653,11 +654,10 @@ export class IntegrationEngine {
           startTimeUtc: new Date(validatedRequest.startTimeUtc),
           endTimeUtc: new Date(
             new Date(validatedRequest.startTimeUtc).getTime() + 
-            this.getServiceDuration(validatedRequest.serviceId) * 60000
+            (await this.getServiceDuration(validatedRequest.serviceId)) * 60000
           ),
           status: 'CONFIRMED',
           referenceId: this.generateReferenceId(),
-          source: validatedRequest.source,
         },
       });
 
@@ -832,7 +832,6 @@ export class IntegrationEngine {
         staffId,
         startTimeUtc: new Date(startTimeUtc),
         status: { not: 'CANCELLED' },
-        deletedAt: null,
       },
     });
 
@@ -842,10 +841,10 @@ export class IntegrationEngine {
   private async getServiceDuration(serviceId: string): Promise<number> {
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
-      select: { duration: true },
+      select: { durationMinutes: true },
     });
 
-    return service?.duration || 60; // Default 60 minutes
+    return service?.durationMinutes || 60; // Default 60 minutes
   }
 
   private generateReferenceId(): string {

@@ -80,10 +80,13 @@ export class AppointmentRepository {
 
                 await tx.consentRecord.create({
                     data: {
-                        tenantId: data.tenantId,
-                        customerEmail: (await tx.customer.findUnique({ where: { id: data.customerId } }))?.email || "",
-                        consentText: profile?.policyText || "Standard Policy",
+                        customerId: data.customerId,
+                        type: 'PRIVACY_POLICY',
+                        version: data.policyVersion || '1.0',
+                        given: true,
+                        givenAt: new Date(),
                         ipAddress: data.ipAddress,
+                        notes: profile?.policyText ? 'Inline policy' : undefined,
                     }
                 });
             }
@@ -265,11 +268,19 @@ export class AppointmentRepository {
         }>;
     }) {
         return prisma.$transaction(async (tx) => {
-            const series = await tx.recurringAppointmentSeries.create({
+            const firstApp = data.appointments[0];
+            const series = await tx.recurringSeries.create({
                 data: {
                     tenantId: data.tenantId,
-                    frequency: data.frequency,
-                    occurrences: data.occurrences,
+                    title: 'Recurring Series',
+                    staffId: firstApp.staffId,
+                    serviceId: firstApp.serviceId,
+                    customerId: firstApp.customerId,
+                    startTimeUtc: firstApp.startTimeUtc,
+                    endTimeUtc: firstApp.endTimeUtc,
+                    recurrenceRule: { frequency: data.frequency, count: data.occurrences },
+                    totalOccurrences: data.occurrences,
+                    createdBy: firstApp.createdBy || 'SYSTEM',
                 },
             });
 
@@ -304,7 +315,6 @@ export class AppointmentRepository {
                         createdBy: appData.createdBy,
                         status: AppointmentStatus.BOOKED,
                         seriesId: series.id,
-                        seriesIndex: i,
                     },
                 });
 
@@ -317,15 +327,19 @@ export class AppointmentRepository {
         });
     }
 
-    async cancelSeries(seriesId: string, fromIndex: number = 0, userId?: string) {
+    async cancelSeries(seriesId: string, fromDate: Date, userId?: string) {
         return prisma.$transaction(async (tx) => {
-            const appointments = await tx.appointment.findMany({
+            const allSeriesAppointments = await tx.appointment.findMany({
                 where: {
                     seriesId,
-                    seriesIndex: { gte: fromIndex },
+                    startTimeUtc: { gte: fromDate },
                     status: { not: AppointmentStatus.CANCELLED },
                 },
+                orderBy: { startTimeUtc: 'asc' }
             });
+
+            if (allSeriesAppointments.length === 0) return { count: 0 };
+            const appointments = allSeriesAppointments;
 
             for (const app of appointments) {
                 await tx.appointment.update({
@@ -340,23 +354,24 @@ export class AppointmentRepository {
         });
     }
 
-    async rescheduleSeries(seriesId: string, fromIndex: number, newStartTimeUtc: Date, newEndTimeUtc: Date, userId?: string) {
+    async rescheduleSeries(seriesId: string, fromDate: Date, newStartTimeUtc: Date, newEndTimeUtc: Date, userId?: string) {
         return prisma.$transaction(async (tx) => {
-            const firstInSeries = await tx.appointment.findFirst({
-                where: { seriesId, seriesIndex: fromIndex }
+            const allSeriesAppointments = await tx.appointment.findMany({
+                where: {
+                    seriesId,
+                    startTimeUtc: { gte: fromDate },
+                    status: { not: AppointmentStatus.CANCELLED },
+                },
+                orderBy: { startTimeUtc: 'asc' }
             });
+
+            const firstInSeries = allSeriesAppointments[0];
 
             if (!firstInSeries) throw new Error("INITIAL_APPOINTMENT_NOT_FOUND");
 
             const timeOffset = newStartTimeUtc.getTime() - firstInSeries.startTimeUtc.getTime();
 
-            const futureAppointments = await tx.appointment.findMany({
-                where: {
-                    seriesId,
-                    seriesIndex: { gte: fromIndex },
-                    status: { not: AppointmentStatus.CANCELLED },
-                },
-            });
+            const futureAppointments = allSeriesAppointments;
 
             for (const app of futureAppointments) {
                 const appNewStart = new Date(app.startTimeUtc.getTime() + timeOffset);

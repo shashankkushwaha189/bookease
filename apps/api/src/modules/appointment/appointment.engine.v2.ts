@@ -96,7 +96,7 @@ export class AppointmentEngine {
       });
 
       // Record successful booking attempt
-      // await this.recordBookingAttempt({
+      /* await this.recordBookingAttempt({
         staffId: validated.staffId,
         serviceId: validated.serviceId,
         customerId: validated.customerId,
@@ -104,7 +104,7 @@ export class AppointmentEngine {
         endTimeUtc: validated.endTimeUtc,
         success: true,
         lockId: lock.id,
-      });
+      }); */
 
       // Update metrics
       this.metrics.successfulBookings++;
@@ -350,7 +350,7 @@ export class AppointmentEngine {
       });
 
       // Record successful booking attempt
-      // await this.recordBookingAttempt({
+      /* await this.recordBookingAttempt({
         staffId: validated.staffId,
         serviceId: validated.serviceId,
         customerId: validated.customerId,
@@ -358,7 +358,7 @@ export class AppointmentEngine {
         endTimeUtc: validated.endTimeUtc,
         success: true,
         lockId: lock.id,
-      });
+      }); */
 
       // Update metrics
       this.metrics.successfulBookings++;

@@ -29,7 +29,6 @@ export interface ArchivedAppointment {
     status: AppointmentStatus;
     notes?: string;
     archivedAt: Date;
-    originalCreatedAt: Date;
 }
 
 export class ArchiveService {
@@ -110,19 +109,19 @@ export class ArchiveService {
                         await prisma.appointmentArchive.create({
                             data: {
                                 tenantId,
+                                originalId: appointment.id,
                                 serviceId: appointment.serviceId,
+                                serviceName: appointment.service?.name || 'Unknown',
                                 staffId: appointment.staffId,
+                                staffName: appointment.staff?.name || 'Unknown',
                                 customerId: appointment.customerId,
+                                customerName: appointment.customer?.name || 'Unknown',
+                                customerEmail: appointment.customer?.email || 'Unknown',
                                 referenceId: appointment.referenceId,
                                 startTimeUtc: appointment.startTimeUtc,
                                 endTimeUtc: appointment.endTimeUtc,
                                 status: appointment.status,
                                 notes: appointment.notes,
-                                createdBy: appointment.createdBy,
-                                createdAt: appointment.createdAt,
-                                updatedAt: appointment.updatedAt,
-                                seriesId: appointment.seriesId,
-                                seriesIndex: appointment.seriesIndex,
                                 archivedAt: new Date()
                             }
                         });
@@ -267,8 +266,7 @@ export class ArchiveService {
             endTimeUtc: appt.endTimeUtc,
             status: appt.status,
             notes: appt.notes,
-            archivedAt: appt.archivedAt,
-            originalCreatedAt: appt.createdAt
+            archivedAt: appt.archivedAt
         }));
 
         const duration = Date.now() - startTime;
@@ -333,22 +331,24 @@ export class ArchiveService {
             prisma.appointmentArchive.groupBy({
                 by: ['serviceId'],
                 where: { tenantId },
-                _count: true,
-                orderBy: { _count: { count: 'desc' } },
-                take: 10
+                _count: {
+                    serviceId: true
+                }
             }).then(async (results: any[]) => {
+                results.sort((a, b) => b._count.serviceId - a._count.serviceId);
+                const topResults = results.slice(0, 10);
                 // Get service names
-                const serviceIds = results.map(r => r.serviceId);
+                const serviceIds = topResults.map(r => r.serviceId);
                 const services = await prisma.service.findMany({
                     where: { id: { in: serviceIds } },
                     select: { id: true, name: true }
                 });
                 
-                return results.map((result: any) => {
+                return topResults.map((result: any) => {
                     const service = services.find(s => s.id === result.serviceId);
                     return { 
                         serviceName: service?.name || 'Unknown', 
-                        count: result._count 
+                        count: result._count.serviceId 
                     };
                 });
             }),
@@ -434,7 +434,7 @@ export class ArchiveService {
             // Restore appointment
             const restoredAppointment = await prisma.appointment.create({
                 data: {
-                    id: archivedId,
+                    id: archived.originalId,
                     tenantId,
                     serviceId: archived.serviceId,
                     staffId: archived.staffId,
@@ -444,11 +444,7 @@ export class ArchiveService {
                     endTimeUtc: archived.endTimeUtc,
                     status: archived.status,
                     notes: archived.notes,
-                    createdBy: archived.createdBy,
-                    createdAt: archived.createdAt,
-                    updatedAt: new Date(),
-                    seriesId: archived.seriesId,
-                    seriesIndex: archived.seriesIndex
+                    updatedAt: new Date()
                 }
             });
 

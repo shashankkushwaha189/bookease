@@ -232,7 +232,7 @@ export const customerResponseSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   deletedAt: z.string().datetime().optional(),
-  notes: z.array(customerNoteSchema.extend({
+  customerNotes: z.array(customerNoteSchema.extend({
     id: z.string().uuid(),
     customerId: z.string().uuid(),
     staffId: z.string().uuid(),

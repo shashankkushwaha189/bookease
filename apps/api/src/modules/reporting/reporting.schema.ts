@@ -164,7 +164,7 @@ export const reportResponseSchema = z.object({
     totalRecords: z.number(),
     generatedIn: z.number(), // milliseconds
     hasMore: z.boolean(),
-    filters: z.record(z.any()).optional(),
+    filters: z.record(z.string(), z.any()).optional(),
   }),
   metadata: z.object({
     startDate: z.string().datetime(),
@@ -207,7 +207,7 @@ export const archivalJobSchema = z.object({
   archivedAppointments: z.number(),
   failedAppointments: z.number(),
   errorMessage: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   createdAt: z.string().datetime().optional(),
 });
 
@@ -257,7 +257,7 @@ export const archiveResultSchema = z.object({
       earliest: z.string().datetime(),
       latest: z.string().datetime(),
     }),
-    statusBreakdown: z.record(z.number()),
+    statusBreakdown: z.record(z.string(), z.number()),
   }),
 });
 

@@ -41,7 +41,7 @@ export class SessionController {
         });
       }
 
-      const session = await this.sessionService.findByToken(token);
+      const session = await this.sessionService.findByToken(token as string);
 
       if (!session) {
         return res.status(404).json({
@@ -81,7 +81,7 @@ export class SessionController {
       }
 
       const sessions = await this.sessionService.findByUser(
-        userId, 
+        userId as string, 
         limit ? parseInt(limit as string) : undefined
       );
 
@@ -101,7 +101,7 @@ export class SessionController {
     try {
       const { token } = req.params;
       
-      await this.sessionService.updateLastAccess(token);
+      await this.sessionService.updateLastAccess(token as string);
 
       res.json({
         success: true,
@@ -119,7 +119,7 @@ export class SessionController {
     try {
       const { token } = req.params;
       
-      await this.sessionService.deleteSession(token);
+      await this.sessionService.deleteSession(token as string);
 
       res.json({
         success: true,
@@ -147,7 +147,7 @@ export class SessionController {
         });
       }
 
-      await this.sessionService.deleteUserSessions(userId);
+      await this.sessionService.deleteUserSessions(userId as string);
 
       res.json({
         success: true,
@@ -175,7 +175,7 @@ export class SessionController {
         });
       }
 
-      const analytics = await this.sessionService.getSessionAnalytics(userId);
+      const analytics = await this.sessionService.getSessionAnalytics(userId as string);
 
       res.json({
         success: true,

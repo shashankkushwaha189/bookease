@@ -260,7 +260,7 @@ export class ArchiveController {
                 });
             }
 
-            const result = await archiveService.restoreArchivedAppointment(tenantId, archivedId);
+            const result = await archiveService.restoreArchivedAppointment(tenantId, archivedId as string);
             
             const duration = Date.now() - startTime;
             logger.info({

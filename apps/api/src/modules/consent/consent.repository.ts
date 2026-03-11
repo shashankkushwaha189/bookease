@@ -3,19 +3,29 @@ import { ConsentRecord } from '@prisma/client';
 
 export class ConsentRepository {
     async create(data: {
-        tenantId: string;
-        customerEmail: string;
+        customerId: string;
+        type: string;
+        version: string;
+        given: boolean;
         ipAddress: string;
-        consentText: string;
+        notes: string;
     }) {
         return prisma.consentRecord.create({
-            data
+            data: {
+                customerId: data.customerId,
+                type: data.type,
+                version: data.version,
+                given: data.given,
+                givenAt: new Date(),
+                ipAddress: data.ipAddress,
+                notes: data.notes
+            }
         });
     }
 
-    async findLatest(tenantId: string, customerEmail: string) {
+    async findLatest(customerId: string, type: string) {
         return prisma.consentRecord.findFirst({
-            where: { tenantId, customerEmail },
+            where: { customerId, type },
             orderBy: { givenAt: 'desc' }
         });
     }

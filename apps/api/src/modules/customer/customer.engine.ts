@@ -155,7 +155,7 @@ export class CustomerManagementEngine {
           deletedAt: null,
         },
         include: {
-          notes: includeNotes ? {
+          customerNotes: includeNotes ? {
             orderBy: { createdAt: 'desc' },
           } : false,
           consentRecords: includeConsentRecords ? {
@@ -241,7 +241,7 @@ export class CustomerManagementEngine {
               select: {
                 appointments: {
                   where: {
-                    deletedAt: null,
+                    status: { notIn: ['CANCELLED'] },
                   },
                 },
               },
@@ -301,6 +301,7 @@ export class CustomerManagementEngine {
       const note = await prisma.customerNote.create({
         data: {
           ...validated,
+          type: validated.type as string,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -309,7 +310,7 @@ export class CustomerManagementEngine {
       const noteTime = Date.now() - startTime;
       this.updateNoteCreationTime(noteTime);
 
-      return note;
+      return note as unknown as CustomerNote;
 
     } catch (error) {
       throw error;
@@ -345,11 +346,12 @@ export class CustomerManagementEngine {
         where: { id: noteId },
         data: {
           ...validated,
+          type: validated.type ? (validated.type as string) : undefined,
           updatedAt: new Date(),
         },
       });
 
-      return updatedNote;
+      return updatedNote as unknown as CustomerNote;
 
     } catch (error) {
       throw error;
@@ -411,7 +413,11 @@ export class CustomerManagementEngine {
             updatedAt: new Date(),
           },
         });
-        return updatedTag;
+        return {
+          ...updatedTag,
+          createdAt: updatedTag.createdAt.toISOString(),
+          updatedAt: updatedTag.updatedAt.toISOString(),
+        } as CustomerTag;
       } else {
         // Create new tag
         const newTag = await prisma.customerTag.create({
@@ -422,7 +428,11 @@ export class CustomerManagementEngine {
             updatedAt: new Date(),
           },
         });
-        return newTag;
+        return {
+          ...newTag,
+          createdAt: newTag.createdAt.toISOString(),
+          updatedAt: newTag.updatedAt.toISOString(),
+        } as CustomerTag;
       }
 
     } catch (error) {
@@ -441,7 +451,11 @@ export class CustomerManagementEngine {
         orderBy: { usageCount: 'desc' },
       });
 
-      return tags;
+      return tags.map(t => ({
+        ...t,
+        createdAt: t.createdAt.toISOString(),
+        updatedAt: t.updatedAt.toISOString(),
+      })) as CustomerTag[];
 
     } catch (error) {
       throw error;
@@ -494,7 +508,13 @@ export class CustomerManagementEngine {
       const consentTime = Date.now() - startTime;
       this.updateConsentRecordTime(consentTime);
 
-      return consent;
+      return {
+        ...consent,
+        givenAt: consent.givenAt.toISOString(),
+        expiresAt: consent.expiresAt?.toISOString(),
+        withdrawnAt: consent.withdrawnAt?.toISOString(),
+        createdAt: consent.createdAt.toISOString(),
+      } as unknown as ConsentRecord;
 
     } catch (error) {
       throw error;
@@ -509,7 +529,13 @@ export class CustomerManagementEngine {
         orderBy: { givenAt: 'desc' },
       });
 
-      return records;
+      return records.map(r => ({
+        ...r,
+        givenAt: r.givenAt.toISOString(),
+        expiresAt: r.expiresAt?.toISOString(),
+        withdrawnAt: r.withdrawnAt?.toISOString(),
+        createdAt: r.createdAt.toISOString(),
+      })) as unknown as ConsentRecord[];
 
     } catch (error) {
       throw error;
@@ -535,7 +561,7 @@ export class CustomerManagementEngine {
             select: {
               appointments: {
                 where: {
-                  deletedAt: null,
+                  status: { notIn: ['CANCELLED', 'COMPLETED'] },
                   startTimeUtc: { gte: new Date() },
                 },
               },
@@ -697,7 +723,6 @@ export class CustomerManagementEngine {
     const appointments = await prisma.appointment.findMany({
       where: {
         customerId,
-        deletedAt: null,
       },
       include: {
         service: { select: { name: true } },
@@ -783,11 +808,11 @@ export class CustomerManagementEngine {
       createdAt: customer.createdAt.toISOString(),
       updatedAt: customer.updatedAt.toISOString(),
       deletedAt: customer.deletedAt?.toISOString(),
-      notes: customer.notes?.map((note: any) => ({
+      customerNotes: customer.customerNotes?.map((note: any) => ({
         id: note.id,
         customerId: note.customerId,
         staffId: note.staffId,
-        type: note.type,
+        type: note.type as CustomerNoteType,
         title: note.title,
         content: note.content,
         isPrivate: note.isPrivate,
@@ -800,7 +825,7 @@ export class CustomerManagementEngine {
       consentRecords: customer.consentRecords?.map((record: any) => ({
         id: record.id,
         customerId: record.customerId,
-        type: record.type,
+        type: record.type as ConsentType,
         version: record.version,
         given: record.given,
         givenAt: record.givenAt.toISOString(),

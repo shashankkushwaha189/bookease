@@ -23,7 +23,7 @@ export class MFAController {
         });
       }
 
-      const mfaSetup = await this.mfaService.generateMFASecret(userId);
+      const mfaSetup = await this.mfaService.generateMFASecret(userId as string);
 
       res.json({
         success: true,
@@ -229,7 +229,7 @@ export class MFAController {
         });
       }
 
-      const codes = await this.mfaService.generateRecoveryCodes(userId);
+      const codes = await this.mfaService.generateRecoveryCodes(userId as string);
 
       res.json({
         success: true,
@@ -276,7 +276,7 @@ export class MFAController {
     try {
       const { userId } = req.params;
       
-      const isEnabled = await this.mfaService.isMFAEnabled(userId);
+      const isEnabled = await this.mfaService.isMFAEnabled(userId as string);
 
       res.json({
         success: true,

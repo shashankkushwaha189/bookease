@@ -13,7 +13,7 @@ export class ConsentService {
 
     async captureConsent(
         tenantId: string,
-        customerEmail: string,
+        customerId: string,
         ipAddress: string
     ) {
         // 1. Fetch exact policy text from BusinessProfile at this moment
@@ -25,14 +25,16 @@ export class ConsentService {
 
         // 2. Snapshot the consent
         const record = await this.repository.create({
-            tenantId,
-            customerEmail,
+            customerId,
+            type: 'TERMS_OF_SERVICE',
+            version: '1.0',
+            given: true,
             ipAddress,
-            consentText,
+            notes: consentText,
         });
 
         logger.info(
-            { tenantId, customerEmail, recordId: record.id },
+            { tenantId, customerId, recordId: record.id },
             'Consent captured'
         );
 

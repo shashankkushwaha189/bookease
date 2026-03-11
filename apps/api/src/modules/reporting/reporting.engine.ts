@@ -181,7 +181,13 @@ export class ReportingArchivalEngine {
       console.error('Archival job failed:', error);
     });
 
-    return job as ArchivalJob;
+    return {
+      ...job,
+      startedAt: job.startedAt?.toISOString(),
+      completedAt: job.completedAt?.toISOString(),
+      createdAt: job.createdAt.toISOString(),
+      metadata: job.metadata ? (job.metadata as Record<string, unknown>) : undefined,
+    } as ArchivalJob;
   }
 
   // Search archived appointments
@@ -274,7 +280,13 @@ export class ReportingArchivalEngine {
     const job = await prisma.archivalJob.findUnique({
       where: { id: jobId },
     });
-    return job as ArchivalJob | null;
+    return job ? {
+      ...job,
+      startedAt: job.startedAt?.toISOString(),
+      completedAt: job.completedAt?.toISOString(),
+      createdAt: job.createdAt.toISOString(),
+      metadata: job.metadata ? (job.metadata as Record<string, unknown>) : undefined,
+    } as ArchivalJob : null;
   }
 
   // Get archival jobs
@@ -284,7 +296,13 @@ export class ReportingArchivalEngine {
       orderBy: { createdAt: 'desc' },
       take: 50,
     });
-    return jobs as ArchivalJob[];
+    return jobs.map(job => ({
+      ...job,
+      startedAt: job.startedAt?.toISOString(),
+      completedAt: job.completedAt?.toISOString(),
+      createdAt: job.createdAt.toISOString(),
+      metadata: job.metadata ? (job.metadata as Record<string, unknown>) : undefined,
+    })) as ArchivalJob[];
   }
 
   // Get metrics
@@ -656,10 +674,10 @@ export class ReportingArchivalEngine {
       const appointmentsToArchive = await prisma.appointment.findMany({
         where: {
           tenantId: config.tenantId,
-          status: { in: config.archiveStatuses },
-          startTimeUtc: { lt: cutoffDate },
-          startTimeUtc: { lt: excludeDate },
-          deletedAt: null,
+          status: { in: config.archiveStatuses as any },
+          startTimeUtc: { 
+            lt: cutoffDate < excludeDate ? cutoffDate : excludeDate 
+          },
         },
         take: config.batchSize,
       });
@@ -704,10 +722,9 @@ export class ReportingArchivalEngine {
             },
           });
 
-          // Soft delete original appointment
-          await prisma.appointment.update({
+          // Delete original appointment after archiving
+          await prisma.appointment.delete({
             where: { id: apt.id },
-            data: { deletedAt: new Date() },
           });
 
           archivedCount++;

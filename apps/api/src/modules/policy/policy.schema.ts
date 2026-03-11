@@ -30,6 +30,7 @@ export enum OverrideReason {
 // Policy rule schema
 export const policyRuleSchema = z.object({
   id: z.string().uuid().optional(),
+  tenantId: z.string().uuid(),
   type: z.nativeEnum(PolicyType),
   name: z.string().min(1).max(100),
   description: z.string().max(500),
@@ -111,7 +112,7 @@ export const policyEvaluationRequestSchema = z.object({
   requestedTime: z.string().datetime().optional(), // For reschedule requests
   userId: z.string().uuid(), // User performing the action
   userRole: z.enum(['CUSTOMER', 'STAFF', 'ADMIN']),
-  context: z.record(z.any()).optional(), // Additional context
+  context: z.record(z.string(), z.any()).optional(), // Additional context
 });
 
 // Policy evaluation result schema
@@ -128,12 +129,13 @@ export const policyEvaluationResultSchema = z.object({
   })),
   overrideRequired: z.boolean(),
   warnings: z.array(z.string()),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 // Policy override schema
 export const policyOverrideSchema = z.object({
   policyEvaluationId: z.string().uuid(),
+  policyId: z.string().uuid(),
   reason: z.nativeEnum(OverrideReason),
   reasonText: z.string().min(1).max(500),
   userId: z.string().uuid(),

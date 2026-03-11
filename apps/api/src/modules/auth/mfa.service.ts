@@ -1,5 +1,6 @@
 import crypto from 'crypto';
-import speakeasy from 'speakeasy';
+import * as speakeasy from 'speakeasy';
+import * as qrcode from 'qrcode';
 import { PrismaClient, User } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
@@ -40,11 +41,17 @@ export class MFAService {
     });
 
     const backupCodes = this.generateBackupCodes();
-    const qrCode = speakeasy.qrCodeDataURL({
+    
+    // Generate otpauth URL
+    const otpauthUrl = speakeasy.otpauthURL({
       secret: secret.base32,
       label: `BookEase (${userId})`,
       issuer: 'BookEase',
+      encoding: 'base32'
     });
+    
+    // Generate QR code data URL using qrcode package
+    const qrCode = await qrcode.toDataURL(otpauthUrl);
 
     // Store MFA secret in database
     await this.prisma.user.update({
@@ -52,6 +59,8 @@ export class MFAService {
       data: {
         mfaEnabled: true,
         mfaSecret: secret.base32,
+        recoveryCodes: JSON.stringify(backupCodes),
+        recoveryCodesGeneratedAt: new Date(),
       },
     });
 
@@ -83,7 +92,8 @@ export class MFAService {
     });
 
     // Check if code matches backup codes
-    const isBackupCode = backupCodes.some(backupCode => backupCode === code);
+    const parsedCodes: string[] = user.recoveryCodes ? JSON.parse(user.recoveryCodes) : [];
+    const isBackupCode = parsedCodes.some(backupCode => backupCode === code);
 
     return verified || isBackupCode;
   }
@@ -247,7 +257,7 @@ export class MFAService {
     await this.prisma.user.update({
       where: { id: userId },
       data: {
-        recoveryCodes: codes,
+        recoveryCodes: JSON.stringify(codes),
         recoveryCodesGeneratedAt: new Date(),
       },
     });
@@ -273,6 +283,7 @@ export class MFAService {
       return false;
     }
 
-    return user.recoveryCodes.includes(code);
+    const parsedCodes: string[] = user.recoveryCodes ? JSON.parse(user.recoveryCodes) : [];
+    return parsedCodes.includes(code);
   }
 }

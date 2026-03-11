@@ -1,0 +1,43 @@
+﻿src/modules/auth/mfa.service.ts(43,30): error TS2339: Property 'qrCodeDataURL' does not exist on type 'typeof import("D:/realworkstudio/bookease/node_modules/.pnpm/@types+speakeasy@2.0.10/node_modules/@types/speakeasy/index")'.
+src/modules/auth/session.routes.ts(7,20): error TS2554: Expected 1 arguments, but got 0.
+src/modules/availability/availability.service.v2.ts(58,9): error TS2561: Object literal may only specify known properties, but 'staff' does not exist in type '{ staffId: string; serviceId: string; date: string; timezone: string; duration: number; includeBufferInSlot: boolean; maxSlots: number; bufferBefore?: number; bufferAfter?: number; }'. Did you mean to write 'staffId'?
+src/modules/integration/integration.engine.ts(558,12): error TS2352: Conversion of type '{ id: string; name: string; isActive: boolean; createdAt: Date; tenantId: string; expiresAt: Date; tokenHash: string; tokenType: string; rateLimitTier: string; permissions: string[]; allowedIps: string[]; allowedOrigins: string[]; lastUsed: Date; }' to type '{ tenantId: string; name: string; tokenType: ApiTokenType; rateLimitTier: RateLimitTier; permissions: string[]; allowedIps: string[]; allowedOrigins: string[]; expiresAt?: string; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'expiresAt' are incompatible.
+    Type 'Date' is not comparable to type 'string'.
+src/modules/notifications/email.service.ts(64,87): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'string'.
+src/modules/notifications/email.service.ts(82,84): error TS2345: Argument of type '{ customerEmail: string; referenceId: string; type: string; }' is not assignable to parameter of type 'string'.
+src/modules/notifications/email.service.ts(117,76): error TS2345: Argument of type '{ customerEmail: string; referenceId: string; type: string; }' is not assignable to parameter of type 'string'.
+src/modules/notifications/email.service.ts(151,74): error TS2345: Argument of type '{ customerEmail: string; referenceId: string; type: string; }' is not assignable to parameter of type 'string'.
+src/modules/notifications/email.service.ts(185,72): error TS2345: Argument of type '{ customerEmail: string; referenceId: string; type: string; }' is not assignable to parameter of type 'string'.
+src/modules/notifications/notification.controller.ts(47,68): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/notifications/notification.routes.ts(20,50): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'UserRole'.
+src/modules/notifications/notification.routes.ts(23,61): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'UserRole'.
+src/modules/notifications/notification.routes.ts(29,71): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'UserRole'.
+src/modules/notifications/reminder.service.ts(152,49): error TS2345: Argument of type '"manual"' is not assignable to parameter of type '"24-hour" | "2-hour"'.
+src/modules/policy/policy.service.ts(117,16): error TS2339: Property 'debug' does not exist on type '{ info: (message: any, context?: string) => void; error: (error: any, context?: string) => void; warn: (message: any, context?: string) => void; }'.
+src/modules/policy/policy.service.ts(191,16): error TS2339: Property 'debug' does not exist on type '{ info: (message: any, context?: string) => void; error: (error: any, context?: string) => void; warn: (message: any, context?: string) => void; }'.
+src/modules/policy/policy.service.ts(233,16): error TS2339: Property 'debug' does not exist on type '{ info: (message: any, context?: string) => void; error: (error: any, context?: string) => void; warn: (message: any, context?: string) => void; }'.
+src/modules/reporting/reporting.schema.ts(167,16): error TS2554: Expected 2-3 arguments, but got 1.
+src/modules/reporting/reporting.schema.ts(210,15): error TS2554: Expected 2-3 arguments, but got 1.
+src/modules/reporting/reporting.schema.ts(260,24): error TS2554: Expected 2-3 arguments, but got 1.
+src/modules/user/user.controller.ts(229,9): error TS2554: Expected 1-2 arguments, but got 3.
+src/modules/user/user.controller.ts(382,41): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/user/user.controller.ts(426,14): error TS2339: Property 'name' does not exist on type 'Omit<{ id: string; isActive: boolean; createdAt: Date; updatedAt: Date; deletedAt: Date; email: string; tenantId: string; passwordHash: string; role: UserRole; lastLoginAt: Date; ... 14 more ...; recoveryCodesGeneratedAt: Date; }, "password">'.
+src/routes/services-staff.routes.ts(120,64): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/services-staff.routes.ts(145,67): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/services-staff.routes.ts(190,70): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/services-staff.routes.ts(329,58): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/services-staff.routes.ts(354,59): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/services-staff.routes.ts(381,61): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/services-staff.routes.ts(408,58): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/services-staff.routes.ts(434,57): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.

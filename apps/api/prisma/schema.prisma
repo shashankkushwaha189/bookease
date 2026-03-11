@@ -90,6 +90,7 @@ model User {
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
   staff  Staff?
+  sessions Session[]
   @@unique([tenantId, email])
   @@index([tenantId])
 }
@@ -104,6 +105,7 @@ model Session {
   deviceId     String?
   ipAddress    String?
   userAgent     String?
+  user         User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -645,10 +647,15 @@ model ApiToken {
   tenantId  String
   name      String
   tokenHash String
-  lastUsed  DateTime?
-  expiresAt DateTime?
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
+  tokenType      String    @default("INTEGRATION")
+  rateLimitTier  String    @default("BASIC")
+  permissions    String[]
+  allowedIps     String[]
+  allowedOrigins String[]
+  lastUsed       DateTime?
+  expiresAt      DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 

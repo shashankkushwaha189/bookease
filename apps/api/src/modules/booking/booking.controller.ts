@@ -162,7 +162,7 @@ export class BookingController {
         // 7. Capture consent
         await this.consentService.captureConsent(
           tenantId,
-          customer.email,
+          customerRecord.id,
           ipAddress
         );
 
@@ -196,7 +196,7 @@ export class BookingController {
             error: {
               code: 'VALIDATION_ERROR',
               message: 'Invalid booking data',
-              details: error.errors
+              details: error.issues
             }
           });
         }
@@ -229,7 +229,7 @@ export class BookingController {
 
         const appointment = await prisma.appointment.findFirst({
           where: {
-            id: bookingId,
+            id: bookingId as string,
             tenantId,
             status: { in: ['BOOKED', 'CONFIRMED'] }
           },
@@ -251,7 +251,7 @@ export class BookingController {
         }
 
         const updatedAppointment = await prisma.appointment.update({
-          where: { id: bookingId },
+          where: { id: bookingId as string },
           data: {
             status: 'CANCELLED',
             cancelledAt: new Date(),
@@ -301,7 +301,7 @@ export class BookingController {
 
         const appointment = await prisma.appointment.findFirst({
           where: {
-            id: bookingId,
+            id: bookingId as string,
             tenantId,
             status: { in: ['BOOKED', 'CONFIRMED'] }
           }
@@ -323,7 +323,7 @@ export class BookingController {
             tenantId,
             staffId: appointment.staffId,
             status: { in: ['BOOKED', 'CONFIRMED'] },
-            id: { not: bookingId },
+            id: { not: bookingId as string },
             OR: [
               {
                 startTimeUtc: { lt: new Date(newEndTimeUtc) },
@@ -344,7 +344,7 @@ export class BookingController {
         }
 
         const updatedAppointment = await prisma.appointment.update({
-          where: { id: bookingId },
+          where: { id: bookingId as string },
           data: {
             startTimeUtc: new Date(newStartTimeUtc),
             endTimeUtc: new Date(newEndTimeUtc),

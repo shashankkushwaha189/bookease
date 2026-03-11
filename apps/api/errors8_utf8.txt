@@ -1,0 +1,162 @@
+﻿src/modules/reporting/reporting.engine.ts(282,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(288,28): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(292,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(292,9): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(292,33): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(292,42): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(292,64): error TS1011: An element access expression should take an argument.
+src/modules/reporting/reporting.engine.ts(293,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(297,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(298,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(304,25): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(308,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(308,16): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(309,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(312,6): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(316,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(316,17): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(317,9): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(325,6): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(330,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(330,11): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(330,17): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(330,44): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(330,58): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(330,86): error TS1011: An element access expression should take an argument.
+src/modules/reporting/reporting.engine.ts(331,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(331,47): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(333,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(338,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(341,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(380,34): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(383,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(392,8): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(395,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(395,11): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(395,17): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(395,42): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(395,56): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(395,82): error TS1011: An element access expression should take an argument.
+src/modules/reporting/reporting.engine.ts(396,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(396,47): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(398,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(404,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(407,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(448,34): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(451,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(466,8): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(469,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(469,11): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(469,17): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(469,43): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(469,57): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(470,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(470,47): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(472,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(479,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(482,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(482,50): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(483,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(483,84): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(484,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(484,91): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(487,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(500,34): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(503,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(516,34): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(519,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(527,34): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(530,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(544,34): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(546,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(574,6): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(577,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(577,11): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(577,17): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(577,46): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(577,60): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(578,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(578,47): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(580,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(582,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(585,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(590,8): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(592,17): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(596,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(599,15): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(601,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(604,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(604,83): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(606,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(612,6): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(615,3): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(615,11): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(615,33): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(615,47): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(615,53): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(616,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(616,16): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(622,6): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(624,9): error TS1003: Identifier expected.
+src/modules/reporting/reporting.engine.ts(624,15): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(624,31): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(624,33): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(625,12): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(625,29): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(628,14): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(646,5): error TS1068: Unexpected token. A constructor, method, accessor, or property was expected.
+src/modules/reporting/reporting.engine.ts(647,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(649,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(649,27): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(649,41): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(649,57): error TS1005: ';' expected.
+src/modules/reporting/reporting.engine.ts(649,59): error TS1434: Unexpected keyword or identifier.
+src/modules/reporting/reporting.engine.ts(664,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(664,11): error TS1434: Unexpected keyword or identifier.
+src/modules/reporting/reporting.engine.ts(664,41): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(664,57): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(664,74): error TS1005: ';' expected.
+src/modules/reporting/reporting.engine.ts(664,88): error TS1109: Expression expected.
+src/modules/reporting/reporting.engine.ts(665,9): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(666,13): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(666,36): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(667,17): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(667,77): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(669,13): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(669,37): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(670,18): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(670,76): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(673,13): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(682,9): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(684,32): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(684,45): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(684,47): error TS1136: Property assignment expected.
+src/modules/reporting/reporting.engine.ts(757,5): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(757,7): error TS1005: 'try' expected.
+src/modules/reporting/reporting.engine.ts(769,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(771,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(771,11): error TS1434: Unexpected keyword or identifier.
+src/modules/reporting/reporting.engine.ts(771,48): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(771,63): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(771,69): error TS1005: ';' expected.
+src/modules/reporting/reporting.engine.ts(772,11): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(784,7): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(786,12): error TS1005: ':' expected.
+src/modules/reporting/reporting.engine.ts(796,6): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(799,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(799,45): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(799,51): error TS1011: An element access expression should take an argument.
+src/modules/reporting/reporting.engine.ts(799,66): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(799,72): error TS1011: An element access expression should take an argument.
+src/modules/reporting/reporting.engine.ts(799,74): error TS1005: ';' expected.
+src/modules/reporting/reporting.engine.ts(799,80): error TS1011: An element access expression should take an argument.
+src/modules/reporting/reporting.engine.ts(799,82): error TS1005: ';' expected.
+src/modules/reporting/reporting.engine.ts(838,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(838,52): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(838,61): error TS1005: ';' expected.
+src/modules/reporting/reporting.engine.ts(839,13): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(839,55): error TS1005: ',' expected.
+src/modules/reporting/reporting.engine.ts(839,57): error TS1136: Property assignment expected.
+src/modules/reporting/reporting.engine.ts(841,7): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(845,3): error TS1128: Declaration or statement expected.
+src/modules/reporting/reporting.engine.ts(846,1): error TS1128: Declaration or statement expected.

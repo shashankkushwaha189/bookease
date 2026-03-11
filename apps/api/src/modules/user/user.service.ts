@@ -211,8 +211,11 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
 
     // Create user
+    // Create user
+    const { name, ...restUserData } = userData;
     const user = await this.userRepository.create({
-      ...userData,
+      ...restUserData,
+      role: userData.role,
       password: hashedPassword,
     });
 
@@ -263,8 +266,8 @@ export class UserService {
   /**
    * Get users by tenant
    */
-  async getUsersByTenant(tenantId: string, role?: UserRole): Promise<Omit<User, 'password'>[]> {
-    const users = await this.userRepository.findByTenant(tenantId, role);
+  async getUsersByTenant(tenantId: string, options?: { role?: UserRole; limit?: number }): Promise<Omit<User, 'password'>[]> {
+    const users = await this.userRepository.findByTenant(tenantId, options?.role);
     
     return users.map(user => {
       // @ts-ignore

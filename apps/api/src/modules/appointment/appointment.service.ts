@@ -447,12 +447,12 @@ export class AppointmentService {
         let result;
         if (scope === "series" && appointment.seriesId) {
             // Cancel entire series from this appointment onwards
-            result = await this.repository.cancelSeries(appointment.seriesId, appointment.seriesIndex ?? 0, user.id);
+            result = await this.repository.cancelSeries(appointment.seriesId, appointment.startTimeUtc, user.id);
             
             logger.info({
                 tenantId: appointment.tenantId,
                 seriesId: appointment.seriesId,
-                fromIndex: appointment.seriesIndex,
+                fromDate: appointment.startTimeUtc,
                 cancelledCount: result.count,
                 userId: user.id,
                 requiresOverride: policyCheck.requiresOverride
@@ -476,7 +476,7 @@ export class AppointmentService {
                 requiresOverride: policyCheck.requiresOverride,
                 ...(scope === 'series' && { 
                     seriesId: appointment.seriesId, 
-                    fromIndex: appointment.seriesIndex 
+                    fromDate: appointment.startTimeUtc 
                 })
             }
         });
@@ -546,7 +546,7 @@ export class AppointmentService {
             // Reschedule entire series from this appointment onwards
             result = await this.repository.rescheduleSeries(
                 appointment.seriesId, 
-                appointment.seriesIndex ?? 0, 
+                appointment.startTimeUtc, 
                 newStart, 
                 newEnd, 
                 user.id
@@ -555,7 +555,7 @@ export class AppointmentService {
             logger.info({
                 tenantId: appointment.tenantId,
                 seriesId: appointment.seriesId,
-                fromIndex: appointment.seriesIndex,
+                fromDate: appointment.startTimeUtc,
                 newStartTime: newStartTimeUtc,
                 rescheduledCount: result.count,
                 userId: user.id,
@@ -582,7 +582,7 @@ export class AppointmentService {
                 requiresOverride: policyCheck.requiresOverride,
                 ...(scope === 'series' && { 
                     seriesId: appointment.seriesId, 
-                    fromIndex: appointment.seriesIndex 
+                    fromDate: appointment.startTimeUtc 
                 })
             }
         });
@@ -786,7 +786,7 @@ export class AppointmentService {
     }
 
     async getRecurringSeries(seriesId: string) {
-        const series = await prisma.recurringAppointmentSeries.findFirst({
+        const series = await prisma.recurringSeries.findFirst({
             where: { id: seriesId },
             include: {
                 appointments: {
@@ -796,7 +796,7 @@ export class AppointmentService {
                         customer: true,
                         timeline: true
                     },
-                    orderBy: { seriesIndex: 'asc' }
+                    orderBy: { startTimeUtc: 'asc' }
                 }
             }
         });
@@ -825,7 +825,7 @@ export class AppointmentService {
             where.appointments = { some: { customerId: filters.customerId } };
         }
 
-        const series = await prisma.recurringAppointmentSeries.findMany({
+        const series = await prisma.recurringSeries.findMany({
             where,
             include: {
                 appointments: {
@@ -835,7 +835,7 @@ export class AppointmentService {
                         staff: true,
                         customer: true
                     },
-                    orderBy: { seriesIndex: 'asc' }
+                    orderBy: { startTimeUtc: 'asc' }
                 },
                 _count: {
                     select: {

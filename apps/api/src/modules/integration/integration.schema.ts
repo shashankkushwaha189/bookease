@@ -56,7 +56,7 @@ export const importJobSchema = z.object({
 export const rowValidationSchema = z.object({
   rowNumber: z.number(),
   status: z.nativeEnum(RowValidationStatus),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   errors: z.array(z.string()).default([]),
   warnings: z.array(z.string()).default([]),
   isValid: z.boolean(),
@@ -120,7 +120,7 @@ export const apiTokenSchema = z.object({
   rateLimitTier: z.nativeEnum(RateLimitTier),
   permissions: z.array(z.string()).default([]),
   expiresAt: z.string().datetime().optional(),
-  allowedIps: z.array(z.string().ip()).default([]),
+  allowedIps: z.array(z.string()).default([]),
   allowedOrigins: z.array(z.string().url()).default([]),
 });
 
@@ -142,7 +142,7 @@ export const rateLimitSchema = z.object({
   tenantId: z.string().uuid(),
   tokenId: z.string().uuid().optional(),
   endpoint: z.string(),
-  ip: z.string().ip().optional(),
+  ip: z.string().optional(),
   userAgent: z.string().optional(),
 });
 

@@ -29,6 +29,7 @@ const StaffAvailabilityPage = React.lazy(() => import('./pages/StaffAvailability
 const StaffPerformancePage = React.lazy(() => import('./pages/StaffPerformancePage'));
 const CustomerBookingsPage = React.lazy(() => import('./pages/CustomerBookingsPage'));
 const CustomerProfilePage = React.lazy(() => import('./pages/CustomerProfilePage'));
+const SuperAdminPage = React.lazy(() => import('./pages/SuperAdminPage'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 const ForbiddenPage = React.lazy(() => import('./pages/ForbiddenPage'));
 
@@ -148,6 +149,16 @@ const router = createBrowserRouter([
             <BookingConfirmPage />
           </ErrorBoundary>
         </PublicLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/superadmin',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <ErrorBoundary>
+          <SuperAdminPage />
+        </ErrorBoundary>
       </Suspense>
     ),
   },

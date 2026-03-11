@@ -116,8 +116,9 @@ router.put('/services/:id',
         try {
             const { tenantId } = req.user;
             const { id } = req.params;
-            
-            const service = await serviceService.updateService(id, tenantId, req.body);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const service = await serviceService.updateService(idStr, tenantIdStr, req.body);
             
             res.json({
                 success: true,
@@ -141,8 +142,9 @@ router.delete('/services/:id',
         try {
             const { tenantId } = req.user;
             const { id } = req.params;
-            
-            const result = await serviceService.softDeleteService(id, tenantId);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const result = await serviceService.softDeleteService(idStr, tenantIdStr);
             
             res.json({
                 success: true,
@@ -186,8 +188,9 @@ router.post('/services/:id/assign',
             const { tenantId } = req.user;
             const { id } = req.params;
             const { staffIds } = req.body;
-            
-            const result = await serviceService.assignServiceToStaff(id, tenantId, staffIds);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const result = await serviceService.assignServiceToStaff(idStr, tenantIdStr, staffIds);
             
             res.json({
                 success: true,
@@ -325,8 +328,9 @@ router.put('/staff/:id',
         try {
             const { tenantId } = req.user;
             const { id } = req.params;
-            
-            const staff = await staffService.updateStaff(id, tenantId, req.body);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const staff = await staffService.updateStaff(idStr, tenantIdStr, req.body);
             
             res.json({
                 success: true,
@@ -350,8 +354,9 @@ router.delete('/staff/:id',
         try {
             const { tenantId } = req.user;
             const { id } = req.params;
-            
-            const result = await staffService.deleteStaff(id, tenantId);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const result = await staffService.deleteStaff(idStr, tenantIdStr);
             
             res.json({
                 success: true,
@@ -377,8 +382,9 @@ router.post('/staff/:id/services',
             const { tenantId } = req.user;
             const { id } = req.params;
             const { serviceIds } = req.body;
-            
-            const staff = await staffService.assignServices(id, tenantId, serviceIds);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const staff = await staffService.assignServices(idStr, tenantIdStr, serviceIds);
             
             res.json({
                 success: true,
@@ -404,8 +410,9 @@ router.post('/staff/:id/schedule',
             const { tenantId } = req.user;
             const { id } = req.params;
             const { schedules } = req.body;
-            
-            const staff = await staffService.setSchedule(id, tenantId, schedules);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const staff = await staffService.setSchedule(idStr, tenantIdStr, schedules);
             
             res.json({
                 success: true,
@@ -430,8 +437,9 @@ router.post('/staff/:id/timeoff',
         try {
             const { tenantId } = req.user;
             const { id } = req.params;
-            
-            const staff = await staffService.addTimeOff(id, tenantId, req.body);
+            const idStr = typeof id === 'string' ? id : id?.[0] as string;
+            const tenantIdStr = typeof tenantId === 'string' ? tenantId : tenantId?.[0] as string;
+            const staff = await staffService.addTimeOff(idStr, tenantIdStr, req.body);
             
             res.json({
                 success: true,
@@ -510,8 +518,8 @@ router.get('/staff/:id/availability', async (req, res) => {
 // GET /api/staff/:id/slots - Get available time slots
 router.get('/staff/:id/slots', async (req, res) => {
     try {
-        const { tenantId } = req.user;
-        const { id } = req.params;
+        const tenantIdStr = typeof req.user.tenantId === 'string' ? req.user.tenantId : req.user.tenantId?.[0] as string;
+        const idStr = typeof req.params.id === 'string' ? req.params.id : req.params.id?.[0] as string;
         const { date, duration } = req.query;
         
         if (!date || !duration) {
@@ -522,11 +530,14 @@ router.get('/staff/:id/slots', async (req, res) => {
             });
         }
         
+        const dateStr = typeof date === 'string' ? date : date?.[0] as string;
+        const durationStr = typeof duration === 'string' ? duration : duration?.[0] as string;
+
         const slots = await staffService.getAvailableTimeSlots(
-            id,
-            tenantId,
-            new Date(date as string),
-            parseInt(duration as string)
+            idStr,
+            tenantIdStr,
+            new Date(dateStr),
+            parseInt(durationStr)
         );
         
         res.json({

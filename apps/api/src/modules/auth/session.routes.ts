@@ -3,8 +3,12 @@ import { SessionController } from './session.controller';
 import { validateBody } from '../../middleware/validate';
 import { z } from 'zod';
 
+import { SessionService } from './session.service';
+import { prisma } from '../../lib/prisma';
+
 const router = Router();
-const controller = new SessionController();
+const sessionService = new SessionService(prisma);
+const controller = new SessionController(sessionService);
 
 // Validation schemas
 const createSessionSchema = z.object({
