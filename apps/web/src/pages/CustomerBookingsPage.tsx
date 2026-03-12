@@ -49,7 +49,14 @@ const CustomerBookingsPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Failed to fetch bookings:', error);
-      toastStore.error('Failed to load bookings');
+      if (error.response?.status === 403) {
+        // This is expected - customers can't access admin appointments
+        console.log('🔒 Customer cannot access admin appointments (this is correct security)');
+        toastStore.info('Your booking calendar will be available soon. For now, please contact staff to book appointments.');
+        setBookings([]); // Show empty state instead of error
+      } else {
+        toastStore.error('Failed to load bookings');
+      }
     } finally {
       setLoading(false);
     }

@@ -49,7 +49,7 @@ export class ReportController {
     summary = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const startTime = Date.now();
-            const tenantId = String(req.headers['x-tenant-id'] || '');
+            const tenantId = req.tenantId; // Use tenantId from middleware, not header
             const { fromDate, toDate } = this.parseDates(req);
             const { page, limit } = this.validatePagination(req);
             const { serviceId, staffId, status } = req.query;
@@ -98,7 +98,7 @@ export class ReportController {
         } catch (error) {
             logger.error({
                 error: error instanceof Error ? error.message : String(error),
-                tenantId: req.headers['x-tenant-id'],
+                tenantId: req.tenantId,
                 operation: 'report.summary'
             }, 'Report summary failed');
             next(error);
@@ -111,7 +111,7 @@ export class ReportController {
     peakTimes = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const startTime = Date.now();
-            const tenantId = String(req.headers['x-tenant-id'] || '');
+            const tenantId = req.tenantId; // Use tenantId from middleware
             const { fromDate, toDate } = this.parseDates(req);
             const { page, limit } = this.validatePagination(req);
 
@@ -156,7 +156,7 @@ export class ReportController {
         } catch (error) {
             logger.error({
                 error: error instanceof Error ? error.message : String(error),
-                tenantId: req.headers['x-tenant-id'],
+                tenantId: req.tenantId,
                 operation: 'report.peakTimes'
             }, 'Peak times analysis failed');
             next(error);
@@ -169,7 +169,7 @@ export class ReportController {
     staffUtilization = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const startTime = Date.now();
-            const tenantId = String(req.headers['x-tenant-id'] || '');
+            const tenantId = req.tenantId; // Use tenantId from middleware
             const { fromDate, toDate } = this.parseDates(req);
             const { page, limit } = this.validatePagination(req);
 
@@ -214,7 +214,7 @@ export class ReportController {
         } catch (error) {
             logger.error({
                 error: error instanceof Error ? error.message : String(error),
-                tenantId: req.headers['x-tenant-id'],
+                tenantId: req.tenantId,
                 operation: 'report.staffUtilization'
             }, 'Staff utilization report failed');
             next(error);
@@ -227,7 +227,7 @@ export class ReportController {
     exportData = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const startTime = Date.now();
-            const tenantId = String(req.headers['x-tenant-id'] || '');
+            const tenantId = req.tenantId; // Use tenantId from middleware
             const type = req.query.type as 'appointments' | 'customers';
 
             if (!tenantId) {
@@ -291,7 +291,7 @@ export class ReportController {
         } catch (error) {
             logger.error({
                 error: error instanceof Error ? error.message : String(error),
-                tenantId: req.headers['x-tenant-id'],
+                tenantId: req.tenantId,
                 operation: 'report.exportData'
             }, 'CSV export failed');
             next(error);
@@ -303,7 +303,7 @@ export class ReportController {
      */
     testPerformance = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const tenantId = String(req.headers['x-tenant-id'] || '');
+            const tenantId = req.tenantId; // Use tenantId from middleware
             const { iterations = 10, reportType = 'summary' } = req.body;
 
             // Check admin role
@@ -410,7 +410,7 @@ export class ReportController {
         } catch (error) {
             logger.error({
                 error: error instanceof Error ? error.message : String(error),
-                tenantId: req.headers['x-tenant-id'],
+                tenantId: req.tenantId,
                 operation: 'report.testPerformance'
             }, 'Report performance test failed');
             next(error);
@@ -422,7 +422,7 @@ export class ReportController {
      */
     validateCsv = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const tenantId = String(req.headers['x-tenant-id'] || '');
+            const tenantId = req.tenantId; // Use tenantId from middleware
             const { type, csvData } = req.body;
 
             if (!tenantId) {
@@ -472,7 +472,7 @@ export class ReportController {
         } catch (error) {
             logger.error({
                 error: error instanceof Error ? error.message : String(error),
-                tenantId: req.headers['x-tenant-id'],
+                tenantId: req.tenantId,
                 operation: 'report.validateCsv'
             }, 'CSV validation failed');
             next(error);

@@ -39,7 +39,7 @@
     },
     "dependencies": {
         "@bookease/logger": "workspace:*",
-        "@prisma/client": "^6.19.2",
+        "@prisma/client": "6.19.2",
         "@types/nodemailer": "^7.0.11",
         "axios": "^1.6.0",
         "bcrypt": "^6.0.0",

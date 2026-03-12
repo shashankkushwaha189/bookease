@@ -6,6 +6,8 @@ import rateLimit from 'express-rate-limit';
 import { env } from './config/env';
 import { correlationIdMiddleware } from './middleware/correlation-id';
 import { errorHandler } from './middleware/error-handler';
+import { authMiddleware } from './middleware/auth.middleware';
+import { requireRole } from './middleware/role.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
 import { prisma } from './lib/prisma';
 import tenantRoutes from './modules/tenant/tenant.routes';
@@ -32,7 +34,7 @@ import notificationRoutes from './modules/notifications/notification.routes';
 import migrateRoutes from './routes/migrate';
 import seedRoutes from './routes/seed';
 import setupRoutes from './routes/setup';
-import { superAdminRoutes } from './modules/superadmin/superadmin.routes';
+import userRoutes from './modules/user/user.routes';
 
 const app = express();
 
@@ -140,32 +142,34 @@ app.use('/api/bookings', bookingRoutes);
 // Public profile still requires tenant context (X-Tenant-ID)
 app.use('/api/public/profile', tenantMiddleware, businessProfileRoutes);
 app.use('/api/business-profile/public', tenantMiddleware, businessProfileRoutes);
-app.use('/api/customers', customerRoutes);
+app.use('/api/customers', tenantMiddleware, authMiddleware, customerRoutes);
 
 app.use(protectedRoutes, tenantMiddleware);
 
-app.use('/api/auth', authRoutes);
-app.use('/api/mfa', mfaRoutes);
-app.use('/api/sessions', sessionRoutes);
-app.use('/api/config', configRoutes);
-app.use('/api/migrate', migrateRoutes);
-app.use('/api/seed', seedRoutes);
-app.use('/api/setup', setupRoutes);
-app.use('/api/availability', availabilityRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/staff', staffRoutes);
-app.use('/api/appointments', appointmentRouter);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/audit', auditRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/archive', archiveRoutes);
-app.use('/api/customers', customerRoutes); // Re-enabled
-app.use('/api/import', importRoutes); // Re-enabled
-app.use('/api/tokens', apiTokenRoutes);
-app.use('/api/policy', policyRoutes);
-// Protected business profile routes (require tenant middleware)
-app.use('/api/superadmin', superAdminRoutes);
+// User management routes with role-based access
+app.use('/api/users', tenantMiddleware, authMiddleware, userRoutes);
+
+// Auth routes (tenant middleware applied with exceptions)
+app.use('/api/auth', tenantMiddleware, authRoutes);
+app.use('/api/mfa', tenantMiddleware, authMiddleware, mfaRoutes);
+app.use('/api/sessions', tenantMiddleware, authMiddleware, sessionRoutes);
+// Admin-only routes (require ADMIN role)
+app.use('/api/config', tenantMiddleware, authMiddleware, requireRole('ADMIN'), configRoutes);
+app.use('/api/migrate', tenantMiddleware, authMiddleware, requireRole('ADMIN'), migrateRoutes);
+app.use('/api/seed', tenantMiddleware, authMiddleware, requireRole('ADMIN'), seedRoutes);
+app.use('/api/setup', tenantMiddleware, authMiddleware, requireRole('ADMIN'), setupRoutes);
+// Staff and Admin routes
+app.use('/api/availability', tenantMiddleware, authMiddleware, requireRole('STAFF', 'ADMIN'), availabilityRoutes);
+app.use('/api/services', tenantMiddleware, authMiddleware, requireRole('STAFF', 'ADMIN'), serviceRoutes);
+app.use('/api/staff', tenantMiddleware, authMiddleware, requireRole('STAFF', 'ADMIN'), staffRoutes);
+app.use('/api/appointments', tenantMiddleware, authMiddleware, requireRole('STAFF', 'ADMIN'), appointmentRouter);
+app.use('/api/bookings', tenantMiddleware, authMiddleware, bookingRoutes);
+app.use('/api/notifications', tenantMiddleware, authMiddleware, requireRole('STAFF', 'ADMIN'), notificationRoutes);
+app.use('/api/audit', tenantMiddleware, authMiddleware, requireRole('ADMIN'), auditRoutes);
+app.use('/api/reports', tenantMiddleware, authMiddleware, requireRole('ADMIN', 'STAFF'), reportRoutes);
+app.use('/api/archive', tenantMiddleware, authMiddleware, requireRole('ADMIN'), archiveRoutes);
+app.use('/api/tokens', tenantMiddleware, authMiddleware, requireRole('ADMIN'), apiTokenRoutes);
+app.use('/api/policy', tenantMiddleware, authMiddleware, requireRole('ADMIN'), policyRoutes);
 
 // Simple database initialization endpoint
 app.post('/api/init-database', async (req, res) => {
@@ -176,27 +180,37 @@ app.post('/api/init-database', async (req, res) => {
     await prisma.$connect();
     console.log('✅ Database connected');
     
+    const { tenantSlug, tenantName, businessName, adminEmail, adminPassword } = req.body;
+    
+    // Use provided data or defaults
+    const slug = tenantSlug || 'demo-clinic';
+    const name = tenantName || 'HealthFirst Clinic';
+    const bizName = businessName || 'HealthFirst Clinic';
+    const email = adminEmail || 'admin@demo.com';
+    const password = adminPassword || 'demo123456';
+    
     // Check if tenant already exists
     const existingTenant = await prisma.tenant.findFirst({
-      where: { slug: 'demo-clinic' }
+      where: { slug }
     });
     
     if (existingTenant) {
-      console.log('✅ Demo tenant already exists');
+      console.log('✅ Tenant already exists:', existingTenant.name);
       return res.json({ 
         success: true, 
-        message: 'Database already initialized',
+        message: 'Tenant already exists',
         tenantId: existingTenant.id,
-        tenantSlug: existingTenant.slug
+        tenantSlug: existingTenant.slug,
+        businessName: existingTenant.name
       });
     }
     
-    // Create demo tenant
+    // Create tenant
     const tenant = await prisma.tenant.create({
       data: {
-        name: 'HealthFirst Clinic',
-        slug: 'demo-clinic',
-        domain: 'demo-clinic.bookease.com',
+        name,
+        slug,
+        domain: `${slug}.bookease.com`,
         timezone: 'UTC',
         isActive: true
       }
@@ -208,7 +222,7 @@ app.post('/api/init-database', async (req, res) => {
     const profile = await prisma.businessProfile.create({
       data: {
         tenantId: tenant.id,
-        businessName: 'HealthFirst Clinic',
+        businessName: bizName,
         brandColor: '#1A56DB',
         accentColor: '#7C3AED'
       }
@@ -216,12 +230,31 @@ app.post('/api/init-database', async (req, res) => {
     
     console.log('✅ Created business profile:', profile.businessName);
     
+    // Create admin user (without password hashing for simplicity - in production, use bcrypt)
+    const bcrypt = require('bcrypt');
+    const passwordHash = await bcrypt.hash(password, 12);
+    
+    const adminUser = await prisma.user.create({
+      data: {
+        tenantId: tenant.id,
+        email,
+        passwordHash,
+        role: 'ADMIN',
+        firstName: 'Admin',
+        lastName: 'User',
+        isActive: true
+      }
+    });
+    
+    console.log('✅ Created admin user:', adminUser.email);
+    
     res.json({ 
       success: true, 
-      message: 'Database initialized successfully',
+      message: 'Tenant initialized successfully',
       tenantId: tenant.id,
       tenantSlug: tenant.slug,
-      businessName: profile.businessName
+      businessName: profile.businessName,
+      adminEmail: adminUser.email
     });
     
   } catch (error) {
@@ -230,8 +263,6 @@ app.post('/api/init-database', async (req, res) => {
       success: false, 
       error: error.message 
     });
-  } finally {
-    await prisma.$disconnect();
   }
 });
 

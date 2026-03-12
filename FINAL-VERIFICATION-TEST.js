@@ -9,6 +9,11 @@ console.log('===================================');
 const API_BASE = 'http://localhost:3000';
 const TENANT_ID = 'b18e0808-27d1-4253-aca9-453897585106';
 
+// These will be set dynamically from seeded data
+let AUTH_TOKEN = null;
+let SERVICE_ID = null;
+let STAFF_ID = null;
+
 let testResults = {
   total: 0,
   passed: 0,

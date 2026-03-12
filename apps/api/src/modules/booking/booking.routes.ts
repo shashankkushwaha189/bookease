@@ -20,6 +20,11 @@ router.post('/', validateBody(createBookingSchema), controller.createPublicBooki
 // Protected routes - require authentication
 router.use(authMiddleware);
 
+// Customer-specific routes (customers can access their own bookings)
+// TODO: Implement these methods in BookingController
+// router.get('/customer', controller.getCustomerBookings);
+// router.post('/customer', validateBody(createBookingSchema), controller.createCustomerBooking);
+
 // Cancel booking (customer can cancel their own, staff/admin can cancel any)
 router.delete('/:bookingId', validateBody(cancelBookingSchema), controller.cancelBooking);
 

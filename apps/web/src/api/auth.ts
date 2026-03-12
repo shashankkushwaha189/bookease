@@ -15,8 +15,15 @@ export const authApi = {
   /**
    * User registration
    */
-  register: (data: { firstName: string; lastName: string; email: string; password: string }) => 
-    api.post('/auth/register', data),
+  register: (data: { 
+    firstName: string; 
+    lastName: string; 
+    email: string; 
+    password: string;
+    tenantSlug?: string;
+    phoneNumber?: string;
+  }) => 
+    api.post('/api/auth/register', data),
 
   /**
    * User logout

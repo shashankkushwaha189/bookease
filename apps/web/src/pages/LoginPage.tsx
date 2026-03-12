@@ -7,7 +7,8 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react'
 import { useAuthStore } from '../stores/auth.store';
 import { useTenantStore } from '../stores/tenant.store';
 import SocialLoginButtons from '../components/SocialLoginButtons';
-
+import { useTenant } from '../components/TenantProvider';
+import TenantSelector from '../components/TenantSelector';
 // Form validation schema
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -25,13 +26,17 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, user, isLocked, lockoutUntil, failedAttempts, incrementFailedAttempts, checkLockoutStatus } = useAuthStore();
-  const { setTenantId } = useTenantStore();
+  const { login, user } = useAuthStore();
+  const { setTenantSlug } = useTenantStore();
   
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [selectedTenant, setSelectedTenant] = useState('');
+
+  // Get current tenant from Provider (which resolves it from URL/Domain)
+  const { tenant, profile } = useTenant();
 
   const {
     register,
@@ -81,37 +86,54 @@ const LoginPage: React.FC<LoginPageProps> = () => {
   // Get default route based on user role
   const getDefaultRouteForRole = (role: string): string => {
     console.log('🎯 getDefaultRouteForRole called with:', { role, roleType: typeof role });
+
+    // Get current tenant slug to maintain it in the URL
+    const { tenantSlug } = useTenantStore.getState();
+    const tenantParam = tenantSlug ? `?tenant=${tenantSlug}` : '';
+
     switch (role) {
       case 'ADMIN':
-        console.log('🎯 Redirecting to ADMIN route: /admin/dashboard');
-        return '/admin/dashboard';
+        console.log('🎯 Redirecting to ADMIN route: /admin/dashboard' + tenantParam);
+        return `/admin/dashboard${tenantParam}`;
       case 'STAFF':
-        console.log('🎯 Redirecting to STAFF route: /staff/schedule');
-        return '/staff/schedule';
+        console.log('🎯 Redirecting to STAFF route: /staff/schedule' + tenantParam);
+        return `/staff/schedule${tenantParam}`;
       case 'USER':
-        console.log('🎯 Redirecting to USER route: /customer/bookings');
-        return '/customer/bookings';
+        console.log('🎯 Redirecting to USER route: /customer/bookings' + tenantParam);
+        return `/customer/bookings${tenantParam}`;
       default:
-        console.log('🎯 Unknown role, defaulting to ADMIN route: /admin/dashboard');
-        return '/admin/dashboard';
+        console.log('🎯 Unknown role, defaulting to ADMIN route: /admin/dashboard' + tenantParam);
+        return `/admin/dashboard${tenantParam}`;
     }
   };
 
-  // Handle tenant selection from URL
+  // Handle tenant selection from URL and state
   useEffect(() => {
-    const tenantId = searchParams.get('tenant');
-    if (tenantId) {
-      setTenantId(tenantId);
+    const urlTenant = searchParams.get('tenant');
+    if (urlTenant) {
+      setSelectedTenant(urlTenant);
+      setTenantSlug(urlTenant);
+      console.log('🏢 Set tenant from URL:', urlTenant);
     }
-    
-    // Ensure demo tenant ID is always set for login
-    const DEMO_TENANT_ID = 'b18e0808-27d1-4253-aca9-453897585106';
-    const { tenantId: currentTenantId } = useTenantStore.getState();
-    if (!currentTenantId) {
-      setTenantId(DEMO_TENANT_ID);
-      console.log('🏢 Initialized tenant ID:', DEMO_TENANT_ID);
+  }, [searchParams, setTenantSlug]);
+
+  // Set default tenant if none selected (run once on mount)
+  useEffect(() => {
+    if (!selectedTenant) {
+      const defaultTenant = 'demo-clinic';
+      setSelectedTenant(defaultTenant);
+      setTenantSlug(defaultTenant);
+      console.log('🏢 Set default tenant:', defaultTenant);
     }
-  }, [searchParams, setTenantId]);
+  }, []);
+
+  // Update tenant store when selection changes
+  useEffect(() => {
+    if (selectedTenant) {
+      setTenantSlug(selectedTenant);
+      console.log('🏢 Updated tenant to:', selectedTenant);
+    }
+  }, [selectedTenant, setTenantSlug]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -123,18 +145,13 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     setIsLoading(true);
     
     try {
-      // Ensure tenant ID is set before login
-      const DEMO_TENANT_ID = 'b18e0808-27d1-4253-aca9-453897585106';
-      const { tenantId, setTenantId: setTenant } = useTenantStore.getState();
-      if (!tenantId) {
-        setTenant(DEMO_TENANT_ID);
-        console.log('🏢 Set tenant ID:', DEMO_TENANT_ID);
-      }
+      // Use the selected tenant from state or fallback to URL tenant
+      const tenantToUse = selectedTenant || tenant?.slug || 'demo-clinic';
       
       console.log('🔐 Attempting login with:', { 
         email: data.email, 
         rememberMe: data.rememberMe,
-        tenantId: useTenantStore.getState().tenantId,
+        tenantSlug: tenantToUse,
         apiUrl: import.meta.env.VITE_API_URL 
       });
       
@@ -153,12 +170,8 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         }
       });
       
-      incrementFailedAttempts();
-      
       if (error.response?.status === 401) {
         setSubmitError('Invalid email or password');
-      } else if (error.response?.status === 429) {
-        setSubmitError('Too many attempts. Please try again later.');
       } else {
         setSubmitError('An error occurred. Please try again.');
       }
@@ -175,13 +188,6 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     navigate('/register');
   };
 
-  const showCaptcha = failedAttempts >= 5;
-
-  // Check lockout status
-  useEffect(() => {
-    checkLockoutStatus();
-  }, [checkLockoutStatus]);
-
   return (
     <div className="min-h-screen w-full overflow-y-auto bg-gray-50">
       {/* Full Screen Login Form */}
@@ -190,7 +196,9 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         <div className="w-full min-h-screen bg-white flex flex-col justify-center px-6 lg:px-8 xl:px-12 py-8">
           <div className="w-full max-w-lg mx-auto">
             <div className="mb-8 lg:mb-10 text-center">
-              <h1 className="text-4xl lg:text-5xl font-bold text-blue-600 mb-4">BookEase</h1>
+              <h1 className="text-4xl lg:text-5xl font-bold text-blue-600 mb-4">
+                {profile?.businessName || tenant?.name || 'BookEase'}
+              </h1>
               <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">Welcome Back</h2>
               <p className="text-gray-600 text-lg">Sign in to your account to continue</p>
             </div>
@@ -215,41 +223,17 @@ const LoginPage: React.FC<LoginPageProps> = () => {
               </div>
             )}
 
-            {/* Account Lockout Warning */}
-            {isLocked && (
-              <div className="bg-error-50 border border-error-200 rounded-lg p-4 mb-4">
-                <div className="flex items-start">
-                  <AlertCircle className="w-5 h-5 text-error-600 mt-0.5 mr-3 flex-shrink-0" />
-                  <div>
-                    <h4 className="text-sm font-semibold text-error-800 mb-1">
-                      Account Temporarily Locked
-                    </h4>
-                    <p className="text-xs text-error-700 mb-2">
-                      Too many failed login attempts. Your account has been locked for security.
-                    </p>
-                    {lockoutUntil && (
-                      <p className="text-xs text-error-600">
-                        Lockout expires: {lockoutUntil.toLocaleTimeString()}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Failed Attempts Warning */}
-            {!isLocked && failedAttempts > 0 && (
-              <div className="bg-warning-50 border border-warning-200 rounded-lg p-3 mb-4">
-                <div className="flex items-center">
-                  <AlertCircle className="w-4 h-4 text-warning-600 mr-2" />
-                  <p className="text-xs text-warning-800">
-                    {5 - failedAttempts} attempts remaining before account lockout
-                  </p>
-                </div>
-              </div>
-            )}
-
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {/* Tenant Selector */}
+              <TenantSelector
+                selectedTenant={selectedTenant}
+                onTenantChange={(tenantSlug: string) => {
+                  setSelectedTenant(tenantSlug);
+                  setTenantSlug(tenantSlug);
+                }}
+                className="mb-6"
+              />
+
               {/* Email Field */}
               <div>
                 <label className="block text-base font-semibold text-gray-700 mb-2">
@@ -324,7 +308,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading || showCaptcha || isLocked}
+                disabled={isLoading}
                 className="w-full py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 {isLoading ? (
@@ -361,12 +345,11 @@ const LoginPage: React.FC<LoginPageProps> = () => {
               {/* Social Login */}
               <SocialLoginButtons 
                 isLoading={isLoading}
-                disabled={showCaptcha || isLocked}
                 className="mt-8"
               />
 
               {/* Demo Credentials */}
-              {!isLoading && (
+              {!isLoading && tenant?.slug === 'demo-clinic' && (
                 <div className="mt-8 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-sm">
                   <div className="flex flex-col space-y-3">
                     <div className="text-base text-gray-700">

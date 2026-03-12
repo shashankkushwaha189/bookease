@@ -4,6 +4,8 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { TenantRepository } from '../tenant/tenant.repository';
 import { prisma } from '../../lib/prisma';
+import { authMiddleware } from '../../middleware/auth.middleware';
+import { requireRole } from '../../middleware/role.middleware';
 import { validateBody } from '../../middleware/validate';
 import { z } from 'zod';
 
@@ -49,16 +51,16 @@ router.post('/refresh', validateBody(z.object({
 })), controller.refreshToken);
 
 // Protected routes (authentication required)
-router.get('/profile', controller.getProfile);
-router.put('/profile', validateBody(updateProfileSchema), controller.updateProfile);
-router.put('/password', validateBody(updatePasswordSchema), controller.updatePassword);
-router.post('/logout', controller.logout);
+router.get('/profile', authMiddleware, controller.getProfile);
+router.put('/profile', authMiddleware, validateBody(updateProfileSchema), controller.updateProfile);
+router.put('/password', authMiddleware, validateBody(updatePasswordSchema), controller.updatePassword);
+router.post('/logout', authMiddleware, controller.logout);
 
 // Admin routes (admin role required)
-router.get('/users', controller.getUsers);
-router.post('/users', validateBody(createUserSchema), controller.createUser);
-router.put('/users/:userId/role', validateBody(updateUserRoleSchema), controller.updateUserRole);
-router.delete('/users/:userId', controller.deleteUser);
-router.get('/search', controller.searchUsers);
+router.get('/', authMiddleware, requireRole('ADMIN'), controller.getUsers);
+router.post('/', authMiddleware, requireRole('ADMIN'), validateBody(createUserSchema), controller.createUser);
+router.put('/:userId/role', authMiddleware, requireRole('ADMIN'), validateBody(updateUserRoleSchema), controller.updateUserRole);
+router.delete('/:userId', authMiddleware, requireRole('ADMIN'), controller.deleteUser);
+router.get('/search', authMiddleware, requireRole('ADMIN', 'STAFF'), controller.searchUsers);
 
 export default router;

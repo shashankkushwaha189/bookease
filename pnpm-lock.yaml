@@ -43,7 +43,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/logger
       '@prisma/client':
-        specifier: ^6.19.2
+        specifier: 6.19.2
         version: 6.19.2(prisma@6.19.2(typescript@5.9.3))(typescript@5.9.3)
       '@types/nodemailer':
         specifier: ^7.0.11

@@ -28,21 +28,47 @@ axiosInstance.interceptors.request.use(
             config.headers.set('Authorization', `Bearer ${token}`);
         }
 
-        // 2. Inject Multi-Tenant ID
-        const tenantId = useTenantStore.getState().tenantId || 
-          (() => {
-            const path = window.location.pathname;
-            const slug = path.split('/')[1];
-            // Skip common routes that aren't tenant slugs
-            if (['login', 'register', 'forgot-password', 'reset-password', ''].includes(slug)) {
-              return 'b18e0808-27d1-4253-aca9-453897585106'; // Default demo tenant
-            }
-            return slug === 'demo-clinic' ? 'b18e0808-27d1-4253-aca9-453897585106' : slug;
-          })();
-        console.log('🔍 Tenant ID:', tenantId);
+        // 2. Inject Multi-Tenant headers
+        const tenantState = useTenantStore.getState();
+        const tenantSlug =
+            tenantState.tenantSlug ||
+            (() => {
+                const params = new URLSearchParams(window.location.search);
+                const queryTenant = params.get('tenant');
+                if (queryTenant) return queryTenant;
+
+                const path = window.location.pathname;
+                const firstSegment = path.split('/')[1];
+
+                // Skip common routes that aren't tenant slugs
+                if (
+                    [
+                        'login',
+                        'register',
+                        'forgot-password',
+                        'reset-password',
+                        'admin',
+                        'staff',
+                        'customer',
+                        '',
+                    ].includes(firstSegment)
+                ) {
+                    return 'demo-clinic';
+                }
+
+                return firstSegment || 'demo-clinic';
+            })();
+        const tenantId = tenantState.tenantId;
+
+        console.log('🔍 Tenant Slug:', tenantSlug);
+        console.log('🔍 Tenant UUID:', tenantId);
         
-        if (tenantId) {
-            config.headers.set('X-Tenant-ID', tenantId);
+        // Send tenant slug in X-Tenant-Slug header for login endpoints
+        if (config.url?.includes('/api/auth/login')) {
+            if (tenantSlug) config.headers.set('X-Tenant-Slug', tenantSlug);
+        } else {
+            if (tenantSlug) config.headers.set('X-Tenant-Slug', tenantSlug);
+            if (tenantId) config.headers.set('X-Tenant-ID', tenantId);
         }
 
         // 3. Inject Correlation Tracing UUID

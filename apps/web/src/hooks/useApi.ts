@@ -23,10 +23,26 @@ axiosInstance.interceptors.request.use(
             config.headers.set('Authorization', `Bearer ${token}`);
         }
 
-        // 2. Inject Multi-Tenant ID
-        const tenantId = useTenantStore.getState().tenantId;
-        if (tenantId) {
-            config.headers.set('X-Tenant-ID', tenantId);
+        // 2. Inject Multi-Tenant headers
+        const tenantState = useTenantStore.getState();
+        const tenantSlug =
+            tenantState.tenantSlug ||
+            (() => {
+                const path = window.location.pathname;
+                const slug = path.split('/')[1];
+                if (['login', 'register', 'forgot-password', 'reset-password', ''].includes(slug)) {
+                    return 'demo-clinic';
+                }
+                return slug || 'demo-clinic';
+            })();
+        const tenantId = tenantState.tenantId;
+
+        // Send tenant slug in X-Tenant-Slug header for login endpoints
+        if (config.url?.includes('/api/auth/login')) {
+            if (tenantSlug) config.headers.set('X-Tenant-Slug', tenantSlug);
+        } else {
+            if (tenantSlug) config.headers.set('X-Tenant-Slug', tenantSlug);
+            if (tenantId) config.headers.set('X-Tenant-ID', tenantId);
         }
 
         // 3. Inject Correlation Tracing UUID
@@ -45,7 +61,7 @@ axiosInstance.interceptors.response.use(
         const { useToastStore } = await import('../stores/toast.store');
 
         const { logout } = useAuthStore.getState();
-        const { error: triggerError } = useToastStore.getState();
+        const { error: triggerErrorToast } = useToastStore.getState();
 
         if (error.response) {
             const status = error.response.status;
@@ -60,7 +76,7 @@ axiosInstance.interceptors.response.use(
                     break;
                 case 422:
                 case 400:
-                    const serverMsg = error.response.data?.error?.message;
+                    const serverMsg = (error.response.data as any)?.error?.message;
                     if (serverMsg) triggerErrorToast(serverMsg);
                     break;
                 case 500:

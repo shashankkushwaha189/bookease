@@ -8,10 +8,22 @@ async function main() {
 
     // Clear existing demographic-specific data safely.
     // Ensure we delete backwards through foreign keys to avoid deadlocks.
-    await prisma.aiSummary.deleteMany({});
-    await prisma.appointmentTimeline.deleteMany({});
-    await prisma.appointmentArchive.deleteMany({});
-    await prisma.appointment.deleteMany({});
+    // Delete in correct order: children first, then parents
+    try {
+        // These reference appointments, must be deleted first
+        await prisma.aiSummary.deleteMany({});
+        await prisma.appointmentTimeline.deleteMany({});
+        await prisma.appointmentArchive.deleteMany({});
+        // Only then delete appointments
+        await prisma.appointment.deleteMany({});
+    } catch (e) {
+        console.warn('Error during appointment cleanup:', e.message);
+        // If there's a constraint issue, try raw SQL deletion
+        await prisma.$executeRaw`DELETE FROM "AiSummary"`;
+        await prisma.$executeRaw`DELETE FROM "AppointmentTimeline"`;
+        await prisma.$executeRaw`DELETE FROM "AppointmentArchive"`;
+        await prisma.$executeRaw`DELETE FROM "Appointment"`;
+    }
     await prisma.consentRecord.deleteMany({});
     await prisma.slotLock.deleteMany({});
     await prisma.staffTimeOff.deleteMany({});
